@@ -81,7 +81,7 @@ func _exterior_detail() -> void:
 		var lamp:=OmniLight3D.new(); lamp.position=Vector3(x,6.8,34); lamp.light_color=Color(0.45,0.8,1); lamp.light_energy=0.7; lamp.omni_range=5; add_child(lamp)
 	# Lifeboat-like covered service craft as non-operational deck dressing
 	for side in [-1.0,1.0]:
-		var pod:=_box(self,"Covered service pod",Vector3(side*6.0,4.4,9),Vector3(1.7,1.0,5.2),ColorMaterial.new())
+		var pod:=_box(self,"Covered service pod",Vector3(side*6.0,4.4,9),Vector3(1.7,1.0,5.2),steel)
 		pod.material_override=trim
 		_box(self,"Pod cradle",Vector3(side*6.0,3.75,9),Vector3(2.0,0.18,5.6),dark)
 	# Deck lights and small bollards
