@@ -17,6 +17,7 @@ func _ready() -> void:
 	glow=_mat(Color(0.04,0.75,0.78),0.25,0.25)
 	glow.emission_enabled=true; glow.emission=Color(0.02,0.35,0.42)
 	rubber=_mat(Color(0.055,0.065,0.07),0.05,0.9)
+	_replace_blocky_hull()
 	_exterior_detail()
 	_interior_detail()
 
@@ -39,6 +40,52 @@ func _cylinder(parent: Node3D, label: String, pos: Vector3, radius: float, heigh
 func _sphere(parent: Node3D, label: String, pos: Vector3, scale: Vector3, mat: Material) -> void:
 	var mesh:=SphereMesh.new(); mesh.radius=0.5; mesh.height=1.0; mesh.radial_segments=20; mesh.rings=12
 	var obj:=MeshInstance3D.new(); obj.name=label; obj.mesh=mesh; obj.position=pos; obj.scale=scale; obj.material_override=mat; parent.add_child(obj)
+
+func _replace_blocky_hull() -> void:
+	# Hide the placeholder box and build a tapered hull shell.
+	var old_hull:=get_parent().get_node_or_null("Hull")
+	if old_hull != null: old_hull.visible=false
+	var old_bow:=get_parent().get_node_or_null("Bow")
+	if old_bow != null: old_bow.visible=false
+	var sections:Array[Vector3]=[
+		Vector3(6.0,-38.0,0.0),
+		Vector3(8.1,-30.0,0.0),
+		Vector3(8.8,28.0,0.0),
+		Vector3(7.0,39.5,0.0)
+	]
+	var verts:=PackedVector3Array()
+	for section in sections:
+		var w:float=section.x
+		var z:float=section.y
+		verts.append(Vector3(-w,0.86,z))
+		verts.append(Vector3(w,0.86,z))
+		verts.append(Vector3(w*0.70,-2.55,z))
+		verts.append(Vector3(-w*0.70,-2.55,z))
+	var indices:=PackedInt32Array()
+	for ring in range(sections.size()-1):
+		for edge in [1,2,3]:
+			var a:=ring*4+edge
+			var b:=ring*4+((edge+1)%4)
+			var c:=(ring+1)*4+((edge+1)%4)
+			var d:=(ring+1)*4+edge
+			indices.append_array(PackedInt32Array([a,b,c,a,c,d]))
+	indices.append_array(PackedInt32Array([0,3,2,0,2,1]))
+	var last:int=(sections.size()-1)*4
+	indices.append_array(PackedInt32Array([last,last+1,last+2,last,last+2,last+3]))
+	var arrays:Array=[]
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX]=verts
+	arrays[Mesh.ARRAY_INDEX]=indices
+	var mesh:=ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
+	var hull_mat:=_mat(Color(0.16,0.22,0.26),0.78,0.32)
+	hull_mat.cull_mode=BaseMaterial3D.CULL_DISABLED
+	mesh.surface_set_material(0,hull_mat)
+	var hull:=MeshInstance3D.new()
+	hull.name="Tapered hull shell"
+	hull.mesh=mesh
+	hull.position.z=2.0
+	add_child(hull)
 
 func _exterior_detail() -> void:
 	# Hull waterline belt and bow/stern detailing
