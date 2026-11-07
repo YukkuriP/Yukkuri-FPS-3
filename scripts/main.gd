@@ -155,6 +155,10 @@ func _monitor() -> void:
 	_button(row,"自動操船 切替",_autopilot)
 	_button(row,"針路 −5°",_left)
 	_button(row,"針路 ＋5°",_right)
+	_button(row,"速力 ＋1 kt",_speed_up)
+	_button(row,"速力 −1 kt",_speed_down)
+	_button(row,"主機出力 ＋5%",_power_up)
+	_button(row,"主機出力 −5%",_power_down)
 	_button(row,"閉じる",_close)
 
 func _button(parent: HBoxContainer, caption: String, action: Callable) -> void:
@@ -212,6 +216,15 @@ func _left() -> void:
 	heading=fposmod(heading-5,360); _refresh()
 func _right() -> void:
 	heading=fposmod(heading+5,360); _refresh()
+func _speed_up() -> void:
+	ship_speed=clampf(ship_speed+1.0,0.0,30.0); _refresh()
+func _speed_down() -> void:
+	ship_speed=clampf(ship_speed-1.0,0.0,30.0); _refresh()
+func _power_up() -> void:
+	engine_output=clampf(engine_output+5.0,0.0,100.0); _refresh()
+func _power_down() -> void:
+	engine_output=clampf(engine_output-5.0,0.0,100.0); _refresh()
+
 func _close() -> void:
 	monitor_open=false; monitor_layer.visible=false; active={}; Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 
