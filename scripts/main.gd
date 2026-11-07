@@ -27,6 +27,10 @@ func _ready() -> void:
 	_ocean_and_sky()
 	_exterior()
 	_interior()
+	var visual_upgrade:=Node3D.new()
+	visual_upgrade.set_script(load("res://scripts/visual_upgrade.gd"))
+	visual_upgrade.name="VisualUpgrade"
+	add_child(visual_upgrade)
 	_player()
 	_hud()
 	_monitor()
