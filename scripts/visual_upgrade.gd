@@ -29,11 +29,6 @@ func _box(parent: Node3D, label: String, pos: Vector3, size: Vector3, mat: Mater
 	var mesh:=BoxMesh.new(); mesh.size=size
 	var obj:=MeshInstance3D.new(); obj.name=label; obj.mesh=mesh; obj.position=pos; obj.material_override=mat
 	parent.add_child(obj)
-	if bevel>0.0:
-		var b:=BevelMesh.new(); b.size=size; b.material=mat; b.size=size
-		var sm:=obj.mesh
-		var mod:=MeshInstance3D.new()
-		# Keep simple mesh topology stable in the Compatibility renderer.
 	return obj
 
 func _cylinder(parent: Node3D, label: String, pos: Vector3, radius: float, height: float, mat: Material, sides:=16) -> MeshInstance3D:
@@ -54,7 +49,7 @@ func _exterior_detail() -> void:
 			_box(self,"Hull plate seam",Vector3(side*9.02,-0.9,float(z)),Vector3(0.025,2.0,0.045),dark,0)
 	# Deck safety lines and painted zones
 	for x in [-7.5,7.5]:
-		_box(self,"Deck edge safety stripe",Vector3(x,1.125,2),Vector3(0.09,0.025,70),ColorMaterial.new())
+		_box(self,"Deck edge safety stripe",Vector3(x,1.125,2),Vector3(0.09,0.025,70),steel)
 	for z in range(-33,37,5):
 		_box(self,"Deck expansion strip",Vector3(0,1.14,float(z)),Vector3(16.8,0.018,0.035),dark,0)
 	# Bow anchor housings and mooring fittings (non-functional visual props)
