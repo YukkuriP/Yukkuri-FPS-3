@@ -3,6 +3,7 @@ extends Node3D
 const WALK_SPEED := 4.5
 const LOOK_SENSITIVITY := 0.0022
 const ROLE_NAMES := ["艦長", "操舵員", "CIC士官", "機関員", "一般乗組員"]
+const ROLE_KEYS: Array[Key] = [KEY_1, KEY_2, KEY_3, KEY_4, KEY_5]
 
 var player: CharacterBody3D
 var camera: Camera3D
@@ -10,7 +11,6 @@ var pitch := 0.0
 var role_index := 4
 var status_label: Label
 var hint_label: Label
-var nearby_console := false
 
 func _ready() -> void:
 	_setup_input()
@@ -26,8 +26,8 @@ func _setup_input() -> void:
 	_add_key_action("move_right", KEY_D)
 	_add_key_action("interact", KEY_E)
 	_add_key_action("release_mouse", KEY_ESCAPE)
-	for i in range(5):
-		_add_key_action("role_" + str(i + 1), KEY_1 + i)
+	for i in range(ROLE_KEYS.size()):
+		_add_key_action("role_" + str(i + 1), ROLE_KEYS[i])
 
 func _add_key_action(action: String, keycode: Key) -> void:
 	if not InputMap.has_action(action):
@@ -37,23 +37,18 @@ func _add_key_action(action: String, keycode: Key) -> void:
 	InputMap.action_add_event(action, event)
 
 func _build_blockout() -> void:
-	# Temporary interior blockout: central passage with bridge/CIC-style stations.
 	_add_box("Deck", Vector3(0, -0.15, 0), Vector3(12, 0.3, 34), Color(0.20, 0.24, 0.27))
 	_add_box("Ceiling", Vector3(0, 3.4, 0), Vector3(12, 0.25, 34), Color(0.12, 0.16, 0.19))
 	_add_box("PortWall", Vector3(-6, 1.6, 0), Vector3(0.25, 3.2, 34), Color(0.25, 0.29, 0.31))
 	_add_box("StarboardWall", Vector3(6, 1.6, 0), Vector3(0.25, 3.2, 34), Color(0.25, 0.29, 0.31))
 	_add_box("ForwardWall", Vector3(0, 1.6, -17), Vector3(12, 3.2, 0.25), Color(0.25, 0.29, 0.31))
 	_add_box("AftWall", Vector3(0, 1.6, 17), Vector3(12, 3.2, 0.25), Color(0.25, 0.29, 0.31))
-
-	# Cross passage bulkheads leave a central doorway.
 	for z in [-9.0, 0.0, 9.0]:
 		_add_box("BulkheadL", Vector3(-4.2, 1.55, z), Vector3(3.6, 3.1, 0.2), Color(0.31, 0.35, 0.37))
 		_add_box("BulkheadR", Vector3(4.2, 1.55, z), Vector3(3.6, 3.1, 0.2), Color(0.31, 0.35, 0.37))
-
 	_add_console(Vector3(-3.2, 0.65, -5.0), "BRIDGE CONSOLE")
 	_add_console(Vector3(3.2, 0.65, 4.5), "CIC STATUS CONSOLE")
 	_add_console(Vector3(-3.2, 0.65, 12.0), "ENGINE STATUS CONSOLE")
-
 	for z in [-14.0, -7.0, 0.0, 7.0, 14.0]:
 		var light := OmniLight3D.new()
 		light.position = Vector3(0, 3.05, z)
@@ -131,7 +126,7 @@ func _create_ui() -> void:
 	var panel := ColorRect.new()
 	panel.color = Color(0.015, 0.03, 0.045, 0.72)
 	panel.position = Vector2(16, 16)
-	panel.size = Vector2(420, 104)
+	panel.size = Vector2(470, 112)
 	layer.add_child(panel)
 	status_label = Label.new()
 	status_label.position = Vector2(30, 26)
@@ -171,14 +166,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		player.velocity.y = 0.0
 	player.move_and_slide()
-
-	for i in range(5):
+	for i in range(ROLE_NAMES.size()):
 		if Input.is_action_just_pressed("role_" + str(i + 1)):
 			role_index = i
 			_update_status()
 	if Input.is_action_just_pressed("interact"):
 		status_label.text = "役職：" + ROLE_NAMES[role_index] + "\n操作端末：試作段階です"
-		
 
 func _update_status() -> void:
 	status_label.text = "YUKKURI FLEET SIMULATOR  |  BLOCKOUT\n現在の役職：" + ROLE_NAMES[role_index]
