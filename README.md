@@ -3,7 +3,7 @@
 アーレイ・バーク級をモチーフにした架空の艦艇ロールプレイ／航海シミュレーター。艦内生活・航海管理・部署の仕事を体験するゲームで、実在艦の兵器操作や戦闘手順は再現しません。
 
 ## 環境
-- Godot 4.x（Compatibility renderer）
+- Godot 4.7.2（Compatibility renderer）
 - Blender 4.x（外観モデル生成用）
 - Windows 11。管理者権限不要のユーザー領域またはUSB運用を想定。
 
