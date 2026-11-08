@@ -39,8 +39,12 @@ func _run() -> void:
 		return
 
 	var door_count := _count_named(deck, "AutomaticCompartmentDoor")
-	if door_count != 6:
-		_fail("Expected six compartment doors; found %d" % door_count)
+	if door_count != 7:
+		_fail("Expected seven compartment doors including lower-deck access; found %d" % door_count)
+		return
+	var lower_deck: Node3D = deck.get_node_or_null("LowerDeck")
+	if lower_deck == null or lower_deck.get_node_or_null("Stairwell/Stair ramp collision") == null:
+		_fail("Lower deck or stair ramp collision is missing")
 		return
 	var collision_count := _count_type(deck, StaticBody3D)
 	if collision_count < 25:
@@ -55,7 +59,7 @@ func _run() -> void:
 
 	print("SHIP SMOKE TEST PASSED")
 	print("Flight IIA length scale: 155.29 m nominal")
-	print("Compartment doors: %d" % door_count)
+	print("Compartment doors: %d (including lower-deck access)" % door_count)
 	print("Static collision bodies: %d" % collision_count)
 	quit(0)
 
