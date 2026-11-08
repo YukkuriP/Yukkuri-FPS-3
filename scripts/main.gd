@@ -30,10 +30,6 @@ func _ready() -> void:
 	visual_upgrade.set_script(load("res://scripts/visual_upgrade.gd"))
 	visual_upgrade.name="VisualUpgrade"
 	add_child(visual_upgrade)
-	var interior_upgrade:=Node3D.new()
-	interior_upgrade.set_script(load("res://scripts/interior_upgrade.gd"))
-	interior_upgrade.name="InteriorUpgrade"
-	add_child(interior_upgrade)
 	_player()
 	_hud()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -41,7 +37,7 @@ func _ready() -> void:
 func _input_map() -> void:
 	var actions := {"fwd":KEY_W,"back":KEY_S,"left":KEY_A,"right":KEY_D,"release":KEY_ESCAPE}
 	for name in actions:
-		var action := "fleet_"+name
+		var action: String = "fleet_" + str(name)
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var ev := InputEventKey.new()
 		ev.physical_keycode = actions[name]
@@ -108,10 +104,10 @@ func _interior() -> void:
 	plan.name = "CompartmentedDeckPlan"
 	plan.set_script(load("res://scripts/deck_plan.gd"))
 	add_child(plan)
-	_add_console(Vector3(-3.8, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
-	_add_console(Vector3(3.8, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
+	_add_console(Vector3(3.2, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
+	_add_console(Vector3(4.9, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
 	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
-	_add_console(Vector3(4.1, 1.85, -15.0), "CIC", "訓練状況")
+	_add_console(Vector3(-2.8, 1.85, -15.0), "CIC", "訓練状況")
 	_add_console(Vector3(4.1, 1.85, -3.0), "COMMS", "通信管理")
 	_add_console(Vector3(4.1, 1.85, 21.0), "ENGINE", "機関・電力")
 	_add_console(Vector3(-4.1, 1.85, 9.0), "MESS", "食堂案内")
