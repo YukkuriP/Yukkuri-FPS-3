@@ -28,7 +28,7 @@ func _run() -> void:
 	main.add_child(capture_camera)
 	# Orthographic establishing shot keeps the entire 155 m hull in frame.
 	capture_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	capture_camera.size = 190.0
+	capture_camera.size = 145.0
 	capture_camera.position = Vector3(150.0, 118.0, 170.0)
 	capture_camera.look_at(Vector3(0.0, 2.0, 2.0), Vector3.UP)
 	capture_camera.current = true
@@ -40,8 +40,8 @@ func _run() -> void:
 
 	# Close inspection of the bridge, mast, funnels and hangar silhouette.
 	capture_camera.fov = 58.0
-	capture_camera.position = Vector3(32.0, 17.0, 24.0)
-	capture_camera.look_at(Vector3(0.0, 5.0, -18.0), Vector3.UP)
+	capture_camera.position = Vector3(30.0, 18.0, -6.0)
+	capture_camera.look_at(Vector3(0.0, 6.0, -42.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("superstructure_closeup.png")):
@@ -49,8 +49,8 @@ func _run() -> void:
 		return
 
 	# Aft deckhouse, twin exhaust trunks and hangar facade inspection.
-	capture_camera.position = Vector3(30.0, 16.0, 70.0)
-	capture_camera.look_at(Vector3(0.0, 5.0, 34.0), Vector3.UP)
+	capture_camera.position = Vector3(26.0, 15.0, 55.0)
+	capture_camera.look_at(Vector3(0.0, 5.0, 28.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("aft_superstructure_closeup.png")):
