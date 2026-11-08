@@ -47,33 +47,138 @@ def cube(n, loc, dim, mat):
     return o
 
 
-# Symmetric tapered hull: 18 m maximum beam, 155.29 m overall length.
-v = [
-    (-8.5, -38, -1.4), (8.5, -38, -1.4),
-    (9, -29, -1.5), (9, 38, -1.5),
-    (-9, 38, -1.5), (-9, -29, -1.5),
-    (-7.1, -38, 1), (7.1, -38, 1),
-    (8.6, -29, 1), (8.6, 38, 1),
-    (-8.6, 38, 1), (-8.6, -29, 1)
+# High-resolution lofted hull. Y=- is the bow; Y=+ is the stern.
+# Each station is a closed transverse section: deck edge, shoulder,
+# bilge and keel. The bow converges to a fine stem instead of a flat cap.
+stations = [
+    (-37.999, 0.025, 0.58),
+    (-37.70, 0.55, 0.60),
+    (-36.8, 1.65, 0.66),
+    (-35.0, 3.15, 0.74),
+    (-32.0, 5.05, 0.82),
+    (-28.0, 6.90, 0.89),
+    (-23.0, 8.05, 0.94),
+    (-16.0, 8.72, 0.98),
+    (-7.0, 9.0, 1.0),
+    (8.0, 9.0, 1.0),
+    (22.0, 8.92, 1.0),
+    (32.0, 8.55, 0.99),
+    (38.0, 7.95, 0.96),
 ]
-v = [(x, y * LONG_SCALE, z) for x, y, z in v]
-f = [
-    (0, 1, 7, 6), (1, 2, 8, 7), (2, 3, 9, 8),
-    (3, 4, 10, 9), (4, 5, 11, 10), (5, 0, 6, 11),
-    (6, 7, 8, 9, 10, 11), (0, 5, 4, 3, 2, 1)
+ring_profile = [
+    (-1.0, 0.92), (-0.94, 0.10), (-0.72, -0.78),
+    (0.0, -1.48), (0.72, -0.78), (0.94, 0.10), (1.0, 0.92)
 ]
-me = bpy.data.meshes.new("HullMesh")
-me.from_pydata(v, [], f)
-me.materials.append(hull)
-ob = bpy.data.objects.new("Continuous tapered hull", me)
-bpy.context.collection.objects.link(ob)
+verts = []
+for y, half_beam, flare in stations:
+    for x_factor, z in ring_profile:
+        verts.append((x_factor * half_beam, y * LONG_SCALE, z))
+faces = []
+ring_size = len(ring_profile)
+for station_index in range(len(stations) - 1):
+    a = station_index * ring_size
+    b = (station_index + 1) * ring_size
+    for j in range(ring_size - 1):
+        faces.append((a + j, a + j + 1, b + j + 1, b + j))
+# Close the stern; the forward stem is a fine, closed point.
+faces.append(tuple(range((len(stations) - 1) * ring_size,
+                         len(stations) * ring_size)))
+faces.append(tuple(reversed(range(ring_size))))
+hull_mesh = bpy.data.meshes.new("ArleighBurke_LoftedHull")
+hull_mesh.from_pydata(verts, [], faces)
+hull_mesh.materials.append(hull)
+hull_mesh.update()
+hull_obj = bpy.data.objects.new("Continuous lofted destroyer hull", hull_mesh)
+bpy.context.collection.objects.link(hull_obj)
+for poly in hull_mesh.polygons:
+    poly.use_smooth = True
+hull_obj.modifiers.new("Hull weighted normals", "WEIGHTED_NORMAL")
 bpy.context.view_layer.update()
-actual_length = ob.dimensions.y
-actual_beam = ob.dimensions.x
+actual_length = hull_obj.dimensions.y
+actual_beam = hull_obj.dimensions.x
 if abs(actual_length - PUBLISHED_LENGTH_M) > 0.01:
     raise RuntimeError(f"Generated hull length mismatch: {actual_length:.3f} m")
 if abs(actual_beam - 18.0) > 0.01:
     raise RuntimeError(f"Generated hull beam mismatch: {actual_beam:.3f} m")
+
+# Raised forecastle deck follows the narrowing bow rather than ending as a
+# rectangular slab. The top is a fan of quads between matching stations.
+deck_verts = []
+for y, half_beam, flare in stations[:8]:
+    deck_verts.extend([
+        (-half_beam * 0.985, y * LONG_SCALE, 0.96),
+        ( half_beam * 0.985, y * LONG_SCALE, 0.96)
+    ])
+deck_faces = []
+for i in range(7):
+    a = i * 2
+    deck_faces.append((a, a + 1, a + 3, a + 2))
+deck_mesh = bpy.data.meshes.new("ForecastleDeckMesh")
+deck_mesh.from_pydata(deck_verts, [], deck_faces)
+deck_mesh.materials.append(deck)
+deck_obj = bpy.data.objects.new("Tapered forecastle deck", deck_mesh)
+bpy.context.collection.objects.link(deck_obj)
+
+# Bow stem reinforcement and paired anchor hawse openings.
+def cylinder_between(name, p1, p2, radius, mat, vertices=24):
+    direction = Vector(p2) - Vector(p1)
+    midpoint = (Vector(p1) + Vector(p2)) * 0.5
+    bpy.ops.mesh.primitive_cylinder_add(
+        vertices=vertices, radius=radius, depth=direction.length,
+        location=midpoint
+    )
+    obj = bpy.context.object
+    obj.name = name
+    obj.rotation_euler = direction.to_track_quat('Z', 'Y').to_euler()
+    obj.data.materials.append(mat)
+    bevel = obj.modifiers.new("Fitting edge bevel", "BEVEL")
+    bevel.width = 0.025
+    bevel.segments = 3
+    obj.modifiers.new("Fitting weighted normals", "WEIGHTED_NORMAL")
+    return obj
+
+for side in (-1, 1):
+    # Hawse pipe rims sit just above the forward deck edge.
+    bpy.ops.mesh.primitive_torus_add(
+        major_radius=0.31, minor_radius=0.075,
+        major_segments=32, minor_segments=12,
+        location=(side * 2.25, -34.2 * LONG_SCALE, 1.02),
+        rotation=(1.5708, 0, 0)
+    )
+    rim = bpy.context.object
+    rim.name = "Anchor hawse pipe rim"
+    rim.data.materials.append(metal)
+    # Recessed dark center makes the opening legible from normal viewing angles.
+    bpy.ops.mesh.primitive_cylinder_add(
+        vertices=32, radius=0.245, depth=0.035,
+        location=(side * 2.25, -34.16 * LONG_SCALE, 1.02),
+        rotation=(1.5708, 0, 0)
+    )
+    opening = bpy.context.object
+    opening.name = "Anchor hawse pipe opening"
+    opening.data.materials.append(glass)
+
+# Heavy anchor stocks and flukes, mounted symmetrically on the bow cheeks.
+for side in (-1, 1):
+    cylinder_between(
+        "Anchor shank",
+        (side * 2.35, -34.0 * LONG_SCALE, 0.82),
+        (side * 2.35, -35.8 * LONG_SCALE, -0.15),
+        0.12, metal
+    )
+    cylinder_between(
+        "Anchor crossbar",
+        (side * 2.35 - 0.55, -35.75 * LONG_SCALE, -0.12),
+        (side * 2.35 + 0.55, -35.75 * LONG_SCALE, -0.12),
+        0.09, metal
+    )
+    for dx in (-0.38, 0.38):
+        cylinder_between(
+            "Anchor fluke",
+            (side * 2.35 + dx, -35.75 * LONG_SCALE, -0.12),
+            (side * 2.35 + dx * 1.35, -36.35 * LONG_SCALE, -0.52),
+            0.10, metal
+        )
 
 cube("Flight deck", (0, 0, 1.05), (17.4, 75, .25), deck)
 cube("Forecastle", (0, -25, 1.25), (15, 24, .3), deck)
