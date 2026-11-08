@@ -112,8 +112,8 @@ func _build_lower_deck_and_stairs() -> void:
 	# Keep the stair assembly unrotated: each tread is level in world space.
 	# Only the sloped ramp and longitudinal members receive the incline.
 	lower.add_child(stair)
-	var ramp_visual := _box(stair, "Stair ramp visual", Vector3.ZERO, Vector3(1.25, 0.16, 5.16), stair_surface_mat)
-	ramp_visual.rotation.x = angle
+	# The sloped collision ramp stays invisible; solid visual plating here
+	# would hide the individually modeled treads when viewed from below.
 	var ramp_body := StaticBody3D.new()
 	ramp_body.name = "Stair ramp collision"
 	ramp_body.rotation.x = angle
