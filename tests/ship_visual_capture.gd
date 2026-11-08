@@ -37,8 +37,8 @@ func _run() -> void:
 		return
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
-	capture_camera.position = Vector3(5.6, 4.25, -48.0)
-	capture_camera.look_at(Vector3(3.5, 2.5, -55.0), Vector3.UP)
+	capture_camera.position = Vector3(5.2, 3.3, -48.0)
+	capture_camera.look_at(Vector3(-0.2, 3.0, -53.5), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
