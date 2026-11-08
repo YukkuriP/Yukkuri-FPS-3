@@ -115,9 +115,9 @@ func _exterior_detail() -> void:
 	# Detailed bridge window band and framing
 	for i in range(9):
 		var x:float=-4.8+float(i)*1.2
-		_box(self,"Bridge window",Vector3(x,6.5,-29.63),Vector3(0.92,0.82,0.045),glass,0)
-		_box(self,"Bridge window mullion",Vector3(x+0.51,6.5,-29.68),Vector3(0.055,0.95,0.07),trim,0)
-	_box(self,"Bridge visor",Vector3(0,7.05,-29.8),Vector3(11.8,0.16,0.55),steel)
+		_box(self,"Bridge window",Vector3(x,5.9,-29.63),Vector3(0.92,0.82,0.045),glass,0)
+		_box(self,"Bridge window mullion",Vector3(x+0.51,5.9,-29.68),Vector3(0.055,0.95,0.07),trim,0)
+	_box(self,"Bridge visor",Vector3(0,6.55,-29.8),Vector3(11.8,0.16,0.55),steel)
 	# Antenna/radar silhouettes and sensor domes; purely decorative
 	_box(self,"Mast cross beam",Vector3(0,12.2,-21),Vector3(7.0,0.16,0.16),trim)
 	_box(self,"Mast diagonal",Vector3(0,10.5,-21),Vector3(0.13,4.4,0.13),trim)
