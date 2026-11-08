@@ -209,6 +209,14 @@ func _replace_blocky_hull() -> void:
 	for index in indices:
 		var vertex: Vector3 = vertices[index]
 		st.set_uv(Vector2(vertex.x * 0.18, vertex.z * 0.12))
+		# Subtle painted-steel tonal shift: darker below the waterline and
+		# slightly lighter toward the weather deck. This is visual-only.
+		var vertical := clampf(inverse_lerp(-1.52, 0.86, vertex.y), 0.0, 1.0)
+		var lower_tone := Color(0.72, 0.76, 0.79)
+		var upper_tone := Color(0.96, 0.97, 0.96)
+		var hull_tone := lower_tone.lerp(upper_tone, smoothstep(0.08, 0.88, vertical))
+		var station_tone := 0.985 + 0.015 * cos(vertex.z * 0.11)
+		st.set_color(Color(hull_tone.r * station_tone, hull_tone.g * station_tone, hull_tone.b * station_tone, 1.0))
 		st.add_vertex(vertex)
 	# Weld duplicate triangle vertices before normal generation. Without this,
 	# the loft shades faceted even though its station curve is smooth.
@@ -216,6 +224,7 @@ func _replace_blocky_hull() -> void:
 	st.generate_normals()
 	var mesh := st.commit()
 	var hull_mat := _mat(Color(0.18, 0.22, 0.24), 0.62, 0.46)
+	hull_mat.vertex_color_use_as_albedo = true
 	hull_mat.roughness_texture = steel.roughness_texture
 	hull_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0, hull_mat)
