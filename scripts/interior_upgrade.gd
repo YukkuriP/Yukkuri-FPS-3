@@ -107,6 +107,16 @@ func _bridge() -> void:
 	wheel.rotation.x = PI / 2.0
 	wheel.material_override = alloy_mat
 	add_child(wheel)
+	var helm_body := StaticBody3D.new()
+	helm_body.name = "HelmInteraction"
+	helm_body.position = Vector3(0, 2.55, -26.5)
+	helm_body.set_meta("control", "helm")
+	var helm_collision := CollisionShape3D.new()
+	var helm_shape := BoxShape3D.new()
+	helm_shape.size = Vector3(1.2, 1.2, 0.24)
+	helm_collision.shape = helm_shape
+	helm_body.add_child(helm_collision)
+	add_child(helm_body)
 	_cylinder(self, "Helm wheel hub", Vector3(0, 2.55, -26.5), 0.12, 0.2, alloy_mat)
 	for i in range(8):
 		var a := TAU * float(i) / 8.0
