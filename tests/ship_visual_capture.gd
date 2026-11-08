@@ -37,12 +37,31 @@ func _run() -> void:
 		return
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
-	capture_camera.position = Vector3(5.2, 3.3, -48.0)
-	capture_camera.look_at(Vector3(-0.2, 3.0, -53.5), Vector3.UP)
+	capture_camera.position = Vector3(4.0, 3.0, -52.0)
+	capture_camera.look_at(Vector3(4.0, 3.8, -61.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
 		_fail("Could not capture bridge compartment")
+		return
+
+	# Inspect a door leaf swung open into the adjoining room.
+	var deck: Node3D = main.get_node_or_null("ShipGeometry/CompartmentedDeckPlan")
+	if deck == null:
+		_fail("Compartmented deck is missing")
+		return
+	var doors := deck.get_tree().get_nodes_in_group("compartment_doors")
+	if doors.size() != 7:
+		_fail("Expected seven hinged doors for visual capture")
+		return
+	var door: Node3D = doors[1]
+	door.rotation.y = PI * 0.5
+	capture_camera.position = Vector3(4.8, 3.0, -54.0)
+	capture_camera.look_at(Vector3(2.7, 3.0, -54.0), Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("hinged_door.png")):
+		_fail("Could not capture hinged door")
 		return
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
@@ -56,7 +75,7 @@ func _run() -> void:
 		return
 
 	print("VISUAL CAPTURE PASSED")
-	print("Saved exterior, bridge compartment and stairwell screenshots")
+	print("Saved exterior, bridge compartment, hinged door and stairwell screenshots")
 	quit(0)
 
 func _save_viewport(path: String) -> bool:
