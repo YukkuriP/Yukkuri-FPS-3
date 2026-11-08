@@ -1,5 +1,6 @@
 # Blender 4.x procedural ship exterior generator. Run from Scripting workspace.
 import bpy
+import bmesh
 from mathutils import Vector
 
 bpy.ops.object.select_all(action='SELECT')
@@ -87,6 +88,13 @@ faces.append(tuple(reversed(range(ring_size))))
 hull_mesh = bpy.data.meshes.new("ArleighBurke_LoftedHull")
 hull_mesh.from_pydata(verts, [], faces)
 hull_mesh.materials.append(hull)
+hull_mesh.update()
+# Recalculate face winding so the hull exports with consistent outward normals.
+bm = bmesh.new()
+bm.from_mesh(hull_mesh)
+bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+bm.to_mesh(hull_mesh)
+bm.free()
 hull_mesh.update()
 hull_obj = bpy.data.objects.new("Continuous lofted destroyer hull", hull_mesh)
 bpy.context.collection.objects.link(hull_obj)
@@ -228,7 +236,7 @@ for side in (-1, 1):
         )
 
 for y in range(-34, 37, 4):
-    cube("Deck expansion seam", (0, y, 1.22), (16, .035, .012), metal)
+    cube("Deck expansion seam", (0, y, 1.005), (beam_at(float(y)) * 1.9, .035, .012), metal)
 
 for x in [-6.5, 6.5]:
     for y in [-30, -25, -15, 0, 10, 20, 33]:
