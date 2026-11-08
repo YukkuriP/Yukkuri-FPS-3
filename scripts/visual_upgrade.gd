@@ -9,13 +9,14 @@ var glow: StandardMaterial3D
 var rubber: StandardMaterial3D
 
 func _ready() -> void:
-	steel=_mat(Color(0.31,0.37,0.39),0.72,0.34)
-	dark=_mat(Color(0.045,0.075,0.09),0.55,0.42)
-	deck=_mat(Color(0.20,0.25,0.27),0.42,0.82)
-	trim=_mat(Color(0.55,0.61,0.62),0.7,0.3)
-	glass=_mat(Color(0.012,0.065,0.085),0.8,0.16)
-	glow=_mat(Color(0.04,0.75,0.78),0.25,0.25)
-	glow.emission_enabled=true; glow.emission=Color(0.02,0.35,0.42)
+	steel=_mat(Color(0.30,0.32,0.31),0.48,0.52)
+	dark=_mat(Color(0.045,0.052,0.05),0.34,0.62)
+	deck=_mat(Color(0.19,0.21,0.20),0.25,0.88)
+	trim=_mat(Color(0.43,0.45,0.42),0.48,0.55)
+	glass=_mat(Color(0.11,0.14,0.13,0.28),0.32,0.2)
+	glass.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+	glow=_mat(Color(0.58,0.54,0.40),0.08,0.62)
+	glow.emission_enabled=true; glow.emission=Color(0.025,0.018,0.006)
 	rubber=_mat(Color(0.055,0.065,0.07),0.05,0.9)
 	_replace_blocky_hull()
 	_exterior_detail()
