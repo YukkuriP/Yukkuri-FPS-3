@@ -217,5 +217,4 @@ func _update_screens() -> void:
 
 func _update_hud() -> void:
 	hud.text="YUKKURI FLEET SIMULATOR  |  "+ROLES[role]+"\n速力 %.1f kt   針路 %03.0f°   艦内時刻 %02d:%02d" % [ship_speed,heading,int(clock),int(fposmod(clock*60,60))]
-	var c:=_nearest()
 	prompt.text="WASD 移動 / マウス 視点 / Esc カーソル切替 / 画面をクリックして直接操作"
