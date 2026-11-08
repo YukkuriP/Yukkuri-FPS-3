@@ -138,8 +138,8 @@ func _run() -> void:
 	for mesh in main.find_children("*", "MeshInstance3D", true, false):
 		var mesh_name := mesh.name.to_lower()
 		mesh.visible = mesh_name.contains("stair") or mesh_name.contains("landing")
-	capture_camera.position = Vector3(2.25, 3.0, -6.0)
-	capture_camera.look_at(Vector3(4.45, -0.25, -6.0), Vector3.UP)
+	capture_camera.position = Vector3(4.45, 3.2, -10.0)
+	capture_camera.look_at(Vector3(4.45, -0.15, -5.5), Vector3.FORWARD)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("stairwell_isolated.png")):
