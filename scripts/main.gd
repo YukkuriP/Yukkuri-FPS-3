@@ -147,7 +147,7 @@ func _interior() -> void:
 	ship_root.add_child(plan)
 	_add_console(Vector3(-4.0, 1.85, -24.8), "BRIDGE", "航海・艦内状況")
 	_add_console(Vector3(4.0, 1.85, -24.8), "BRIDGE", "艦長用状況盤")
-	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
+	_add_console(Vector3(-5.0, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
 	_add_console(Vector3(-2.8, 1.85, -15.0), "CIC", "訓練状況")
 	_add_console(Vector3(4.1, 1.85, -3.0), "COMMS", "通信管理")
 	_add_console(Vector3(4.1, 1.85, 21.0), "ENGINE", "機関・電力")
