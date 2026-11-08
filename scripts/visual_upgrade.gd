@@ -29,6 +29,7 @@ func _ready() -> void:
 	_interior_superstructure_finish()
 	_bridge_furnishings()
 	_hangar_interior_finish()
+	_interior_detail()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
