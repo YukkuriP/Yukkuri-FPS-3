@@ -63,10 +63,10 @@ func _replace_blocky_hull() -> void:
 	var indices:=PackedInt32Array()
 	for ring in range(sections.size()-1):
 		for edge in [1,2,3]:
-			var a:=ring*4+edge
-			var b:=ring*4+((edge+1)%4)
-			var c:=(ring+1)*4+((edge+1)%4)
-			var d:=(ring+1)*4+edge
+			var a: int = ring * 4 + edge
+			var b: int = ring * 4 + ((edge + 1) % 4)
+			var c: int = (ring + 1) * 4 + ((edge + 1) % 4)
+			var d: int = (ring + 1) * 4 + edge
 			indices.append_array(PackedInt32Array([a,b,c,a,c,d]))
 	indices.append_array(PackedInt32Array([0,3,2,0,2,1]))
 	var last:int=(sections.size()-1)*4
