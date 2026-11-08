@@ -19,10 +19,15 @@ func _run() -> void:
 		_fail("Could not create screenshot output directory")
 		return
 
+	var hud_layer := main.get_node_or_null("CanvasLayer")
+	if hud_layer != null:
+		hud_layer.visible = false
+
 	var capture_camera := Camera3D.new()
 	capture_camera.name = "VisualCaptureCamera"
 	main.add_child(capture_camera)
-	capture_camera.position = Vector3(100.0, 70.0, 120.0)
+	capture_camera.fov = 55.0
+	capture_camera.position = Vector3(65.0, 35.0, 70.0)
 	capture_camera.look_at(Vector3(0.0, 3.0, 0.0), Vector3.UP)
 	capture_camera.current = true
 	await process_frame
@@ -31,29 +36,20 @@ func _run() -> void:
 		_fail("Could not capture exterior view")
 		return
 
-	var player: CharacterBody3D = main.get("player")
-	var player_camera: Camera3D = main.get("camera")
-	if player == null or player_camera == null:
-		_fail("Player camera is missing")
-		return
-	capture_camera.current = false
-	player.position = Vector3(2.0, 2.2, -50.0)
-	player.rotation.y = 0.0
-	player_camera.rotation.x = 0.0
-	player_camera.current = true
-	for _frame in range(8):
-		await process_frame
-		await physics_frame
+	# Camera inside the forward compartment, aimed across the console and glazing.
+	capture_camera.position = Vector3(5.6, 4.25, -48.0)
+	capture_camera.look_at(Vector3(3.5, 2.5, -55.0), Vector3.UP)
+	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
 		_fail("Could not capture bridge compartment")
 		return
 
-	player.position = Vector3(4.45, 2.2, -17.0)
-	player.rotation.y = PI
-	for _frame in range(8):
+	# Overhead oblique view of the stairwell opening and the lower-deck stair.
+	capture_camera.position = Vector3(5.8, 4.65, -11.0)
+	capture_camera.look_at(Vector3(4.45, -0.1, -12.0), Vector3.UP)
+	for _frame in range(2):
 		await process_frame
-		await physics_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("stairwell.png")):
 		_fail("Could not capture stairwell")
