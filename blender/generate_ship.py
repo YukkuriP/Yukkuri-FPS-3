@@ -2,20 +2,36 @@
 import bpy
 import bmesh
 import os
+import sys
+# Debian Blender's glTF exporter imports NumPy from the system Python packages.
+sys.path.append('/usr/lib/python3/dist-packages')
 from mathutils import Vector
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 
 
-def material(n, c, metal=.3, rough=.55):
+def material(n, c, metal=.3, rough=.55, texture_scale=38.0, bump_strength=.12):
     m = bpy.data.materials.new(n)
     m.diffuse_color = (*c, 1)
     m.use_nodes = True
-    p = m.node_tree.nodes.get("Principled BSDF")
+    nodes = m.node_tree.nodes
+    links = m.node_tree.links
+    p = nodes.get("Principled BSDF")
     p.inputs["Base Color"].default_value = (*c, 1)
     p.inputs["Metallic"].default_value = metal
     p.inputs["Roughness"].default_value = rough
+    # Subtle physically based surface breakup: painted steel, nonskid aggregate,
+    # and tiny coating irregularities catch highlights without looking noisy.
+    tex = nodes.new("ShaderNodeTexNoise")
+    tex.inputs["Scale"].default_value = texture_scale
+    tex.inputs["Detail"].default_value = 3.0
+    tex.inputs["Roughness"].default_value = 0.72
+    bump = nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = bump_strength
+    bump.inputs["Distance"].default_value = 0.018
+    links.new(tex.outputs["Fac"], bump.inputs["Height"])
+    links.new(bump.outputs["Normal"], p.inputs["Normal"])
     return m
 
 
@@ -26,11 +42,11 @@ PUBLISHED_LENGTH_M = 155.29
 SOURCE_HALF_LENGTH = 38.0
 LONG_SCALE = PUBLISHED_LENGTH_M / (SOURCE_HALF_LENGTH * 2.0)
 
-hull = material("Naval grey hull", (.17, .22, .25), .72, .38)
-deck = material("Non skid deck", (.28, .32, .33), .45, .7)
-white = material("Superstructure", (.66, .70, .70), .25, .62)
+hull = material("Naval grey hull - coated steel", (.105, .145, .17), .68, .43, 52.0, .075)
+deck = material("Non skid deck - rough aggregate", (.20, .235, .245), .22, .86, 145.0, .24)
+white = material("Superstructure - haze grey paint", (.48, .52, .52), .18, .72, 68.0, .055)
 glass = material("Bridge glazing", (.025, .11, .15), .75, .18)
-metal = material("Fittings", (.43, .48, .49), .75, .32)
+metal = material("Fittings - stainless steel", (.30, .34, .36), .82, .29, 95.0, .035)
 
 
 def cube(n, loc, dim, mat):
