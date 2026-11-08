@@ -150,16 +150,37 @@ func _replace_blocky_hull() -> void:
 			stations.append(Vector2(z, clampf(w, 0.10, 9.0)))
 	stations.append(control[control.size() - 1])
 
-	# Transverse profile: deck edge, shoulder, bilge and keel.
-	var profile: Array[Vector2] = [
+	# Transverse profile control points: deck edge, shoulder, bilge and keel.
+	# Interpolate the section instead of leaving seven hard angular bands.
+	var profile_control: Array[Vector2] = [
 		Vector2(1.0, 0.86),
+		Vector2(0.985, 0.42),
 		Vector2(0.96, 0.10),
 		Vector2(0.72, -0.82),
+		Vector2(0.38, -1.28),
 		Vector2(0.0, -1.52),
+		Vector2(-0.38, -1.28),
 		Vector2(-0.72, -0.82),
 		Vector2(-0.96, 0.10),
+		Vector2(-0.985, 0.42),
 		Vector2(-1.0, 0.86)
 	]
+	var profile: Array[Vector2] = []
+	const PROFILE_SUBDIVISIONS := 4
+	for i in range(profile_control.size() - 1):
+		var p0: Vector2 = profile_control[maxi(0, i - 1)]
+		var p1: Vector2 = profile_control[i]
+		var p2: Vector2 = profile_control[i + 1]
+		var p3: Vector2 = profile_control[mini(profile_control.size() - 1, i + 2)]
+		for step in range(PROFILE_SUBDIVISIONS):
+			var t := float(step) / float(PROFILE_SUBDIVISIONS)
+			var t2 := t * t
+			var t3 := t2 * t
+			var point := 0.5 * ((2.0 * p1) + (-p0 + p2) * t
+				+ (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2
+				+ (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3)
+			profile.append(point)
+	profile.append(profile_control[profile_control.size() - 1])
 	var vertices := PackedVector3Array()
 	var indices := PackedInt32Array()
 	for station in stations:
