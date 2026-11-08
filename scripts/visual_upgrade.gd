@@ -380,7 +380,7 @@ func _interior_superstructure_finish() -> void:
 func _bridge_furnishings() -> void:
 	var chair_mat := _mat(Color(0.12, 0.14, 0.14), 0.28, 0.72)
 	var cushion_mat := _mat(Color(0.28, 0.30, 0.28), 0.05, 0.94)
-	for x in [2.8, 5.2]:
+	for x in [-2.8, 2.8]:
 		var base := _cylinder(self, "Bridge chair pedestal", Vector3(x, 1.55, -25.2), 0.12, 0.55, steel, 16)
 		_cylinder(self, "Bridge chair foot ring", Vector3(x, 1.45, -25.2), 0.34, 0.055, trim, 16)
 		_box(self, "Bridge chair seat", Vector3(x, 1.92, -25.2), Vector3(0.72, 0.16, 0.72), cushion_mat)
