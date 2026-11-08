@@ -85,7 +85,7 @@ func _run() -> void:
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
 	# View from the aft side of the helm so the live monitor faces are visible.
-	capture_camera.position = Vector3(0.0, 3.8, -22.5)
+	capture_camera.position = Vector3(0.0, 3.8, -23.5)
 	capture_camera.look_at(Vector3(0.0, 3.2, -29.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -132,6 +132,18 @@ func _run() -> void:
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("stairwell.png")):
 		_fail("Could not capture stairwell")
+		return
+
+	# Diagnostic isolated view: hide unrelated ship meshes to verify the stair model itself.
+	for mesh in main.find_children("*", "MeshInstance3D", true, false):
+		var mesh_name := mesh.name.to_lower()
+		mesh.visible = mesh_name.contains("stair") or mesh_name.contains("landing")
+	capture_camera.position = Vector3(2.25, 3.0, -6.0)
+	capture_camera.look_at(Vector3(4.45, -0.25, -6.0), Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("stairwell_isolated.png")):
+		_fail("Could not capture isolated stairwell")
 		return
 
 	print("VISUAL CAPTURE PASSED")
