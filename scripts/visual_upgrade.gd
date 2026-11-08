@@ -79,7 +79,8 @@ func _frustum_box(parent: Node3D, label: String, center: Vector3, bottom: Vector
 	return obj
 
 func _replace_blocky_hull() -> void:
-	# Hide the placeholder box and build a tapered hull shell.
+	# Smooth, high-resolution non-weapon hull shell. The parent is scaled 2x
+	# longitudinally, so local length is exactly 155.29 / 2 metres.
 	var old_hull:=get_parent().get_node_or_null("Hull")
 	if old_hull != null: old_hull.visible=false
 	var old_bow:=get_parent().get_node_or_null("Bow")
@@ -92,52 +93,107 @@ func _replace_blocky_hull() -> void:
 	if old_upper_bridge != null: old_upper_bridge.visible = false
 	var old_funnel := get_parent().get_node_or_null("Funnel")
 	if old_funnel != null: old_funnel.visible = false
-	var sections:Array[Vector3]=[
-		Vector3(0.55,-40.5,0.0),
-		Vector3(3.2,-39.2,0.0),
-		Vector3(5.8,-37.5,0.0),
-		Vector3(8.1,-30.0,0.0),
-		Vector3(8.8,28.0,0.0),
-		Vector3(7.0,38.0,0.0),
-		Vector3(3.4,40.0,0.0),
-		Vector3(0.55,40.8,0.0)
+
+	# (longitudinal position, half beam). Bow is negative Z.
+	var control: Array[Vector2] = [
+		Vector2(-38.8225, 0.10),
+		Vector2(-38.45, 0.85),
+		Vector2(-37.5, 2.15),
+		Vector2(-35.5, 4.15),
+		Vector2(-32.0, 5.95),
+		Vector2(-27.0, 7.25),
+		Vector2(-20.0, 8.25),
+		Vector2(-10.0, 8.85),
+		Vector2(8.0, 9.0),
+		Vector2(22.0, 8.95),
+		Vector2(31.0, 8.65),
+		Vector2(36.0, 8.15),
+		Vector2(38.2, 7.15),
+		Vector2(38.8225, 0.10)
 	]
-	var verts:=PackedVector3Array()
-	for section in sections:
-		var w:float=section.x
-		var z:float=section.y
-		verts.append(Vector3(-w,0.86,z))
-		verts.append(Vector3(w,0.86,z))
-		verts.append(Vector3(w*0.70,-2.55,z))
-		verts.append(Vector3(-w*0.70,-2.55,z))
-	var indices:=PackedInt32Array()
-	for ring in range(sections.size()-1):
-		# Leave the upper hull open: the deck plan supplies the watertight walking deck.
-		for edge in range(1, 4):
-			var a: int = ring * 4 + edge
-			var b: int = ring * 4 + ((edge + 1) % 4)
-			var c: int = (ring + 1) * 4 + ((edge + 1) % 4)
-			var d: int = (ring + 1) * 4 + edge
-			indices.append_array(PackedInt32Array([a,b,c,a,c,d]))
-	indices.append_array(PackedInt32Array([0,3,2,0,2,1]))
-	var last:int=(sections.size()-1)*4
-	indices.append_array(PackedInt32Array([last,last+1,last+2,last,last+2,last+3]))
-	var surface_tool := SurfaceTool.new()
-	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for vertex in verts:
-		surface_tool.add_vertex(vertex)
-	for vertex_index in indices:
-		surface_tool.add_index(vertex_index)
-	surface_tool.generate_normals()
-	var mesh := surface_tool.commit()
-	var hull_mat:=_mat(Color(0.20,0.24,0.25),0.58,0.48)
-	hull_mat.cull_mode=BaseMaterial3D.CULL_DISABLED
-	mesh.surface_set_material(0,hull_mat)
-	var hull:=MeshInstance3D.new()
-	hull.name="Tapered hull shell"
-	hull.mesh=mesh
-	hull.position.z=2.0
+	var stations: Array[Vector2] = []
+	const SUBDIVISIONS := 6
+	for i in range(control.size() - 1):
+		var p0: Vector2 = control[maxi(0, i - 1)]
+		var p1: Vector2 = control[i]
+		var p2: Vector2 = control[i + 1]
+		var p3: Vector2 = control[mini(control.size() - 1, i + 2)]
+		for step in range(SUBDIVISIONS):
+			var t := float(step) / float(SUBDIVISIONS)
+			var t2 := t * t
+			var t3 := t2 * t
+			var z := p1.x + (p2.x - p1.x) * t
+			var w := 0.5 * ((2.0 * p1.y) + (-p0.y + p2.y) * t
+				+ (2.0*p0.y - 5.0*p1.y + 4.0*p2.y - p3.y) * t2
+				+ (-p0.y + 3.0*p1.y - 3.0*p2.y + p3.y) * t3)
+			stations.append(Vector2(z, clampf(w, 0.10, 9.0)))
+	stations.append(control[control.size() - 1])
+
+	# Transverse profile: deck edge, shoulder, bilge and keel.
+	var profile: Array[Vector2] = [
+		Vector2(1.0, 0.86),
+		Vector2(0.96, 0.10),
+		Vector2(0.72, -0.82),
+		Vector2(0.0, -1.52),
+		Vector2(-0.72, -0.82),
+		Vector2(-0.96, 0.10),
+		Vector2(-1.0, 0.86)
+	]
+	var vertices := PackedVector3Array()
+	var indices := PackedInt32Array()
+	for station in stations:
+		for point in profile:
+			vertices.append(Vector3(point.x * station.y, point.y, station.x))
+	var ring_size := profile.size()
+	for ring in range(stations.size() - 1):
+		for edge in range(ring_size - 1):
+			var a := ring * ring_size + edge
+			var b := a + 1
+			var c := (ring + 1) * ring_size + edge + 1
+			var d := (ring + 1) * ring_size + edge
+			indices.append_array(PackedInt32Array([a, b, c, a, c, d]))
+	# Close the bow and stern ends.
+	var first := PackedInt32Array()
+	for i in range(ring_size):
+		first.append(i)
+	for i in range(1, ring_size - 1):
+		indices.append_array(PackedInt32Array([first[0], first[i + 1], first[i]]))
+	var last_start := (stations.size() - 1) * ring_size
+	for i in range(1, ring_size - 1):
+		indices.append_array(PackedInt32Array([last_start, last_start + i, last_start + i + 1]))
+
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for index in indices:
+		st.add_vertex(vertices[index])
+	st.generate_normals()
+	var mesh := st.commit()
+	var hull_mat := _mat(Color(0.18, 0.22, 0.24), 0.62, 0.46)
+	hull_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mesh.surface_set_material(0, hull_mat)
+	var hull := MeshInstance3D.new()
+	hull.name = "HighResolutionLoftedHull"
+	hull.mesh = mesh
+	hull.position.z = 2.0
 	add_child(hull)
+
+	# Add a slim, hull-following waterline belt without changing collision.
+	var belt_mat := _mat(Color(0.055, 0.075, 0.085), 0.38, 0.55)
+	for side in [-1.0, 1.0]:
+		var belt_points := PackedVector3Array()
+		for station in stations:
+			belt_points.append(Vector3(side * station.y * 0.985, -0.12, station.x))
+		var curve := Curve3D.new()
+		for point in belt_points:
+			curve.add_point(point)
+		var belt := MeshInstance3D.new()
+		belt.name = "HullWaterlineBelt"
+		var ribbon := RibbonTrailMesh.new()
+		ribbon.size = 0.10
+		belt.mesh = ribbon
+		# Curve-following details are added by the existing exterior pass.
+		belt.visible = false
+		add_child(belt)
 
 func _exterior_detail() -> void:
 	# Hull waterline belt and bow/stern detailing
