@@ -105,14 +105,19 @@ func _exterior() -> void:
 	# Aft superstructure shell encloses communications and engineering spaces.
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Aft deckhouse side shell",Vector3(side*6.4,3.6,13),Vector3(0.2,5,19),Color.WHITE,true).material_override=white
-	for z in [3.5,22.5]:
-		_cube(ship_root,"Aft deckhouse transverse bulkhead",Vector3(0,3.6,z),Vector3(13,5,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Aft deckhouse forward bulkhead",Vector3(0,3.6,3.5),Vector3(13,5,0.2),Color.WHITE,true).material_override=white
+	# A clear central passage connects the aft superstructure to the hangar.
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Aft deckhouse aft bulkhead wing",Vector3(side*3.75,3.6,22.5),Vector3(5.5,5,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Aft passage lintel",Vector3(0,6.0,22.5),Vector3(2.0,0.8,0.2),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Aft deckhouse roof",Vector3(0,6.2,13),Vector3(13,0.2,19),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Funnel",Vector3(0,7.4,15),Vector3(4,4,4),Color(0.12,0.15,0.17))
 	# Hangar shell: clear interior volume, side walls, roof, and aft door.
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Hangar side shell",Vector3(side*6.0,4.8,28),Vector3(0.2,6,12),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Hangar forward bulkhead",Vector3(0,4.8,22),Vector3(12,6,0.2),Color.WHITE,true).material_override=white
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Hangar forward bulkhead wing",Vector3(side*3.75,4.8,22),Vector3(4.5,6,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Hangar passage lintel",Vector3(0,7.55,22),Vector3(3.0,0.5,0.2),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Hangar roof",Vector3(0,7.9,28),Vector3(12,0.2,12),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Hangar door",Vector3(0,4,34.1),Vector3(8.5,4.2,0.15),Color(0.1,0.15,0.18))
 	_cube(ship_root,"Mast",Vector3(0,10.4,-21),Vector3(0.8,5,0.8),Color(0.3,0.34,0.35))
