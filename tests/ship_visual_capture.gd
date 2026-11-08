@@ -104,7 +104,7 @@ func _run() -> void:
 		return
 
 	# Inspect the stair geometry from a camera placed beside an actual tread.
-	var stair_treads := main.find_children("Stair tread", "MeshInstance3D", true, false)
+	var stair_treads := main.get_tree().get_nodes_in_group("stair_treads")
 	if stair_treads.size() < 6:
 		_fail("Could not find the stair treads for visual inspection")
 		return
