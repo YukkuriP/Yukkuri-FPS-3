@@ -73,8 +73,10 @@ func _replace_blocky_hull() -> void:
 	indices.append_array(PackedInt32Array([last,last+1,last+2,last,last+2,last+3]))
 	var surface_tool := SurfaceTool.new()
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for vertex in verts:
+		surface_tool.add_vertex(vertex)
 	for vertex_index in indices:
-		surface_tool.add_vertex(verts[vertex_index])
+		surface_tool.add_index(vertex_index)
 	surface_tool.generate_normals()
 	var mesh := surface_tool.commit()
 	var hull_mat:=_mat(Color(0.16,0.22,0.26),0.78,0.32)
@@ -88,7 +90,14 @@ func _replace_blocky_hull() -> void:
 
 func _exterior_detail() -> void:
 	# Hull waterline belt and bow/stern detailing
-	_box(self,"Waterline stripe",Vector3(0,-2.36,2),Vector3(17.7,0.12,75),dark)
+	# Waterline belt follows the lower hull taper instead of using a rectangular slab.
+	for z in range(-34, 38, 4):
+		var t := clampf((float(z) + 38.0) / 68.0, 0.0, 1.0)
+		var half_width := lerpf(4.2, 6.16, t)
+		if z > 28:
+			half_width = lerpf(6.16, 4.9, clampf((float(z) - 28.0) / 11.5, 0.0, 1.0))
+		for side in [-1.0, 1.0]:
+			_box(self,"Waterline belt segment",Vector3(side * half_width,-2.34,float(z)),Vector3(0.12,0.12,4.0),dark,0)
 	for side in [-1.0,1.0]:
 		_box(self,"Hull rubbing strake",Vector3(side*8.94,-0.9,2),Vector3(0.13,0.18,68),trim)
 		for z in range(-30,36,4):
