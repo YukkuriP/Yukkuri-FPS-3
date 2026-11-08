@@ -5,8 +5,6 @@ config_version=5
 [application]
 config/name="Yukkuri Fleet Simulator"
 run/main_scene="res://scenes/main.tscn"
-
-[application]
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
