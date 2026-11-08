@@ -28,7 +28,7 @@ func _run() -> void:
 	main.add_child(capture_camera)
 	capture_camera.fov = 55.0
 	capture_camera.fov = 50.0
-	capture_camera.position = Vector3(55.0, 32.0, 65.0)
+	capture_camera.position = Vector3(70.0, 42.0, 82.0)
 	capture_camera.look_at(Vector3(0.0, 2.0, 2.0), Vector3.UP)
 	capture_camera.current = true
 	await process_frame
@@ -84,8 +84,8 @@ func _run() -> void:
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(0.0, 3.6, -45.0)
-	capture_camera.look_at(Vector3(0.0, 2.5, -58.0), Vector3.UP)
+	capture_camera.position = Vector3(0.0, 3.8, -54.0)
+	capture_camera.look_at(Vector3(0.0, 3.2, -62.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -108,7 +108,7 @@ func _run() -> void:
 	door.rotation.y = -PI * 0.5
 	var door_center_z := door.global_position.z + 1.62
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(0.0, 3.2, door_center_z - 3.5)
+	capture_camera.position = Vector3(2.5, 4.0, door_center_z - 7.0)
 	capture_camera.look_at(Vector3(door.global_position.x - 1.62, 3.0, door.global_position.z), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -123,8 +123,8 @@ func _run() -> void:
 		return
 	var stair_tread := stair_treads[5] as Node3D
 	capture_camera.fov = 68.0
-	capture_camera.position = stair_tread.global_position + Vector3(-4.0, 2.4, 5.5)
-	capture_camera.look_at(stair_tread.global_position + Vector3(0.0, 0.5, 0.0), Vector3.UP)
+	capture_camera.position = stair_tread.global_position + Vector3(-4.5, 4.0, 7.0)
+	capture_camera.look_at(stair_tread.global_position + Vector3(0.0, 0.6, -1.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
