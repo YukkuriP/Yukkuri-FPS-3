@@ -15,8 +15,11 @@ var trim_mat: StandardMaterial3D
 var dark_mat: StandardMaterial3D
 var glass_mat: StandardMaterial3D
 var light_mat: StandardMaterial3D
+var ui_font: SystemFont
 
 func _ready() -> void:
+	ui_font = SystemFont.new()
+	ui_font.font_names = PackedStringArray(["Yu Gothic UI", "Meiryo UI", "Meiryo", "Noto Sans CJK JP"])
 	wall_mat = _mat(Color(0.48, 0.53, 0.54), 0.18, 0.82)
 	floor_mat = _mat(Color(0.16, 0.20, 0.21), 0.32, 0.88)
 	trim_mat = _mat(Color(0.34, 0.40, 0.42), 0.65, 0.38)
@@ -64,6 +67,7 @@ func _box(parent: Node3D, label: String, pos: Vector3, size: Vector3, material: 
 func _label(value: String, pos: Vector3, size: int = 28) -> void:
 	var label := Label3D.new()
 	label.text = value
+	label.font = ui_font
 	label.position = pos
 	label.font_size = size
 	label.modulate = Color(0.76, 0.88, 0.88)
