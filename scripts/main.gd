@@ -10,6 +10,8 @@ var player: CharacterBody3D
 var camera: Camera3D
 var pitch := 0.0
 var role := 5
+var flight_mode := false
+const FLY_SPEED := 12.0
 var heading := 248.0
 var ship_speed := 12.0
 var engine_output := 72.0
@@ -44,7 +46,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input_map() -> void:
-	var actions := {"fwd":KEY_W,"back":KEY_S,"left":KEY_A,"right":KEY_D,"release":KEY_ESCAPE}
+	var actions := {"fwd":KEY_W,"back":KEY_S,"left":KEY_A,"right":KEY_D,"release":KEY_ESCAPE,"fly_toggle":KEY_F,"fly_up":KEY_SPACE,"fly_down":KEY_CTRL,"interact":KEY_E}
 	for name in actions:
 		var action: String = "fleet_" + str(name)
 		if not InputMap.has_action(action): InputMap.add_action(action)
@@ -184,16 +186,31 @@ func _unhandled_input(event: InputEvent) -> void:
 		player.rotate_y(-event.relative.x*SENS); pitch=clampf(pitch-event.relative.y*SENS,-1.42,1.42); camera.rotation.x=pitch
 	if event.is_action_pressed("fleet_release"):
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+	if event.is_action_pressed("fleet_fly_toggle"):
+		flight_mode = not flight_mode
+		player.velocity = Vector3.ZERO
+		_update_hud()
 
 
 func _physics_process(delta: float) -> void:
 	clock=fposmod(clock+delta*0.002,24.0)
 	var v:=Vector2(Input.get_action_strength("fleet_right")-Input.get_action_strength("fleet_left"),Input.get_action_strength("fleet_back")-Input.get_action_strength("fleet_fwd"))
-	var dir:=(player.transform.basis*Vector3(v.x,0,v.y)).normalized()
-	player.velocity.x=dir.x*SPEED; player.velocity.z=dir.z*SPEED
-	if not player.is_on_floor(): player.velocity.y-=20*delta
-	else: player.velocity.y=0
-	player.move_and_slide()
+	if flight_mode:
+		var fly_direction := camera.global_basis * Vector3(v.x, 0.0, v.y)
+		fly_direction += Vector3.UP * (Input.get_action_strength("fleet_fly_up") - Input.get_action_strength("fleet_fly_down"))
+		if fly_direction.length_squared() > 1.0:
+			fly_direction = fly_direction.normalized()
+		player.global_position += fly_direction * FLY_SPEED * delta
+		player.velocity = Vector3.ZERO
+	else:
+		var dir:=(player.transform.basis*Vector3(v.x,0,v.y)).normalized()
+		player.velocity.x=dir.x*SPEED
+		player.velocity.z=dir.z*SPEED
+		if not player.is_on_floor():
+			player.velocity.y-=20*delta
+		else:
+			player.velocity.y=0
+		player.move_and_slide()
 	for i in range(6):
 		if Input.is_action_just_pressed("fleet_role_"+str(i+1)): role=i
 	_update_screens()
@@ -248,5 +265,5 @@ func _update_screens() -> void:
 			_: l.text="CREW SERVICES / LIVE\nMESS HALL  %s\nNOTICE  NONE\nSHIP TIME  %02d:%02d\nCLICK DISPLAY: CHANGE STATUS" % ["OPEN" if mess_status else "CLOSED",int(clock),int(fposmod(clock*60,60))]
 
 func _update_hud() -> void:
-	hud.text="YUKKURI FLEET SIMULATOR  |  "+ROLES[role]+"\n速力 %.1f kt   針路 %03.0f°   艦内時刻 %02d:%02d" % [ship_speed,heading,int(clock),int(fposmod(clock*60,60))]
-	prompt.text="WASD 移動 / マウス 視点 / Esc カーソル切替 / 画面をクリックして直接操作"
+	hud.text="YUKKURI FLEET SIMULATOR  |  "+("FLIGHT MODE" if flight_mode else ROLES[role])+"\n速力 %.1f kt   針路 %03.0f°   艦内時刻 %02d:%02d" % [ship_speed,heading,int(clock),int(fposmod(clock*60,60))]
+	prompt.text=("飛行モード ON: WASD移動 / Space上昇 / Ctrl下降 / F解除" if flight_mode else "WASD 移動 / マウス 視点 / E ドア開閉 / F 飛行モード / Esc カーソル切替")
