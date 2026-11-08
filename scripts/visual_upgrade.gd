@@ -50,10 +50,14 @@ func _replace_blocky_hull() -> void:
 	var old_bow:=get_parent().get_node_or_null("Bow")
 	if old_bow != null: old_bow.visible=false
 	var sections:Array[Vector3]=[
-		Vector3(6.0,-38.0,0.0),
+		Vector3(0.55,-40.5,0.0),
+		Vector3(3.2,-39.2,0.0),
+		Vector3(5.8,-37.5,0.0),
 		Vector3(8.1,-30.0,0.0),
 		Vector3(8.8,28.0,0.0),
-		Vector3(7.0,39.5,0.0)
+		Vector3(7.0,38.0,0.0),
+		Vector3(3.4,40.0,0.0),
+		Vector3(0.55,40.8,0.0)
 	]
 	var verts:=PackedVector3Array()
 	for section in sections:
@@ -102,9 +106,14 @@ func _exterior_detail() -> void:
 		for side in [-1.0, 1.0]:
 			_box(self,"Waterline belt segment",Vector3(side * half_width,-2.34,float(z)),Vector3(0.12,0.12,4.0),dark,0)
 	for side in [-1.0,1.0]:
-		_box(self,"Hull rubbing strake",Vector3(side*8.94,-0.9,2),Vector3(0.13,0.18,68),trim)
-		for z in range(-30,36,4):
-			_box(self,"Hull plate seam",Vector3(side*9.02,-0.9,float(z)),Vector3(0.025,2.0,0.045),dark,0)
+		for z in range(-38,39,2):
+			var t := clampf((float(z) + 38.0) / 66.0, 0.0, 1.0)
+			var half_width := lerpf(6.0, 8.8, t)
+			if z > 28:
+				half_width = lerpf(8.8, 7.0, clampf((float(z) - 28.0) / 10.0, 0.0, 1.0))
+			_box(self,"Hull rubbing strake segment",Vector3(side * (half_width * 0.99),-0.9,float(z)),Vector3(0.13,0.18,2.1),trim)
+			if z % 4 == 0:
+				_box(self,"Hull plate seam",Vector3(side * (half_width * 1.002),-0.9,float(z)),Vector3(0.025,2.0,0.045),dark,0)
 	# Deck safety lines and painted zones
 	for x in [-7.5,7.5]:
 		_box(self,"Deck edge safety stripe",Vector3(x,1.125,2),Vector3(0.09,0.025,70),steel)
