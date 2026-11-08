@@ -30,6 +30,10 @@ func _ready() -> void:
 	visual_upgrade.set_script(load("res://scripts/visual_upgrade.gd"))
 	visual_upgrade.name="VisualUpgrade"
 	add_child(visual_upgrade)
+	var interior_upgrade:=Node3D.new()
+	interior_upgrade.set_script(load("res://scripts/interior_upgrade.gd"))
+	interior_upgrade.name="InteriorUpgrade"
+	add_child(interior_upgrade)
 	_player()
 	_hud()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -130,11 +134,12 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var ui:=Control.new(); ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); vp.add_child(ui)
 	var bg:=ColorRect.new(); bg.color=Color(0.01,0.04,0.055); bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); ui.add_child(bg)
 	var label:=Label.new(); label.position=Vector2(22,20); label.size=Vector2(600,310); label.add_theme_font_size_override("font_size",24); label.add_theme_color_override("font_color",Color(0.4,0.9,0.86)); ui.add_child(label)
-	var surface:=MeshInstance3D.new(); var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.255)
+	var surface:=MeshInstance3D.new(); var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.255); surface.rotation.x=PI/2
 	var mat:=StandardMaterial3D.new(); mat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; mat.albedo_texture=vp.get_texture(); mat.emission_enabled=true; mat.emission_texture=vp.get_texture(); mat.emission_energy_multiplier=0.65; surface.material_override=mat; root.add_child(surface)
 	var hit_body:=StaticBody3D.new()
 	hit_body.name="ScreenHitArea"
 	hit_body.position=Vector3(0,0.73,-0.255)
+	hit_body.rotation.x=PI/2
 	var hit_shape:=CollisionShape3D.new()
 	var hit_box:=BoxShape3D.new()
 	hit_box.size=Vector3(1.52,0.79,0.12)
