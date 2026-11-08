@@ -312,6 +312,20 @@ func _superstructure_finish() -> void:
 		for z in [24.0, 31.0]:
 			_box(self, "Aft floodlight housing", Vector3(side * 5.45, 6.1, z), Vector3(0.35, 0.25, 0.55), dark)
 
+	# Bridge wing side glazing and weather-deck observation windows.
+	for side in [-1.0, 1.0]:
+		for z in [-27.0, -24.0, -21.0, -18.0, -15.0]:
+			_box(self, "Bridge wing side window gasket", Vector3(side * 6.16, 5.55, z), Vector3(0.055, 1.05, 1.25), dark, 0)
+			_box(self, "Bridge wing side window glass", Vector3(side * 6.20, 5.55, z), Vector3(0.035, 0.88, 1.08), glass, 0)
+		for z in [6.0, 10.0, 14.0, 18.0, 22.0]:
+			_box(self, "Aft service room window frame", Vector3(side * 6.65, 4.55, z), Vector3(0.05, 0.62, 0.9), dark, 0)
+			_box(self, "Aft service room window glass", Vector3(side * 6.69, 4.55, z), Vector3(0.025, 0.48, 0.72), glass, 0)
+		# Hinged weather doors and compact ventilation panels on the side shell.
+		for z in [-12.0, 2.0, 24.0]:
+			_box(self, "Weather deck side access door", Vector3(side * 6.16, 3.1, z), Vector3(0.06, 1.9, 0.95), steel)
+			_box(self, "Weather deck door inset", Vector3(side * 6.20, 3.1, z), Vector3(0.025, 1.55, 0.68), dark, 0)
+			_cylinder(self, "Weather deck door handle", Vector3(side * 6.24, 3.1, z - 0.28), 0.045, 0.18, trim, 10)
+
 func _interior_superstructure_finish() -> void:
 	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
 	var inset := _mat(Color(0.26, 0.29, 0.28), 0.22, 0.78)
