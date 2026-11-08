@@ -121,7 +121,8 @@ func _build_lower_deck_and_stairs() -> void:
 	for i in range(11):
 		var step_z := -8.0 + float(i) * 0.4
 		var step_y := 1.16 - float(i) * 0.25
-		_box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
+		var tread := _box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
+		tread.add_to_group("stair_treads")
 	for side in [-1.0, 1.0]:
 		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat)
 		rail.rotation.x = 0.0
@@ -421,7 +422,7 @@ func _build_helm_station() -> void:
 	torus.inner_radius = 0.43
 	torus.outer_radius = 0.5
 	wheel.mesh = torus
-	wheel.position = Vector3(0.0, DECK_Y + 1.65, -27.8)
+	wheel.position = Vector3(3.9, DECK_Y + 1.65, -29.2)
 	wheel.rotation.x = PI * 0.5
 	wheel.material_override = trim_mat
 	add_child(wheel)
@@ -434,4 +435,4 @@ func _build_helm_station() -> void:
 	hit.shape = shape
 	body.add_child(hit)
 	add_child(body)
-	_box(self, "Helm pedestal", Vector3(0.0, DECK_Y + 0.65, -27.8), Vector3(0.9, 1.25, 0.8), dark_mat)
+	_box(self, "Helm pedestal", Vector3(3.9, DECK_Y + 0.65, -29.2), Vector3(0.9, 1.25, 0.8), dark_mat)
