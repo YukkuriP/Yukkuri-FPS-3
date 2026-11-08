@@ -80,10 +80,10 @@ func _exterior() -> void:
 	var hull:=_material(Color(0.17,0.22,0.25),0.72,0.38)
 	var white:=_material(Color(0.68,0.72,0.72),0.25,0.6)
 	var deck:=_material(Color(0.29,0.33,0.34),0.45,0.65)
-	_cube(self,"Hull",Vector3(0,-0.9,2),Vector3(18,3.5,78),Color.WHITE,true).material_override=hull
+	_cube(self,"Hull",Vector3(0,-0.9,2),Vector3(18,3.5,78),Color.WHITE).material_override=hull
 	_cube(self,"Bow",Vector3(0,-0.7,-39),Vector3(13,2.7,7),Color.WHITE).material_override=hull
-	_cube(self,"Main deck",Vector3(0,1.0,2),Vector3(17.5,0.22,76),Color.WHITE,true).material_override=deck
-	_cube(self,"Forecastle",Vector3(0,1.2,-28),Vector3(15,0.3,22),Color.WHITE).material_override=deck
+	_cube(self,"Main deck",Vector3(0,1.0,2),Vector3(17.5,0.22,76),Color.WHITE).material_override=deck
+	_cube(self,"Forecastle",Vector3(0,1.2,-28),Vector3(15,0.3,22),Color.WHITE,true).material_override=deck
 	_cube(self,"Forward deckhouse",Vector3(0,4,-21),Vector3(12,5.8,17),Color.WHITE).material_override=white
 	_cube(self,"Bridge glazing",Vector3(0,6.5,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
 	_cube(self,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
