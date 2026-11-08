@@ -256,13 +256,13 @@ func _superstructure_finish() -> void:
 	# Hangar door has inset panels, perimeter seals and warning lamps.
 	_box(self, "Hangar door perimeter frame", Vector3(0.0, 4.0, 34.18), Vector3(8.9, 4.45, 0.18), trim)
 	_box(self, "Hangar door inset panel", Vector3(0.0, 4.0, 34.06), Vector3(8.5, 4.05, 0.06), steel)
-	_box(self, "Hangar outer door leaf", Vector3(0.0, 4.0, 34.34), Vector3(8.35, 3.95, 0.12), steel)
+	_box(self, "Hangar outer door leaf", Vector3(0.0, 4.0, 34.65), Vector3(8.2, 3.85, 0.14), steel)
 	for y in [2.25, 3.1, 4.0, 4.9, 5.75]:
-		_box(self, "Hangar door horizontal stiffener", Vector3(0.0, y, 34.26), Vector3(8.0, 0.055, 0.035), trim, 0)
+		_box(self, "Hangar door horizontal stiffener", Vector3(0.0, y, 34.57), Vector3(7.9, 0.055, 0.035), trim, 0)
 	for x in [-3.0, 0.0, 3.0]:
-		_box(self, "Hangar door vertical seam", Vector3(x, 4.0, 34.265), Vector3(0.035, 3.7, 0.035), dark, 0)
-	_box(self, "Hangar door inspection hatch", Vector3(3.2, 4.0, 34.25), Vector3(0.75, 1.05, 0.035), dark, 0)
-	_box(self, "Hangar door access handle", Vector3(2.85, 4.0, 34.20), Vector3(0.07, 0.28, 0.08), trim, 0)
+		_box(self, "Hangar door vertical seam", Vector3(x, 4.0, 34.575), Vector3(0.035, 3.6, 0.035), dark, 0)
+	_box(self, "Hangar door inspection hatch", Vector3(3.2, 4.0, 34.56), Vector3(0.75, 1.05, 0.035), dark, 0)
+	_box(self, "Hangar door access handle", Vector3(2.85, 4.0, 34.50), Vector3(0.07, 0.28, 0.08), trim, 0)
 	for x in [-3.4, -2.3, -1.15, 0.0, 1.15, 2.3, 3.4]:
 		_box(self, "Hangar door recessed rib", Vector3(x, 4.0, 34.0), Vector3(0.045, 3.85, 0.035), dark, 0)
 	for side in [-1.0, 1.0]:
