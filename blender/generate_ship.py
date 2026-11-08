@@ -66,6 +66,31 @@ stations = [
     (32.0, 8.55, 0.99),
     (38.0, 7.95, 0.96),
 ]
+# Catmull-Rom interpolation adds smooth intermediate hull stations while
+# preserving every measured control station. This yields a denser, fairer bow.
+def catmull_rom(p0, p1, p2, p3, t):
+    return 0.5 * (
+        2.0 * p1
+        + (-p0 + p2) * t
+        + (2.0*p0 - 5.0*p1 + 4.0*p2 - p3) * t*t
+        + (-p0 + 3.0*p1 - 3.0*p2 + p3) * t*t*t
+    )
+
+control_stations = stations
+stations = []
+SUBDIVISIONS_PER_BAY = 5
+for i in range(len(control_stations) - 1):
+    p1 = control_stations[i]
+    p2 = control_stations[i + 1]
+    p0 = control_stations[max(0, i - 1)]
+    p3 = control_stations[min(len(control_stations) - 1, i + 2)]
+    for step in range(SUBDIVISIONS_PER_BAY):
+        t = step / SUBDIVISIONS_PER_BAY
+        y = p1[0] + (p2[0] - p1[0]) * t
+        half_beam = catmull_rom(p0[1], p1[1], p2[1], p3[1], t)
+        flare = catmull_rom(p0[2], p1[2], p2[2], p3[2], t)
+        stations.append((y, max(0.025, half_beam), flare))
+stations.append(control_stations[-1])
 ring_profile = [
     (-1.0, 0.92), (-0.94, 0.10), (-0.72, -0.78),
     (0.0, -1.48), (0.72, -0.78), (0.94, 0.10), (1.0, 0.92)
