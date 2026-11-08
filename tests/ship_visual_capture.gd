@@ -74,8 +74,8 @@ func _run() -> void:
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
 	capture_camera.fov = 68.0
-	capture_camera.position = Vector3(4.45, 6.0, -18.0)
-	capture_camera.look_at(Vector3(4.45, -0.5, -12.0), Vector3.UP)
+	capture_camera.position = Vector3(2.6, 0.35, -14.0)
+	capture_camera.look_at(Vector3(4.45, -0.15, -12.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
