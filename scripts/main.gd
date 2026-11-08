@@ -76,8 +76,31 @@ func _cube(parent: Node3D, name: String, p: Vector3, s: Vector3, c: Color, solid
 	return obj
 
 func _ocean_and_sky() -> void:
-	var sea:=MeshInstance3D.new(); var plane:=PlaneMesh.new(); plane.size=Vector2(900,900)
-	sea.mesh=plane; sea.position.y=-2.8; sea.material_override=_material(Color(0.012,0.09,0.15),0.5,0.25); add_child(sea)
+	var sea:=MeshInstance3D.new()
+	var plane:=PlaneMesh.new()
+	plane.size=Vector2(900,900)
+	plane.subdivide_width=96
+	plane.subdivide_depth=96
+	sea.mesh=plane
+	sea.position.y=-2.8
+	var sea_mat:=_material(Color(0.025,0.13,0.19),0.32,0.24)
+	sea_mat.clearcoat_enabled=true
+	sea_mat.clearcoat=0.42
+	sea_mat.clearcoat_roughness=0.28
+	# Fine-scale roughness breakup gives the large ocean surface varied highlights.
+	var sea_noise:=FastNoiseLite.new()
+	sea_noise.seed=80421
+	sea_noise.noise_type=FastNoiseLite.TYPE_SIMPLEX
+	sea_noise.frequency=0.035
+	sea_noise.fractal_octaves=4
+	var sea_roughness:=NoiseTexture2D.new()
+	sea_roughness.width=512
+	sea_roughness.height=512
+	sea_roughness.seamless=true
+	sea_roughness.noise=sea_noise
+	sea_mat.roughness_texture=sea_roughness
+	sea.material_override=sea_mat
+	add_child(sea)
 	var we:=WorldEnvironment.new(); var env:=Environment.new()
 	env.background_mode=Environment.BG_SKY
 	var sky:=Sky.new(); var sm:=ProceduralSkyMaterial.new()
