@@ -207,6 +207,7 @@ func _build_passage_walls() -> void:
 func _add_auto_door(side: int, z: float) -> void:
 	var door := Node3D.new()
 	door.name = "AutomaticCompartmentDoor"
+	door.add_to_group("compartment_doors")
 	door.position = Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, z)
 	add_child(door)
 	_box(door, "Watertight-style sliding door panel", Vector3.ZERO, Vector3(0.12, 3.25, 1.62), trim_mat, true)
