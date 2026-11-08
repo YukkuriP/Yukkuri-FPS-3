@@ -23,6 +23,7 @@ func _ready() -> void:
 	_superstructure_finish()
 	_interior_superstructure_finish()
 	_bridge_furnishings()
+	_hangar_interior_finish()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -376,6 +377,32 @@ func _bridge_furnishings() -> void:
 		_box(self, "Bridge overhead cable ladder", Vector3(x, 4.95, -22.0), Vector3(0.12, 0.10, 14.0), trim)
 	for z in [-25.0, -21.0, -17.0]:
 		_box(self, "Bridge document holder", Vector3(5.72, 3.4, z), Vector3(0.10, 0.58, 0.72), chair_mat)
+
+
+func _hangar_interior_finish() -> void:
+	var rack_mat := _mat(Color(0.25, 0.28, 0.28), 0.32, 0.72)
+	var safety := _mat(Color(0.55, 0.42, 0.16), 0.08, 0.82)
+	# Practical hangar wall liners, overhead beams and equipment storage.
+	for side in [-1.0, 1.0]:
+		for z in [24.0, 27.0, 30.0, 33.0]:
+			_box(self, "Hangar interior wall panel", Vector3(side * 5.78, 4.5, z), Vector3(0.06, 4.4, 2.7), steel)
+			_box(self, "Hangar wall panel seam", Vector3(side * 5.74, 4.5, z + 1.38), Vector3(0.025, 4.2, 0.04), dark, 0)
+		_box(self, "Hangar equipment rack", Vector3(side * 5.1, 3.4, 26.0), Vector3(0.65, 2.4, 3.8), rack_mat)
+		for row in range(4):
+			_box(self, "Hangar rack shelf", Vector3(side * 5.1, 2.5 + float(row) * 0.48, 26.0), Vector3(0.82, 0.07, 3.5), trim)
+		_box(self, "Hangar safety floor stripe", Vector3(side * 4.4, 1.28, 28.0), Vector3(0.12, 0.025, 10.0), safety, 0)
+	for z in [23.0, 27.0, 31.0, 33.0]:
+		_box(self, "Hangar overhead beam", Vector3(0.0, 7.55, z), Vector3(11.6, 0.18, 0.22), trim)
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(0.0, 7.0, z)
+		lamp.light_color = Color(0.82, 0.79, 0.7)
+		lamp.light_energy = 0.72
+		lamp.omni_range = 8.0
+		add_child(lamp)
+	# Workbench and mobile service trolley as visual dressing.
+	_box(self, "Hangar workbench", Vector3(-3.7, 2.0, 29.5), Vector3(1.8, 0.16, 2.2), rack_mat)
+	_box(self, "Hangar workbench cabinet", Vector3(-3.7, 1.55, 29.5), Vector3(1.55, 0.8, 1.9), dark)
+	_box(self, "Hangar service trolley", Vector3(3.7, 1.7, 29.5), Vector3(1.1, 0.75, 1.5), steel)
 
 func _interior_detail() -> void:
 	# Floor panels, ceiling cable trays and door frames make the passage feel built.
