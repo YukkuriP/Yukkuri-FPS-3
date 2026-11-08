@@ -308,7 +308,7 @@ func _build_wall_finish() -> void:
 	var kick := _mat(Color(0.28, 0.30, 0.29), 0.42, 0.72)
 	var pipe_mat := _mat(Color(0.38, 0.40, 0.37), 0.62, 0.48)
 	for side in [-1.0, 1.0]:
-		var wall_x := side * 1.245
+		var wall_x: float = side * 1.245
 		for z in range(-34, 39, 3):
 			_box(self, "Bulkhead removable wall panel", Vector3(wall_x, 3.05, float(z)), Vector3(0.025, 2.85, 2.82), panel)
 			_box(self, "Bulkhead panel joint", Vector3(wall_x - side * 0.018, 3.05, float(z) + 1.43), Vector3(0.018, 2.9, 0.025), seam)
