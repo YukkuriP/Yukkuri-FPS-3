@@ -38,6 +38,9 @@ func _run() -> void:
 		_fail("Could not capture exterior view")
 		return
 
+	# Switch back to perspective for all close inspection cameras.
+	capture_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+	capture_camera.fov = 58.0
 	# Close inspection of the bridge, mast, funnels and hangar silhouette.
 	capture_camera.fov = 58.0
 	capture_camera.position = Vector3(30.0, 18.0, -6.0)
