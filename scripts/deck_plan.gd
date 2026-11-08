@@ -98,7 +98,7 @@ func _room_end_wall(z: float, side: int) -> void:
 func _build_compartments() -> void:
 	var room_data := [
 		{"name":"BRIDGE", "z":-27.0, "side":1},
-		{"name":"CREW OPERATIONS", "z":-15.0, "side":-1},
+		{"name":"CIC", "z":-15.0, "side":-1},
 		{"name":"COMMUNICATIONS", "z":-3.0, "side":1},
 		{"name":"MESS", "z":9.0, "side":-1},
 		{"name":"ENGINEERING", "z":21.0, "side":1},
@@ -179,7 +179,7 @@ func _build_helm_station() -> void:
 	torus.inner_radius = 0.43
 	torus.outer_radius = 0.5
 	wheel.mesh = torus
-	wheel.position = Vector3(3.9, DECK_Y + 1.65, -27.8)
+	wheel.position = Vector3(0.0, DECK_Y + 1.65, -27.8)
 	wheel.rotation.x = PI * 0.5
 	wheel.material_override = trim_mat
 	add_child(wheel)
@@ -192,4 +192,4 @@ func _build_helm_station() -> void:
 	hit.shape = shape
 	body.add_child(hit)
 	add_child(body)
-	_box(self, "Helm pedestal", Vector3(3.9, DECK_Y + 0.65, -27.8), Vector3(0.9, 1.25, 0.8), dark_mat)
+	_box(self, "Helm pedestal", Vector3(0.0, DECK_Y + 0.65, -27.8), Vector3(0.9, 1.25, 0.8), dark_mat)
