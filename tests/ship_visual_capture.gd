@@ -36,6 +36,16 @@ func _run() -> void:
 		_fail("Could not capture exterior view")
 		return
 
+	# Close inspection of the bridge, mast, funnels and hangar silhouette.
+	capture_camera.fov = 58.0
+	capture_camera.position = Vector3(32.0, 17.0, 24.0)
+	capture_camera.look_at(Vector3(0.0, 5.0, -18.0), Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("superstructure_closeup.png")):
+		_fail("Could not capture superstructure close-up")
+		return
+
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
 	capture_camera.fov = 78.0
