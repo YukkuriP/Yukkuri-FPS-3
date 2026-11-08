@@ -67,6 +67,13 @@ me.from_pydata(v, [], f)
 me.materials.append(hull)
 ob = bpy.data.objects.new("Continuous tapered hull", me)
 bpy.context.collection.objects.link(ob)
+bpy.context.view_layer.update()
+actual_length = ob.dimensions.y
+actual_beam = ob.dimensions.x
+if abs(actual_length - PUBLISHED_LENGTH_M) > 0.01:
+    raise RuntimeError(f"Generated hull length mismatch: {actual_length:.3f} m")
+if abs(actual_beam - 18.0) > 0.01:
+    raise RuntimeError(f"Generated hull beam mismatch: {actual_beam:.3f} m")
 
 cube("Flight deck", (0, 0, 1.05), (17.4, 75, .25), deck)
 cube("Forecastle", (0, -25, 1.25), (15, 24, .3), deck)
