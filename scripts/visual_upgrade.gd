@@ -260,6 +260,40 @@ func _superstructure_finish() -> void:
 	for side in [-1.0, 1.0]:
 		_box(self, "Hangar door safety lamp", Vector3(side * 4.65, 6.45, 34.0), Vector3(0.22, 0.16, 0.12), glow, 0)
 
+	# Longitudinal deckhouse plating, welded seams and external service access.
+	for side in [-1.0, 1.0]:
+		for z in range(-29, -12, 2):
+			_box(self, "Forward deckhouse vertical seam", Vector3(side * 6.02, 4.0, float(z)), Vector3(0.035, 5.25, 0.055), dark, 0)
+		for z in [-27.0, -21.0, -15.0]:
+			_box(self, "Forward deckhouse access panel", Vector3(side * 6.045, 3.9, z), Vector3(0.045, 1.15, 1.3), steel)
+			_box(self, "Forward access panel inset", Vector3(side * 6.075, 3.9, z), Vector3(0.02, 0.82, 0.95), dark, 0)
+		_box(self, "Forward deckhouse belt seam", Vector3(side * 6.03, 2.35, -21.0), Vector3(0.045, 0.08, 16.0), trim, 0)
+		for z in range(5, 23, 2):
+			_box(self, "Aft deckhouse vertical seam", Vector3(side * 6.53, 3.6, float(z)), Vector3(0.035, 4.5, 0.055), dark, 0)
+		for z in [7.0, 13.0, 19.0]:
+			_box(self, "Aft deckhouse service hatch", Vector3(side * 6.56, 3.55, z), Vector3(0.04, 1.0, 1.2), steel)
+			_box(self, "Aft service hatch inset", Vector3(side * 6.59, 3.55, z), Vector3(0.02, 0.72, 0.92), dark, 0)
+		_box(self, "Aft deckhouse belt seam", Vector3(side * 6.54, 2.15, 14.0), Vector3(0.045, 0.08, 18.0), trim, 0)
+	# Covered utility craft with a rounded hull silhouette instead of plain boxes.
+	for side in [-1.0, 1.0]:
+		var craft := MeshInstance3D.new()
+		var craft_mesh := CapsuleMesh.new()
+		craft_mesh.radius = 0.38
+		craft_mesh.height = 3.8
+		craft.mesh = craft_mesh
+		craft.position = Vector3(side * 6.0, 4.35, 9.0)
+		craft.rotation.x = PI * 0.5
+		craft.scale = Vector3(1.0, 1.0, 1.3)
+		craft.material_override = steel
+		add_child(craft)
+		_box(self, "Utility craft cradle rail", Vector3(side * 6.0, 3.78, 9.0), Vector3(2.0, 0.12, 5.8), dark)
+	# External access ladders and handrails on service faces.
+	for z in [-10.0, 20.0]:
+		for rung in range(8):
+			_box(self, "External ladder rung", Vector3(6.63, 2.0 + float(rung) * 0.38, z), Vector3(0.10, 0.055, 0.62), trim, 0)
+		for side in [-1.0, 1.0]:
+			_box(self, "External ladder rail", Vector3(6.63, 3.35, z + side * 0.36), Vector3(0.10, 3.0, 0.07), steel)
+
 func _interior_superstructure_finish() -> void:
 	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
 	var inset := _mat(Color(0.26, 0.29, 0.28), 0.22, 0.78)
