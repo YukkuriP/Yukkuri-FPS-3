@@ -133,7 +133,16 @@ func _build_lower_deck_and_stairs() -> void:
 		stair_light.omni_range = 5.5
 		stair_light.shadow_enabled = true
 		add_child(stair_light)
+	# Landing plates and sloped stringers make the stair read as a real shipboard stair, not a corridor.
+	_box(lower, "Upper stair landing", Vector3(STAIR_X, 1.18, -10.45), Vector3(1.55, 0.12, 1.15), trim_mat, true)
+	_box(lower, "Lower stair landing", Vector3(STAIR_X, -1.42, -1.25), Vector3(1.55, 0.12, 1.15), trim_mat, true)
+	for i in range(11):
+		var step_z := -8.0 + float(i) * 0.4
+		var step_y := 1.16 - float(i) * 0.25
+		_box(self, "Stair riser", Vector3(STAIR_X, step_y - 0.09, step_z - 0.18), Vector3(1.25, 0.18, 0.06), dark_mat)
 	for side in [-1.0, 1.0]:
+		var stringer := _box(stair, "Stair side stringer", Vector3(side * 0.69, 0.0, 0.0), Vector3(0.12, 0.22, 5.0), trim_mat)
+		stringer.rotation.x = 0.0
 		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat)
 		rail.rotation.x = 0.0
 	# Lower-deck equipment, service lockers and low-level lighting.
