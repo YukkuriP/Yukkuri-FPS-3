@@ -93,7 +93,11 @@ func _run() -> void:
 		return
 
 	# Inspect the bridge aft watertight-style access door head-on.
-	var door: Node3D = deck.find_child("BridgeAftHingedDoor", true, false)
+	var deck_plan: Node = main.find_child("CompartmentedDeckPlan", true, false)
+	if deck_plan == null:
+		_fail("Could not find the compartmented deck plan")
+		return
+	var door: Node3D = deck_plan.find_child("BridgeAftHingedDoor", true, false)
 	if door == null:
 		_fail("Could not find the bridge aft hinged door")
 		return
