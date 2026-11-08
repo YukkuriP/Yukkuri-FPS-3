@@ -29,3 +29,6 @@ jobs:
 
       - name: Headless startup smoke test
         run: godot --headless --path . --quit-after 5
+
+      - name: Ship geometry and collision smoke test
+        run: godot --headless --path . --script res://tests/ship_smoke_test.gd
