@@ -22,7 +22,7 @@ jobs:
           include-templates: false
 
       - name: Install Blender for ship mesh generation check
-        run: sudo apt-get update && sudo apt-get install -y blender
+        run: sudo apt-get update && sudo apt-get install -y blender python3-numpy
 
       - name: Generate ship exterior and verify GLB export
         run: |
