@@ -114,7 +114,7 @@ func _interior() -> void:
 
 func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var root:=Node3D.new(); root.position=pos; add_child(root)
-	_cube(root,"Console cabinet",Vector3(0,0,0),Vector3(1.8,1.15,0.85),Color(0.08,0.12,0.15))
+	_cube(root,"Console cabinet",Vector3(0,0,0),Vector3(1.8,1.15,0.85),Color(0.08,0.12,0.15),true)
 	_cube(root,"Bezel",Vector3(0,0.72,-0.18),Vector3(1.65,0.88,0.12),Color(0.02,0.04,0.05))
 	var vp:=SubViewport.new(); vp.size=Vector2i(640,360); vp.render_target_update_mode=SubViewport.UPDATE_ALWAYS; root.add_child(vp)
 	var ui:=Control.new(); ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); vp.add_child(ui)
