@@ -154,7 +154,7 @@ func _add_auto_door(side: int, z: float) -> void:
 	_box(door, "Watertight-style sliding door panel", Vector3.ZERO, Vector3(0.12, 3.25, 1.62), trim_mat, true)
 	var area := Area3D.new()
 	area.name = "DoorApproachSensor"
-	area.position = Vector3(0, 0, 0)
+	area.position = door.position
 	area.collision_layer = 0
 	area.collision_mask = 1
 	var sensor_shape := CollisionShape3D.new()
