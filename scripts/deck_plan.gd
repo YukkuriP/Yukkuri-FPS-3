@@ -139,10 +139,40 @@ func _build_passage_walls() -> void:
 				_box(self, "Passage bulkhead", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, cursor + length * 0.5), Vector3(0.18, WALL_H, length), wall_mat, true)
 			_box(self, "Door header", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H - 0.22, center), Vector3(0.24, 0.44, 1.8), trim_mat, true)
 			_box(self, "Door threshold", Vector3(float(side) * PASSAGE_HALF, DECK_Y + 0.035, center), Vector3(0.28, 0.07, 1.8), trim_mat)
+			_add_auto_door(side, center)
 			cursor = center + 0.9
 		if cursor < 40.0:
 			var length := 40.0 - cursor
 			_box(self, "Passage bulkhead", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, cursor + length * 0.5), Vector3(0.18, WALL_H, length), wall_mat, true)
+
+
+func _add_auto_door(side: int, z: float) -> void:
+	var door := Node3D.new()
+	door.name = "AutomaticCompartmentDoor"
+	door.position = Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, z)
+	add_child(door)
+	_box(door, "Watertight-style sliding door panel", Vector3.ZERO, Vector3(0.12, 3.25, 1.62), trim_mat, true)
+	var area := Area3D.new()
+	area.name = "DoorApproachSensor"
+	area.position = Vector3(0, 0, 0)
+	area.collision_layer = 0
+	area.collision_mask = 1
+	var sensor_shape := CollisionShape3D.new()
+	var sensor_box := BoxShape3D.new()
+	sensor_box.size = Vector3(2.8, 3.4, 2.8)
+	sensor_shape.shape = sensor_box
+	area.add_child(sensor_shape)
+	add_child(area)
+	area.body_entered.connect(_on_door_area_entered.bind(door, side))
+	area.body_exited.connect(_on_door_area_exited.bind(door, side))
+
+func _on_door_area_entered(_body: Node3D, door: Node3D, side: int) -> void:
+	var tween := door.create_tween()
+	tween.tween_property(door, "position:x", float(side) * (PASSAGE_HALF + 2.0), 0.28)
+
+func _on_door_area_exited(_body: Node3D, door: Node3D, side: int) -> void:
+	var tween := door.create_tween()
+	tween.tween_property(door, "position:x", float(side) * PASSAGE_HALF, 0.28)
 
 func _build_passage_details() -> void:
 	for z in range(-34, 40, 2):
