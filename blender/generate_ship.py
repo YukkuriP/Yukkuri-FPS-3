@@ -89,7 +89,7 @@ for i in range(len(control_stations) - 1):
         y = p1[0] + (p2[0] - p1[0]) * t
         half_beam = catmull_rom(p0[1], p1[1], p2[1], p3[1], t)
         flare = catmull_rom(p0[2], p1[2], p2[2], p3[2], t)
-        stations.append((y, max(0.025, half_beam), flare))
+        stations.append((y, min(9.0, max(0.025, half_beam)), flare))
 stations.append(control_stations[-1])
 ring_profile = [
     (-1.0, 0.92), (-0.94, 0.10), (-0.72, -0.78),
@@ -214,6 +214,65 @@ for side in (-1, 1):
             (side * 2.35 + dx * 1.35, -36.35 * LONG_SCALE, -0.52),
             0.10, metal
         )
+
+# Faceted bridge, mast platforms and recognizable external sensor silhouettes.
+cube("Bridge brow", (0, -24.0, 8.55), (10.2, 6.0, 0.42), white)
+cube("Bridge roof", (0, -20.5, 8.9), (9.0, 5.0, 0.35), hull)
+cube("Forward bridge visor", (0, -25.9, 7.55), (10.0, 0.22, 0.32), metal)
+cube("Forward mast platform", (0, -21, 11.4), (5.5, 3.5, 0.28), metal)
+cube("Aft mast platform", (0, 12, 10.2), (6.0, 4.0, 0.25), metal)
+
+# Four fixed-array radar panels on the forward mast; non-functional visual props.
+for side in (-1, 1):
+    for fore_aft in (-1, 1):
+        panel = cube("Phased array radar panel", (side * 2.35, -21 + fore_aft * 0.75, 11.6), (0.18, 2.2, 2.0), glass)
+        panel.rotation_euler[2] = 0.0 if fore_aft < 0 else 3.14159
+        cube("Radar panel backing", (side * 2.48, -21 + fore_aft * 0.75, 11.6), (0.16, 2.35, 2.15), metal)
+
+# Mast cross members, aerial spars and navigation-light housings.
+for z, width in ((12.8, 5.2), (14.0, 3.4), (15.1, 1.8)):
+    cube("Mast cross-tree", (0, -21, z), (width, 0.16, 0.16), metal)
+for side in (-1, 1):
+    cube("Navigation light housing", (side * 4.5, -23.0, 8.7), (0.22, 0.3, 0.18), metal)
+    cube("Bridge wing", (side * 6.1, -20.5, 6.5), (1.4, 5.5, 0.28), deck)
+    cube("Bridge wing support", (side * 5.9, -20.5, 5.5), (0.12, 0.16, 1.8), metal)
+
+# Repeated small windows and watertight access doors on both deckhouses.
+for side in (-1, 1):
+    for y in range(-26, -15, 2):
+        cube("Forward deckhouse window", (side * 6.08, y, 4.8), (0.035, 0.85, 0.42), glass)
+    for y in range(7, 20, 2):
+        cube("Aft deckhouse window", (side * 6.58, y, 4.3), (0.035, 0.9, 0.42), glass)
+    for y in (-16, 4, 24):
+        cube("Watertight access door", (side * 6.6, y, 2.4), (0.08, 1.0, 2.0), hull)
+        cube("Door vision slit", (side * 6.66, y, 2.85), (0.025, 0.42, 0.16), glass)
+
+# Life-raft canisters and deck equipment housings along the superstructure sides.
+for side in (-1, 1):
+    for y in (-12, -7, 2, 7, 17, 22):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.34, depth=1.8,
+            location=(side * 6.45, y * LONG_SCALE, 5.8), rotation=(0, 1.5708, 0))
+        raft = bpy.context.object
+        raft.name = "Enclosed life raft canister"
+        raft.data.materials.append(white)
+
+# Waterline boot-top stripe, following both sides of the hull.
+stripe = material("Dark waterline boot topping", (.055, .075, .085), .35, .5)
+for side in (-1, 1):
+    points = []
+    for y, half_beam, _ in stations:
+        points.append((side * half_beam * 0.965, y * LONG_SCALE, -0.08))
+    curve = bpy.data.curves.new("Waterline stripe curve", "CURVE")
+    curve.dimensions = "3D"
+    curve.bevel_depth = 0.055
+    curve.bevel_resolution = 3
+    spline = curve.splines.new("POLY")
+    spline.points.add(len(points) - 1)
+    for p, co in zip(spline.points, points):
+        p.co = (*co, 1)
+    obj = bpy.data.objects.new("Hull waterline stripe", curve)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(stripe)
 
 cube("Forward superstructure", (0, -20, 4), (12, 17, 5.8), white)
 cube("Bridge tier", (0, -21, 7.7), (9, 10, 1.9), white)
