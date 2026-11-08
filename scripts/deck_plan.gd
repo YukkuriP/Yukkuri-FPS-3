@@ -200,6 +200,18 @@ func _room_wall_x(x: float, z_center: float, door_z: float) -> void:
 func _room_end_wall(z: float, side: int) -> void:
 	var x_center := float(side) * (PASSAGE_HALF + (HULL_HALF - PASSAGE_HALF) * 0.5)
 	var width := HULL_HALF - PASSAGE_HALF
+	# The communications-room aft bulkhead crosses the upper stair landing.
+	# Split it around a full-height access opening so the stair can be entered.
+	if side == 1 and is_equal_approx(z, STAIR_Z - 1.8):
+		var opening_half := 0.9
+		var opening_left := STAIR_X - opening_half
+		var opening_right := STAIR_X + opening_half
+		var left_width := opening_left - PASSAGE_HALF
+		var right_width := HULL_HALF - opening_right
+		_box(self, "Stair access bulkhead port segment", Vector3(PASSAGE_HALF + left_width * 0.5, DECK_Y + WALL_H * 0.5, z), Vector3(left_width, WALL_H, 0.18), wall_mat, true)
+		_box(self, "Stair access bulkhead starboard segment", Vector3(opening_right + right_width * 0.5, DECK_Y + WALL_H * 0.5, z), Vector3(right_width, WALL_H, 0.18), wall_mat, true)
+		_box(self, "Stair access opening header", Vector3(STAIR_X, DECK_Y + WALL_H - 0.22, z), Vector3(opening_half * 2.0, 0.44, 0.18), trim_mat, true)
+		return
 	_box(self, "Transverse bulkhead", Vector3(x_center, DECK_Y + WALL_H * 0.5, z), Vector3(width, WALL_H, 0.18), wall_mat, true)
 
 func _build_compartments() -> void:
