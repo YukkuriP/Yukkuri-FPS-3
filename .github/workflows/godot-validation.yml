@@ -34,7 +34,7 @@ jobs:
         run: godot --headless --path . --script res://tests/ship_smoke_test.gd
 
       - name: Install software display for visual test
-        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri fonts-noto-cjk
 
       - name: Capture ship exterior and interior views
         run: xvfb-run -a godot --path . --rendering-method gl_compatibility --script res://tests/ship_visual_capture.gd
