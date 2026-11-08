@@ -19,16 +19,16 @@ func _run() -> void:
 		_fail("Could not create screenshot output directory")
 		return
 
-	var hud_layer := main.get_node_or_null("CanvasLayer")
-	if hud_layer != null:
-		hud_layer.visible = false
+	for child in main.get_children():
+		if child is CanvasLayer:
+			child.visible = false
 
 	var capture_camera := Camera3D.new()
 	capture_camera.name = "VisualCaptureCamera"
 	main.add_child(capture_camera)
 	capture_camera.fov = 55.0
-	capture_camera.position = Vector3(65.0, 35.0, 70.0)
-	capture_camera.look_at(Vector3(0.0, 3.0, 0.0), Vector3.UP)
+	capture_camera.position = Vector3(48.0, 25.0, 55.0)
+	capture_camera.look_at(Vector3(0.0, 2.0, 0.0), Vector3.UP)
 	capture_camera.current = true
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -37,8 +37,8 @@ func _run() -> void:
 		return
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
-	capture_camera.position = Vector3(4.0, 3.0, -52.0)
-	capture_camera.look_at(Vector3(4.0, 3.8, -61.0), Vector3.UP)
+	capture_camera.position = Vector3(5.4, 3.0, -48.0)
+	capture_camera.look_at(Vector3(3.5, 2.5, -54.4), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -54,10 +54,13 @@ func _run() -> void:
 	if doors.size() != 7:
 		_fail("Expected seven hinged doors for visual capture")
 		return
-	var door: Node3D = doors[3]
+	var door: Node3D = doors[0]
+	for candidate in doors:
+		if absf(candidate.global_position.z + 54.0) < absf(door.global_position.z + 54.0):
+			door = candidate
 	door.rotation.y = PI * 0.5
-	capture_camera.position = Vector3(4.2, 3.0, -55.0)
-	capture_camera.look_at(Vector3(2.1, 3.0, -54.0), Vector3.UP)
+	capture_camera.position = Vector3(5.2, 3.0, -53.5)
+	capture_camera.look_at(Vector3(2.2, 3.0, -54.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hinged_door.png")):
