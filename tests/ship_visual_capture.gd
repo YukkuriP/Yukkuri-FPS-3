@@ -93,6 +93,21 @@ func _run() -> void:
 		_fail("Could not capture bridge compartment")
 		return
 
+	# Close-up of a live SubViewport display, viewed from its front face.
+	var display_surfaces := main.find_children("ConsoleDisplaySurface", "MeshInstance3D", true, false)
+	if display_surfaces.is_empty():
+		_fail("Could not find live console display surfaces")
+		return
+	var display_surface := display_surfaces[0] as Node3D
+	capture_camera.fov = 48.0
+	capture_camera.position = display_surface.global_position + Vector3(0.0, 0.25, 3.2)
+	capture_camera.look_at(display_surface.global_position, Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("console_display_closeup.png")):
+		_fail("Could not capture live console display")
+		return
+
 	# Inspect the bridge aft watertight-style access door head-on.
 	var deck_plan: Node = main.find_child("CompartmentedDeckPlan", true, false)
 	if deck_plan == null:
