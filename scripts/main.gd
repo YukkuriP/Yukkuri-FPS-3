@@ -189,7 +189,15 @@ func _click_console() -> void:
 	var hit:=get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty(): return
 	var collider: Object=hit.collider
-	if not collider is StaticBody3D or not collider.has_meta("console_index"): return
+	if not collider is StaticBody3D: return
+	if collider.has_meta("control"):
+		var control:String=str(collider.get_meta("control"))
+		if control=="helm":
+			var helm_side:= -1.0 if hit.position.x<collider.global_position.x else 1.0
+			heading=fposmod(heading+helm_side*5.0,360.0)
+			_update_screens()
+			return
+	if not collider.has_meta("console_index"): return
 	var index:int=int(collider.get_meta("console_index"))
 	if index<0 or index>=consoles.size(): return
 	var c:Dictionary=consoles[index]
