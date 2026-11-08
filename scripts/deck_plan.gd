@@ -181,6 +181,14 @@ func _build_compartments() -> void:
 	for item in room_data:
 		var z: float = item.z
 		var side: int = item.side
+		if String(item.name) == "BRIDGE":
+			# The bridge is a full-beam compartment, not a narrow side room.
+			_box(self, "BRIDGE full-width ceiling", Vector3(0.0, DECK_Y + WALL_H, z), Vector3(13.0, 0.18, 9.6), wall_mat)
+			_label("BRIDGE", Vector3(-1.0, DECK_Y + WALL_H - 0.55, z - 4.45), 24)
+			for bridge_side in [-1.0, 1.0]:
+				_box(self, "Bridge compartment placard", Vector3(bridge_side * 6.12, DECK_Y + 2.95, z - 4.2), Vector3(0.06, 0.42, 1.8), dark_mat)
+				_box(self, "Bridge placard indicator", Vector3(bridge_side * 6.08, DECK_Y + 2.95, z - 4.2), Vector3(0.035, 0.07, 0.8), light_mat)
+			continue
 		var cx := float(side) * (PASSAGE_HALF + (HULL_HALF - PASSAGE_HALF) * 0.5)
 		var width := HULL_HALF - PASSAGE_HALF
 		_box(self, String(item.name) + " ceiling", Vector3(cx, DECK_Y + WALL_H, z), Vector3(width, 0.18, 9.6), wall_mat)
@@ -207,9 +215,18 @@ func _build_passage_walls() -> void:
 				openings.append(float(room.z))
 		if side == 1:
 			openings.append(STAIR_Z)
+		if side == -1:
+			openings.append(-27.0)
 		openings.sort()
 		var cursor := -36.0
 		for center in openings:
+			if is_equal_approx(center, -27.0):
+				var bridge_end := center - 4.8
+				if bridge_end > cursor:
+					var bridge_length := bridge_end - cursor
+					_box(self, "Passage bulkhead", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, cursor + bridge_length * 0.5), Vector3(0.18, WALL_H, bridge_length), wall_mat, true)
+				cursor = center + 4.8
+				continue
 			var segment_end := center - 0.9
 			if segment_end > cursor:
 				var length := segment_end - cursor
@@ -432,7 +449,7 @@ func _build_helm_station() -> void:
 	torus.inner_radius = 0.43
 	torus.outer_radius = 0.5
 	wheel.mesh = torus
-	wheel.position = Vector3(3.9, DECK_Y + 1.65, -29.2)
+	wheel.position = Vector3(0.0, DECK_Y + 1.65, -29.2)
 	wheel.rotation.x = PI * 0.5
 	wheel.material_override = trim_mat
 	add_child(wheel)
@@ -445,4 +462,4 @@ func _build_helm_station() -> void:
 	hit.shape = shape
 	body.add_child(hit)
 	add_child(body)
-	_box(self, "Helm pedestal", Vector3(3.9, DECK_Y + 0.65, -29.2), Vector3(0.9, 1.25, 0.8), dark_mat)
+	_box(self, "Helm pedestal", Vector3(0.0, DECK_Y + 0.65, -29.2), Vector3(0.9, 1.25, 0.8), dark_mat)
