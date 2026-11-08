@@ -26,6 +26,7 @@ func _ready() -> void:
 	_replace_blocky_hull()
 	_exterior_detail()
 	_superstructure_finish()
+	_deckhouse_fenestration()
 	_interior_superstructure_finish()
 	_bridge_furnishings()
 	_hangar_interior_finish()
@@ -457,6 +458,36 @@ func _superstructure_finish() -> void:
 			_box(self, "Weather deck side access door", Vector3(side * 6.16, 3.1, z), Vector3(0.06, 1.9, 0.95), steel)
 			_box(self, "Weather deck door inset", Vector3(side * 6.20, 3.1, z), Vector3(0.025, 1.55, 0.68), dark, 0)
 			_cylinder(self, "Weather deck door handle", Vector3(side * 6.24, 3.1, z - 0.28), 0.045, 0.18, trim, 10)
+
+
+func _deckhouse_fenestration() -> void:
+	# Small framed side glazing and flush access panels break up the broad
+	# deckhouse planes without changing walkable walls or collision geometry.
+	var frame := _mat(Color(0.22, 0.25, 0.25), 0.42, 0.62)
+	var gasket := _mat(Color(0.045, 0.06, 0.065), 0.12, 0.88)
+	var panel := _mat(Color(0.34, 0.37, 0.36), 0.28, 0.78)
+	for side in [-1.0, 1.0]:
+		# Forward deckhouse side windows, set just proud of the exterior skin.
+		for z in [-27.0, -23.0, -19.0, -15.0]:
+			var x := side * 6.025
+			_box(self, "Forward side window gasket", Vector3(x, 4.65, z), Vector3(0.055, 0.92, 1.42), gasket, 0)
+			_box(self, "Forward side window glass", Vector3(x + side * 0.035, 4.65, z), Vector3(0.035, 0.72, 1.22), glass, 0)
+			for y in [4.17, 5.13]:
+				_box(self, "Forward side window frame", Vector3(x + side * 0.06, y, z), Vector3(0.08, 0.055, 1.48), frame, 0)
+			for dz in [-0.72, 0.72]:
+				_box(self, "Forward side window frame", Vector3(x + side * 0.06, 4.65, z + dz), Vector3(0.08, 0.98, 0.055), frame, 0)
+		# Aft deckhouse flush service panels and ventilation access covers.
+		for z in [6.0, 12.0, 18.0]:
+			var px := side * 6.525
+			_box(self, "Aft exterior service panel gasket", Vector3(px, 3.35, z), Vector3(0.055, 1.22, 1.55), gasket, 0)
+			_box(self, "Aft exterior service panel", Vector3(px + side * 0.04, 3.35, z), Vector3(0.035, 1.04, 1.36), panel, 0)
+			for y in [2.79, 3.91]:
+				_box(self, "Aft service panel seam", Vector3(px + side * 0.065, y, z), Vector3(0.025, 0.035, 1.4), frame, 0)
+			_cylinder(self, "Aft service panel latch", Vector3(px + side * 0.09, 3.35, z + 0.48), 0.045, 0.12, trim, 10)
+	# Discreet expansion joints on the forward and aft bulkhead skins.
+	for z in [-11.8, 3.65]:
+		for x in [-4.5, -2.25, 0.0, 2.25, 4.5]:
+			_box(self, "Deckhouse vertical panel joint", Vector3(x, 3.8, z), Vector3(0.035, 4.7, 0.025), frame, 0)
 
 func _interior_superstructure_finish() -> void:
 	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
