@@ -83,8 +83,9 @@ func _run() -> void:
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 82.0
-	capture_camera.position = Vector3(0.0, 4.2, -45.5)
-	capture_camera.look_at(Vector3(0.0, 2.5, -55.0), Vector3.UP)
+	capture_camera.fov = 82.0
+	capture_camera.position = Vector3(5.5, 4.2, -46.5)
+	capture_camera.look_at(Vector3(-3.5, 2.5, -54.5), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -102,13 +103,13 @@ func _run() -> void:
 		return
 	var door: Node3D = doors[0]
 	for candidate in doors:
-		if candidate.global_position.x > 0.0 and absf(candidate.global_position.z + 7.62) < absf(door.global_position.z + 7.62):
+		if candidate.global_position.x < 0.0 and absf(candidate.global_position.z - 16.38) < absf(door.global_position.z - 16.38):
 			door = candidate
-	door.rotation.y = PI * 0.5
+	door.rotation.y = -PI * 0.5
 	var door_center_z := door.global_position.z + 1.62
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(5.8, 3.2, door_center_z + 2.2)
-	capture_camera.look_at(Vector3(door.global_position.x + 1.62, 3.0, door_center_z), Vector3.UP)
+	capture_camera.position = Vector3(-5.2, 3.2, door_center_z + 2.0)
+	capture_camera.look_at(Vector3(door.global_position.x - 1.62, 3.0, door_center_z), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hinged_door.png")):
