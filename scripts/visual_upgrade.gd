@@ -394,6 +394,16 @@ func _bridge_furnishings() -> void:
 		_box(self, "Bridge document holder", Vector3(5.72, 3.4, z), Vector3(0.10, 0.58, 0.72), chair_mat)
 
 
+	# Dedicated helm lighting at the working stations.
+	for z in [-28.0, -25.0, -22.0]:
+		var bridge_lamp := OmniLight3D.new()
+		bridge_lamp.position = Vector3(4.0, 4.55, z)
+		bridge_lamp.light_color = Color(0.88, 0.84, 0.74)
+		bridge_lamp.light_energy = 1.8
+		bridge_lamp.omni_range = 9.0
+		bridge_lamp.shadow_enabled = true
+		add_child(bridge_lamp)
+
 func _hangar_interior_finish() -> void:
 	var rack_mat := _mat(Color(0.25, 0.28, 0.28), 0.32, 0.72)
 	var safety := _mat(Color(0.55, 0.42, 0.16), 0.08, 0.82)
