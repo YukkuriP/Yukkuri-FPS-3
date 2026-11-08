@@ -507,17 +507,39 @@ func _build_furniture() -> void:
 		_box(self, "Crew locker", Vector3(-6.0, DECK_Y + 1.25, z), Vector3(0.65, 2.3, 0.75), dark_mat, true)
 
 func _build_helm_station() -> void:
+	var wheel_center := Vector3(0.0, DECK_Y + 1.78, -29.2)
 	var wheel := MeshInstance3D.new()
 	var torus := TorusMesh.new()
 	torus.inner_radius = 0.43
-	torus.outer_radius = 0.5
+	torus.outer_radius = 0.50
 	wheel.mesh = torus
-	wheel.position = Vector3(0.0, DECK_Y + 1.65, -29.2)
+	wheel.position = wheel_center
 	wheel.rotation.x = PI * 0.5
 	wheel.material_override = trim_mat
 	add_child(wheel)
+	# Six spokes and a central hub make the helm visibly read as a physical wheel.
+	for spoke in range(6):
+		var angle := TAU * float(spoke) / 6.0
+		var spoke_mesh := MeshInstance3D.new()
+		var spoke_box := BoxMesh.new()
+		spoke_box.size = Vector3(0.055, 0.055, 0.84)
+		spoke_mesh.mesh = spoke_box
+		spoke_mesh.position = wheel_center + Vector3(cos(angle) * 0.20, sin(angle) * 0.20, 0.0)
+		spoke_mesh.rotation.z = angle
+		spoke_mesh.material_override = trim_mat
+		add_child(spoke_mesh)
+	var hub := MeshInstance3D.new()
+	var hub_mesh := CylinderMesh.new()
+	hub_mesh.top_radius = 0.13
+	hub_mesh.bottom_radius = 0.13
+	hub_mesh.height = 0.16
+	hub.mesh = hub_mesh
+	hub.position = wheel_center
+	hub.rotation.x = PI * 0.5
+	hub.material_override = dark_mat
+	add_child(hub)
 	var body := StaticBody3D.new()
-	body.position = wheel.position
+	body.position = wheel_center
 	body.set_meta("control", "helm")
 	var hit := CollisionShape3D.new()
 	var shape := SphereShape3D.new()
@@ -525,4 +547,13 @@ func _build_helm_station() -> void:
 	hit.shape = shape
 	body.add_child(hit)
 	add_child(body)
-	_box(self, "Helm pedestal", Vector3(0.0, DECK_Y + 0.65, -29.2), Vector3(0.9, 1.25, 0.8), dark_mat)
+	_box(self, "Helm pedestal", Vector3(0.0, DECK_Y + 0.72, -29.2), Vector3(0.78, 1.35, 0.72), dark_mat, true)
+	_box(self, "Helm pedestal front inset", Vector3(0.0, DECK_Y + 0.80, -29.58), Vector3(0.58, 0.48, 0.035), trim_mat)
+	_box(self, "Helm repeater display", Vector3(0.0, DECK_Y + 1.18, -29.60), Vector3(0.48, 0.24, 0.035), glass_mat)
+	_box(self, "Helm foot plate", Vector3(0.0, DECK_Y + 0.08, -29.2), Vector3(1.55, 0.08, 1.25), trim_mat)
+	# Two low-profile bridge workstations flank the helm without blocking the forward windows.
+	for side in [-1.0, 1.0]:
+		_box(self, "Bridge wing work console", Vector3(side * 3.9, DECK_Y + 0.82, -27.0), Vector3(1.55, 1.25, 0.95), dark_mat, true)
+		_box(self, "Bridge wing console bezel", Vector3(side * 3.9, DECK_Y + 1.48, -27.40), Vector3(1.40, 0.08, 0.65), trim_mat)
+		_box(self, "Bridge wing display", Vector3(side * 3.9, DECK_Y + 1.54, -27.40), Vector3(1.22, 0.025, 0.48), glass_mat)
+		_box(self, "Bridge wing keyboard", Vector3(side * 3.9, DECK_Y + 1.36, -26.55), Vector3(1.18, 0.06, 0.32), trim_mat)
