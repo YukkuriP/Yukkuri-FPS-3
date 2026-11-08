@@ -265,9 +265,9 @@ func _superstructure_finish() -> void:
 	_box(self, "Hangar door access handle", Vector3(2.85, 4.0, 34.50), Vector3(0.07, 0.28, 0.08), trim, 0)
 	# Outer aft-facing closure skin sits proud of the frame so it cannot be hidden
 	# by the hangar shell's rear face.
-	_box(self, "Aft hangar closure skin", Vector3(0.0, 4.0, 35.05), Vector3(8.25, 3.8, 0.16), _mat(Color(0.52, 0.55, 0.53), 0.22, 0.82))
+	_box(self, "Aft hangar closure skin", Vector3(0.0, 4.0, 36.0), Vector3(8.25, 3.8, 0.16), _mat(Color(0.58, 0.60, 0.58), 0.18, 0.78))
 	for y in [2.3, 3.15, 4.0, 4.85, 5.7]:
-		_box(self, "Aft hangar closure rib", Vector3(0.0, y, 34.95), Vector3(7.9, 0.055, 0.035), trim, 0)
+		_box(self, "Aft hangar closure rib", Vector3(0.0, y, 35.9), Vector3(7.9, 0.055, 0.035), trim, 0)
 	for x in [-3.4, -2.3, -1.15, 0.0, 1.15, 2.3, 3.4]:
 		_box(self, "Hangar door recessed rib", Vector3(x, 4.0, 34.0), Vector3(0.045, 3.85, 0.035), dark, 0)
 	for side in [-1.0, 1.0]:
