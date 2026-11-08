@@ -90,12 +90,30 @@ func _exterior() -> void:
 	_cube(ship_root,"Bow",Vector3(0,-0.7,-39),Vector3(13,2.7,7),Color.WHITE).material_override=hull
 	_cube(ship_root,"Main deck",Vector3(0,1.0,2),Vector3(17.5,0.22,76),Color.WHITE).material_override=deck
 	_cube(ship_root,"Forecastle",Vector3(0,1.2,-28),Vector3(15,0.3,22),Color.WHITE,true).material_override=deck
-	_cube(ship_root,"Forward deckhouse",Vector3(0,4,-21),Vector3(12,5.8,17),Color.WHITE).material_override=white
-	_cube(ship_root,"Bridge glazing",Vector3(0,6.5,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
+	# Superstructure is built as walkable shell walls, not opaque solid blocks.
+	# Forward deckhouse: side/rear bulkheads, roof, and a glazed forward bridge band.
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Forward deckhouse side shell",Vector3(side*5.9,4.0,-21.0),Vector3(0.2,5.8,17.0),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse aft bulkhead",Vector3(0,4.0,-12.5),Vector3(12,5.8,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse forward lower bulkhead",Vector3(0,3.2,-29.5),Vector3(12,4.2,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse forward upper lintel",Vector3(0,6.1,-29.5),Vector3(12,1.6,0.2),Color.WHITE,true).material_override=white
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Bridge window pillar",Vector3(side*5.7,5.9,-29.5),Vector3(0.6,1.2,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Bridge glazing",Vector3(0,5.9,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
+	_cube(ship_root,"Forward deckhouse roof",Vector3(0,6.95,-21),Vector3(12,0.2,17),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
-	_cube(ship_root,"Aft deckhouse",Vector3(0,3.6,13),Vector3(13,5,19),Color.WHITE).material_override=white
+	# Aft superstructure shell encloses communications and engineering spaces.
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Aft deckhouse side shell",Vector3(side*6.4,3.6,13),Vector3(0.2,5,19),Color.WHITE,true).material_override=white
+	for z in [3.5,22.5]:
+		_cube(ship_root,"Aft deckhouse transverse bulkhead",Vector3(0,3.6,z),Vector3(13,5,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Aft deckhouse roof",Vector3(0,6.2,13),Vector3(13,0.2,19),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Funnel",Vector3(0,7.4,15),Vector3(4,4,4),Color(0.12,0.15,0.17))
-	_cube(ship_root,"Hangar",Vector3(0,4.8,28),Vector3(12,6,12),Color.WHITE).material_override=white
+	# Hangar shell: clear interior volume, side walls, roof, and aft door.
+	for side in [-1.0, 1.0]:
+		_cube(ship_root,"Hangar side shell",Vector3(side*6.0,4.8,28),Vector3(0.2,6,12),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Hangar forward bulkhead",Vector3(0,4.8,22),Vector3(12,6,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Hangar roof",Vector3(0,7.9,28),Vector3(12,0.2,12),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Hangar door",Vector3(0,4,34.1),Vector3(8.5,4.2,0.15),Color(0.1,0.15,0.18))
 	_cube(ship_root,"Mast",Vector3(0,10.4,-21),Vector3(0.8,5,0.8),Color(0.3,0.34,0.35))
 	_cube(ship_root,"Mast yard",Vector3(0,12,-21),Vector3(6.5,0.2,0.2),Color(0.3,0.34,0.35))
@@ -142,7 +160,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	consoles.append({"node":root,"kind":kind,"title":title,"label":label})
 
 func _player() -> void:
-	player=CharacterBody3D.new(); player.name="Player"; player.position=Vector3(0,2.2,68); add_child(player)
+	player=CharacterBody3D.new(); player.name="Player"; player.position=Vector3(0,2.2,58); add_child(player)
 	var col:=CollisionShape3D.new(); var cap:=CapsuleShape3D.new(); cap.radius=0.34; cap.height=1.8; col.shape=cap; player.add_child(col)
 	camera=Camera3D.new(); camera.position=Vector3(0,0.65,0); camera.current=true; camera.fov=78; player.add_child(camera)
 
