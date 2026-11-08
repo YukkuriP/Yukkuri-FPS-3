@@ -184,6 +184,7 @@ func _build_compartments() -> void:
 		if String(item.name) == "BRIDGE":
 			# The bridge is a full-beam compartment, not a narrow side room.
 			_box(self, "BRIDGE full-width ceiling", Vector3(0.0, DECK_Y + WALL_H, z), Vector3(13.0, 0.18, 9.6), wall_mat)
+			_build_bridge_aft_bulkhead(z + 4.8)
 			_label("BRIDGE", Vector3(-1.0, DECK_Y + WALL_H - 0.55, z - 4.45), 24)
 			for bridge_side in [-1.0, 1.0]:
 				_box(self, "Bridge compartment placard", Vector3(bridge_side * 6.12, DECK_Y + 2.95, z - 4.2), Vector3(0.06, 0.42, 1.8), dark_mat)
@@ -198,6 +199,59 @@ func _build_compartments() -> void:
 		_box(self, "Compartment sign", Vector3(float(side) * (PASSAGE_HALF + 0.15), DECK_Y + 2.95, z - 4.2), Vector3(0.06, 0.42, 1.8), dark_mat)
 		_box(self, "Sign indicator", Vector3(float(side) * (PASSAGE_HALF + 0.11), DECK_Y + 2.95, z - 4.2), Vector3(0.035, 0.07, 0.8), light_mat)
 
+
+
+func _build_bridge_aft_bulkhead(z: float) -> void:
+	# Full-width aft bridge bulkhead with a single centered hinged access door.
+	var half_width := HULL_HALF
+	var door_half := 0.9
+	var left_width := half_width - door_half
+	_box(self, "Bridge aft bulkhead port", Vector3(-door_half - left_width * 0.5, DECK_Y + WALL_H * 0.5, z), Vector3(left_width, WALL_H, 0.18), wall_mat, true)
+	_box(self, "Bridge aft bulkhead starboard", Vector3(door_half + left_width * 0.5, DECK_Y + WALL_H * 0.5, z), Vector3(left_width, WALL_H, 0.18), wall_mat, true)
+	_box(self, "Bridge aft door header", Vector3(0.0, DECK_Y + WALL_H - 0.22, z), Vector3(1.8, 0.44, 0.24), trim_mat, true)
+	_box(self, "Bridge aft door threshold", Vector3(0.0, DECK_Y + 0.035, z), Vector3(1.8, 0.07, 0.28), trim_mat)
+	var hinge := Node3D.new()
+	hinge.name = "BridgeAftHingedDoor"
+	hinge.add_to_group("compartment_doors")
+	hinge.position = Vector3(-0.81, DECK_Y + WALL_H * 0.5, z)
+	add_child(hinge)
+	var leaf := AnimatableBody3D.new()
+	leaf.name = "DoorLeaf"
+	leaf.position = Vector3(0.81, 0.0, 0.0)
+	leaf.sync_to_physics = true
+	hinge.add_child(leaf)
+	_box(leaf, "Painted steel bridge access door", Vector3.ZERO, Vector3(1.58, 3.18, 0.10), wall_mat)
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(1.6, 3.2, 0.12)
+	collision.shape = shape
+	leaf.add_child(collision)
+	for x in [-0.72, 0.72]:
+		_box(leaf, "Bridge door stiffening rib", Vector3(x, 0.0, -0.06), Vector3(0.045, 2.8, 0.025), trim_mat)
+	_box(leaf, "Bridge door handle backing", Vector3(0.56, 0.0, 0.075), Vector3(0.20, 0.24, 0.04), dark_mat)
+	_box(leaf, "Bridge door handle", Vector3(0.56, 0.0, 0.11), Vector3(0.05, 0.18, 0.06), trim_mat)
+	for y in [-1.15, 0.0, 1.15]:
+		var pin := MeshInstance3D.new()
+		var pin_mesh := CylinderMesh.new()
+		pin_mesh.top_radius = 0.05
+		pin_mesh.bottom_radius = 0.05
+		pin_mesh.height = 0.22
+		pin.mesh = pin_mesh
+		pin.position = Vector3(-0.78, y, 0.0)
+		pin.material_override = trim_mat
+		hinge.add_child(pin)
+	var area := Area3D.new()
+	area.name = "BridgeDoorInteractionArea"
+	area.collision_layer = 0
+	area.collision_mask = 1
+	var sensor := CollisionShape3D.new()
+	var sensor_shape := BoxShape3D.new()
+	sensor_shape.size = Vector3(3.0, 3.4, 3.2)
+	sensor.shape = sensor_shape
+	area.add_child(sensor)
+	hinge.add_child(area)
+	area.body_entered.connect(_on_door_area_entered.bind(hinge, 1))
+	area.body_exited.connect(_on_door_area_exited.bind(hinge, 1))
 
 func _build_passage_walls() -> void:
 	var room_data := [
