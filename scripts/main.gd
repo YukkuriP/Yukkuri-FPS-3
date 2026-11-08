@@ -100,11 +100,11 @@ func _exterior() -> void:
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Forward deckhouse side shell",Vector3(side*5.9,4.0,-21.0),Vector3(0.2,5.8,17.0),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Forward deckhouse aft bulkhead",Vector3(0,4.0,-12.5),Vector3(12,5.8,0.2),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Forward deckhouse forward lower bulkhead",Vector3(0,3.2,-29.5),Vector3(12,4.2,0.2),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Forward deckhouse forward upper lintel",Vector3(0,6.1,-29.5),Vector3(12,1.6,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse forward lower bulkhead",Vector3(0,2.1,-29.5),Vector3(12,1.7,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse forward upper lintel",Vector3(0,6.6,-29.5),Vector3(12,0.5,0.2),Color.WHITE,true).material_override=white
 	for side in [-1.0, 1.0]:
-		_cube(ship_root,"Bridge window pillar",Vector3(side*5.7,5.9,-29.5),Vector3(0.6,1.2,0.2),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Bridge glazing",Vector3(0,5.9,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
+		_cube(ship_root,"Bridge window pillar",Vector3(side*5.7,4.8,-29.5),Vector3(0.6,3.2,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Bridge glazing",Vector3(0,4.8,-29.55),Vector3(10.8,3.2,0.12),Color(0.025,0.14,0.2))
 	_cube(ship_root,"Forward deckhouse roof",Vector3(0,6.95,-21),Vector3(12,0.2,17),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
 	# Aft superstructure shell encloses communications and engineering spaces.
