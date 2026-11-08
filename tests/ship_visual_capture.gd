@@ -56,13 +56,13 @@ func _run() -> void:
 		return
 
 	# Aim directly at the actual aft hangar door mesh.
-	var hangar_leaf := main.find_child("Hangar outer door leaf", true, false) as Node3D
+	var hangar_leaf := main.find_child("Aft hangar closure skin", true, false) as Node3D
 	if hangar_leaf == null:
-		_fail("Could not find the aft hangar door leaf")
+		_fail("Could not find the aft hangar closure skin")
 		return
 	capture_camera.fov = 62.0
 	hangar_leaf.visible = true
-	print("HANGAR_LEAF_GLOBAL:", hangar_leaf.global_position)
+	print("HANGAR_CLOSURE_GLOBAL:", hangar_leaf.global_position)
 	capture_camera.position = hangar_leaf.global_position + Vector3(0.0, 0.0, 12.0)
 	capture_camera.look_at(hangar_leaf.global_position, Vector3.UP)
 	print("HANGAR_CAPTURE_CAMERA:", capture_camera.global_position)
