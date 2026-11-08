@@ -21,6 +21,7 @@ func _ready() -> void:
 	_replace_blocky_hull()
 	_exterior_detail()
 	_superstructure_finish()
+	_interior_superstructure_finish()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -180,6 +181,40 @@ func _superstructure_finish() -> void:
 			_cylinder(self, "Deck bollard base", Vector3(side * 7.2, 1.22, z), 0.16, 0.10, dark, 12)
 			_cylinder(self, "Deck bollard", Vector3(side * 7.2, 1.42, z), 0.09, 0.38, trim, 12)
 			_box(self, "Deck drain cover", Vector3(side * 6.9, 1.13, z + 0.7), Vector3(0.22, 0.025, 0.42), dark, 0)
+
+func _interior_superstructure_finish() -> void:
+	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
+	var inset := _mat(Color(0.26, 0.29, 0.28), 0.22, 0.78)
+	var seal := _mat(Color(0.12, 0.14, 0.13), 0.18, 0.85)
+	# Interior-facing liners on the actual deckhouse shell, not floating outside it.
+	for side in [-1.0, 1.0]:
+		for z in range(-30, -13, 3):
+			_box(self, "Bridge bulkhead liner panel", Vector3(side * 5.77, 4.0, float(z)), Vector3(0.045, 3.45, 2.65), liner)
+			_box(self, "Bridge liner joint", Vector3(side * 5.73, 4.0, float(z) + 1.34), Vector3(0.025, 3.45, 0.045), seal, 0)
+		for z in range(5, 23, 3):
+			_box(self, "Aft bulkhead liner panel", Vector3(side * 6.27, 3.55, float(z)), Vector3(0.045, 3.1, 2.65), liner)
+			_box(self, "Aft liner joint", Vector3(side * 6.23, 3.55, float(z) + 1.34), Vector3(0.025, 3.1, 0.045), seal, 0)
+		_box(self, "Bridge lower kick strip", Vector3(side * 5.73, 2.35, -21.5), Vector3(0.06, 0.35, 15.0), inset)
+		_box(self, "Aft lower kick strip", Vector3(side * 6.23, 2.15, 14.0), Vector3(0.06, 0.35, 17.0), inset)
+		for z in [-28.0, -22.0, -16.0, 7.0, 13.0, 19.0]:
+			var hatch_z := z
+			var hatch_y := 4.0 if z < 0.0 else 3.55
+			var wall_x := side * (5.70 if z < 0.0 else 6.20)
+			_box(self, "Electrical service cabinet", Vector3(wall_x, hatch_y, hatch_z), Vector3(0.06, 1.1, 0.9), inset)
+			_box(self, "Electrical cabinet inset", Vector3(wall_x - side * 0.04, hatch_y, hatch_z), Vector3(0.025, 0.82, 0.65), liner, 0)
+			for row in range(4):
+				_box(self, "Cabinet ventilation slot", Vector3(wall_x - side * 0.06, hatch_y - 0.25 + float(row) * 0.16, hatch_z), Vector3(0.02, 0.025, 0.52), seal, 0)
+	# Warm ceiling fixtures, conduit and cable trays.
+	for z in [-29.0, -23.0, -17.0, 7.0, 13.0, 19.0]:
+		var y := 5.0 if z < 0.0 else 5.7
+		_box(self, "Ceiling light housing interior", Vector3(0.0, y, z), Vector3(1.65, 0.12, 0.42), inset)
+		_box(self, "Ceiling diffuser interior", Vector3(0.0, y - 0.07, z), Vector3(1.35, 0.035, 0.26), glow, 0)
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(0.0, y - 0.18, z)
+		lamp.light_color = Color(0.82, 0.78, 0.67)
+		lamp.light_energy = 0.62
+		lamp.omni_range = 6.5
+		add_child(lamp)
 
 func _interior_detail() -> void:
 	# Floor panels, ceiling cable trays and door frames make the passage feel built.
