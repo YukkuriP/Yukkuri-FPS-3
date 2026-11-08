@@ -335,6 +335,57 @@ for x in [-6.08, 6.08]:
     for y in range(-25, -16, 2):
         cube("Bridge side window", (x, y, 6.1), (.035, 1.2, .55), glass)
 
+# Aft flight deck markings: landing circle, centerline and H symbol.
+marking = material("Flight deck safety markings", (.82, .84, .79), .08, .8)
+def deck_line(name, points, radius=0.055, mat=marking, cyclic=False):
+    curve = bpy.data.curves.new(name, "CURVE")
+    curve.dimensions = "3D"
+    curve.bevel_depth = radius
+    curve.bevel_resolution = 3
+    spline = curve.splines.new("POLY")
+    spline.points.add(len(points) - 1)
+    for point, co in zip(spline.points, points):
+        point.co = (*co, 1.0)
+    spline.use_cyclic_u = cyclic
+    obj = bpy.data.objects.new(name, curve)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(mat)
+    return obj
+
+pad_y = 34.0 * LONG_SCALE
+circle_points = []
+for i in range(96):
+    angle = (i / 96.0) * 6.28318530718
+    circle_points.append((6.0 * __import__("math").cos(angle), pad_y + 6.0 * __import__("math").sin(angle), 1.035))
+deck_line("Helicopter landing circle", circle_points, 0.075, marking, True)
+deck_line("Flight deck centerline", [(0, 25.0 * LONG_SCALE, 1.04), (0, 38.0 * LONG_SCALE, 1.04)], 0.045)
+for x in (-2.4, 2.4):
+    deck_line("Landing H marking", [(x, 32.8 * LONG_SCALE, 1.045), (x, 35.2 * LONG_SCALE, 1.045)], 0.10)
+deck_line("Landing H crossbar", [(-2.4, 34.0 * LONG_SCALE, 1.045), (2.4, 34.0 * LONG_SCALE, 1.045)], 0.10)
+
+# Mooring fittings, fairleads and capstans along the forecastle.
+for side in (-1, 1):
+    for y in (-31, -27, -22, 30, 34):
+        bpy.ops.mesh.primitive_torus_add(major_radius=0.28, minor_radius=0.07,
+            major_segments=24, minor_segments=10,
+            location=(side * beam_at(float(y)) * 0.78, y * LONG_SCALE, 1.12))
+        fitting = bpy.context.object
+        fitting.name = "Deck mooring fairlead"
+        fitting.data.materials.append(metal)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.22, depth=0.34,
+            location=(side * beam_at(float(y)) * 0.70, y * LONG_SCALE, 1.18))
+        capstan = bpy.context.object
+        capstan.name = "Mooring capstan base"
+        capstan.data.materials.append(metal)
+
+# Raised nonskid service panels and tie-down points on the aft working deck.
+for y in (25, 28, 31, 37):
+    for x in (-4.5, -2.5, 2.5, 4.5):
+        cube("Flight deck tie-down socket", (x, y, 1.06), (0.16, 0.16, 0.035), metal)
+for side in (-1, 1):
+    for y in (26, 29, 32, 35):
+        cube("Flight deck edge safety marking", (side * 7.1, y, 1.04), (0.12, 1.1, 0.025), marking)
+
 bpy.ops.object.light_add(type='AREA', location=(18, -28 * LONG_SCALE, 35))
 bpy.context.object.data.energy = 4500
 bpy.context.object.data.shape = 'DISK'
