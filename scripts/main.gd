@@ -89,7 +89,7 @@ func _ocean_and_sky() -> void:
 
 func _exterior() -> void:
 	var hull:=_material(Color(0.17,0.22,0.25),0.72,0.38)
-	var white:=_material(Color(0.68,0.72,0.72),0.25,0.6)
+	var white:=_material(Color(0.56,0.57,0.54),0.18,0.78)
 	var deck:=_material(Color(0.29,0.33,0.34),0.45,0.65)
 	_cube(ship_root,"Hull",Vector3(0,-0.9,2),Vector3(18,3.5,78),Color.WHITE).material_override=hull
 	_cube(ship_root,"Bow",Vector3(0,-0.7,-39),Vector3(13,2.7,7),Color.WHITE).material_override=hull
@@ -104,7 +104,13 @@ func _exterior() -> void:
 	_cube(ship_root,"Forward deckhouse forward upper lintel",Vector3(0,6.6,-29.5),Vector3(12,0.5,0.2),Color.WHITE,true).material_override=white
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Bridge window pillar",Vector3(side*5.7,4.8,-29.5),Vector3(0.6,3.2,0.2),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Bridge glazing",Vector3(0,4.8,-29.55),Vector3(10.8,3.2,0.12),Color(0.025,0.14,0.2))
+	var bridge_glass := _cube(ship_root,"Bridge glazing",Vector3(0,4.8,-29.55),Vector3(10.8,3.2,0.12),Color.WHITE)
+	var glazing_mat := StandardMaterial3D.new()
+	glazing_mat.albedo_color = Color(0.16,0.19,0.18,0.24)
+	glazing_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glazing_mat.metallic = 0.32
+	glazing_mat.roughness = 0.18
+	bridge_glass.material_override = glazing_mat
 	_cube(ship_root,"Forward deckhouse roof",Vector3(0,6.95,-21),Vector3(12,0.2,17),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
 	# Aft superstructure shell encloses communications and engineering spaces.
