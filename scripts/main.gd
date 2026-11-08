@@ -145,8 +145,8 @@ func _interior() -> void:
 	plan.name = "CompartmentedDeckPlan"
 	plan.set_script(load("res://scripts/deck_plan.gd"))
 	ship_root.add_child(plan)
-	_add_console(Vector3(3.2, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
-	_add_console(Vector3(4.9, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
+	_add_console(Vector3(-2.7, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
+	_add_console(Vector3(2.7, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
 	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
 	_add_console(Vector3(-2.8, 1.85, -15.0), "CIC", "訓練状況")
 	_add_console(Vector3(4.1, 1.85, -3.0), "COMMS", "通信管理")
