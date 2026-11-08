@@ -380,7 +380,7 @@ func _build_room_wall_finish() -> void:
 			var lamp := OmniLight3D.new()
 			lamp.position = Vector3(side * 4.1, DECK_Y + 3.15, room_z)
 			lamp.light_color = Color(0.82, 0.79, 0.68)
-			lamp.light_energy = 0.48
+			lamp.light_energy = 0.78
 			lamp.omni_range = 5.5
 			add_child(lamp)
 
