@@ -197,7 +197,7 @@ for side in (-1, 1):
 for side in (-1, 1):
     cylinder_between(
         "Anchor shank",
-        (side * 2.35, -34.0 * LONG_SCALE, 0.82),
+        (side * 2.35, -32.5 * LONG_SCALE, 0.82),
         (side * 2.35, -35.8 * LONG_SCALE, -0.15),
         0.12, metal
     )
@@ -279,8 +279,8 @@ cube("Bridge tier", (0, -21, 7.7), (9, 10, 1.9), white)
 cube("Bridge glass", (0, -28.55, 6.5), (10.5, .1, 1.2), glass)
 cube("Aft superstructure", (0, 13, 3.7), (13, 19, 5), white)
 cube("Funnel", (0, 15, 7.1), (4, 4, 3.6), hull)
-cube("Hangar", (0, 28, 4.6), (12, 12, 5.8), white)
-cube("Hangar door", (0, 34.1, 4), (8.5, .12, 4), glass)
+cube("Hangar", (0, 21, 4.6), (12, 10, 5.8), white)
+cube("Hangar door", (0, 26.1, 4), (8.5, .12, 4), glass)
 
 cube("Mast lower", (0, -21, 10.2), (.8, .8, 5), metal)
 cube("Mast yard", (0, -21, 12), (6.5, .2, .2), metal)
@@ -352,15 +352,15 @@ def deck_line(name, points, radius=0.055, mat=marking, cyclic=False):
     obj.data.materials.append(mat)
     return obj
 
-pad_y = 34.0 * LONG_SCALE
+pad_y = 32.5 * LONG_SCALE
 circle_points = []
 for i in range(96):
     angle = (i / 96.0) * 6.28318530718
-    circle_points.append((6.0 * __import__("math").cos(angle), pad_y + 6.0 * __import__("math").sin(angle), 1.035))
+    circle_points.append((4.8 * __import__("math").cos(angle), pad_y + 4.8 * __import__("math").sin(angle), 1.035))
 deck_line("Helicopter landing circle", circle_points, 0.075, marking, True)
-deck_line("Flight deck centerline", [(0, 25.0 * LONG_SCALE, 1.04), (0, 38.0 * LONG_SCALE, 1.04)], 0.045)
+deck_line("Flight deck centerline", [(0, 27.0 * LONG_SCALE, 1.04), (0, 38.0 * LONG_SCALE, 1.04)], 0.045)
 for x in (-2.4, 2.4):
-    deck_line("Landing H marking", [(x, 32.8 * LONG_SCALE, 1.045), (x, 35.2 * LONG_SCALE, 1.045)], 0.10)
+    deck_line("Landing H marking", [(x, 31.5 * LONG_SCALE, 1.045), (x, 33.5 * LONG_SCALE, 1.045)], 0.10)
 deck_line("Landing H crossbar", [(-2.4, 34.0 * LONG_SCALE, 1.045), (2.4, 34.0 * LONG_SCALE, 1.045)], 0.10)
 
 # Mooring fittings, fairleads and capstans along the forecastle.
@@ -379,11 +379,11 @@ for side in (-1, 1):
         capstan.data.materials.append(metal)
 
 # Raised nonskid service panels and tie-down points on the aft working deck.
-for y in (25, 28, 31, 37):
+for y in (28, 30, 33, 36):
     for x in (-4.5, -2.5, 2.5, 4.5):
         cube("Flight deck tie-down socket", (x, y, 1.06), (0.16, 0.16, 0.035), metal)
 for side in (-1, 1):
-    for y in (26, 29, 32, 35):
+    for y in (28, 30, 33, 36):
         cube("Flight deck edge safety marking", (side * 7.1, y, 1.04), (0.12, 1.1, 0.025), marking)
 
 bpy.ops.object.light_add(type='AREA', location=(18, -28 * LONG_SCALE, 35))
