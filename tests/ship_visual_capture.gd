@@ -57,8 +57,8 @@ func _run() -> void:
 
 	# Direct view of the hangar aft facade and stern working deck.
 	capture_camera.fov = 62.0
-	capture_camera.position = Vector3(0.0, 4.1, 84.0)
-	capture_camera.look_at(Vector3(0.0, 4.0, 68.2), Vector3.UP)
+	capture_camera.position = Vector3(0.0, 4.0, 84.0)
+	capture_camera.look_at(Vector3(0.0, 4.0, 69.3), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hangar_aft_closeup.png")):
@@ -103,8 +103,8 @@ func _run() -> void:
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
 	capture_camera.fov = 68.0
-	capture_camera.position = Vector3(2.6, 0.35, -14.0)
-	capture_camera.look_at(Vector3(4.45, -0.15, -12.0), Vector3.UP)
+	capture_camera.position = Vector3(4.45, 2.8, -17.0)
+	capture_camera.look_at(Vector3(4.45, -0.7, -9.5), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
