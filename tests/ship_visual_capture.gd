@@ -57,8 +57,8 @@ func _run() -> void:
 
 	# Direct view of the hangar aft facade and stern working deck.
 	capture_camera.fov = 62.0
-	capture_camera.position = Vector3(0.0, 7.0, 86.0)
-	capture_camera.look_at(Vector3(0.0, 4.0, 66.0), Vector3.UP)
+	capture_camera.position = Vector3(0.0, 4.1, 84.0)
+	capture_camera.look_at(Vector3(0.0, 4.0, 68.2), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hangar_aft_closeup.png")):
