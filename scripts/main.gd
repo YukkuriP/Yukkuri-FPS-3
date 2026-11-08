@@ -159,7 +159,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE: _click_console()
 	if event is InputEventMouseMotion and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		player.rotate_y(-event.relative.x*SENS); pitch=clampf(pitch-event.relative.y*SENS,-1.42,1.42); camera.rotation.x=pitch
-	if event.is_action_pressed("fleet_release"): Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	if event.is_action_pressed("fleet_release"):
+		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 
 
 func _physics_process(delta: float) -> void:
