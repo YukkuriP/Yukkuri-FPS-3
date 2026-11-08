@@ -6,6 +6,8 @@ const DECK_Y := 1.25
 const WALL_H := 3.8
 const PASSAGE_HALF := 1.35
 const HULL_HALF := 6.45
+const STAIR_X := 4.45
+const STAIR_Z := -6.0
 
 var wall_mat: StandardMaterial3D
 var floor_mat: StandardMaterial3D
@@ -24,6 +26,7 @@ func _ready() -> void:
 	light_mat.emission_enabled = true
 	light_mat.emission = Color(0.025, 0.22, 0.25)
 	_build_deck()
+	_build_lower_deck_and_stairs()
 	_build_compartments()
 	_build_passage_walls()
 	_build_passage_details()
@@ -69,11 +72,66 @@ func _label(value: String, pos: Vector3, size: int = 28) -> void:
 	add_child(label)
 
 func _build_deck() -> void:
-	_box(self, "Continuous deck plating", Vector3(0, DECK_Y - 0.14, 2), Vector3(13.0, 0.28, 76), floor_mat, true)
+	# Split the main deck around a real stairwell opening on the starboard side.
+	_box(self, "Main deck forward plating", Vector3(0, DECK_Y - 0.14, -22.1), Vector3(13.0, 0.28, 27.8), floor_mat, true)
+	_box(self, "Main deck aft plating", Vector3(0, DECK_Y - 0.14, 18.1), Vector3(13.0, 0.28, 43.8), floor_mat, true)
+	_box(self, "Main deck stairwell port plating", Vector3(-1.475, DECK_Y - 0.14, -6.0), Vector3(10.05, 0.28, 4.4), floor_mat, true)
+	_box(self, "Main deck stairwell starboard plating", Vector3(5.925, DECK_Y - 0.14, -6.0), Vector3(1.15, 0.28, 4.4), floor_mat, true)
 	_box(self, "Passage ceiling", Vector3(0, DECK_Y + WALL_H, 2), Vector3(PASSAGE_HALF * 2.0, 0.18, 76), wall_mat)
 	for x in [-HULL_HALF, HULL_HALF]:
 		_box(self, "Outer bulkhead", Vector3(x, DECK_Y + WALL_H * 0.5, 2), Vector3(0.22, WALL_H, 76), wall_mat, true)
 	# The centreline passage is continuous; each room opens into it through a real gap.
+
+func _build_lower_deck_and_stairs() -> void:
+	var lower := Node3D.new()
+	lower.name = "LowerDeck"
+	add_child(lower)
+	_box(lower, "Lower deck plating", Vector3(0, -1.55, 2), Vector3(13.0, 0.22, 76.0), floor_mat, true)
+	# Lower service passage and its watertight-style bulkheads.
+	_box(lower, "Lower passage port bulkhead", Vector3(-PASSAGE_HALF, -0.48, 2), Vector3(0.18, 1.9, 76.0), wall_mat, true)
+	_box(lower, "Lower passage starboard forward bulkhead", Vector3(PASSAGE_HALF, -0.48, -21.45), Vector3(0.18, 1.9, 29.1), wall_mat, true)
+	_box(lower, "Lower passage starboard aft bulkhead", Vector3(PASSAGE_HALF, -0.48, 17.45), Vector3(0.18, 1.9, 45.1), wall_mat, true)
+	for x in [-HULL_HALF, HULL_HALF]:
+		_box(lower, "Lower deck outer bulkhead", Vector3(x, -0.48, 2), Vector3(0.22, 1.9, 76.0), wall_mat, true)
+	# A sloped collision ramp under individually modeled stair treads makes the
+	# staircase traversable by CharacterBody3D without snagging on every riser.
+	var stair := Node3D.new()
+	stair.name = "Stairwell"
+	stair.position = Vector3(STAIR_X, -0.095, STAIR_Z)
+	var angle := atan2(2.69, 4.4)
+	stair.rotation.x = angle
+	lower.add_child(stair)
+	_box(stair, "Stair ramp visual", Vector3.ZERO, Vector3(1.25, 0.16, 5.16), trim_mat)
+	var ramp_body := StaticBody3D.new()
+	ramp_body.name = "Stair ramp collision"
+	var ramp_shape := CollisionShape3D.new()
+	var ramp_box := BoxShape3D.new()
+	ramp_box.size = Vector3(1.25, 0.16, 5.16)
+	ramp_shape.shape = ramp_box
+	ramp_body.add_child(ramp_shape)
+	stair.add_child(ramp_body)
+	for i in range(11):
+		var step_z := -8.0 + float(i) * 0.4
+		var step_y := 1.16 - float(i) * 0.25
+		_box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
+	for side in [-1.0, 1.0]:
+		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), alloy_material())
+		rail.rotation.x = 0.0
+	# Lower-deck equipment, service lockers and low-level lighting.
+	for z in [-28.0, -18.0, -2.0, 12.0, 26.0]:
+		for side in [-1.0, 1.0]:
+			_box(lower, "Lower deck service cabinet", Vector3(side * 4.7, -0.45, z), Vector3(1.0, 1.55, 1.0), dark_mat, true)
+			_box(lower, "Lower deck cabinet status", Vector3(side * 4.7, -0.35, z - 0.53), Vector3(0.72, 0.45, 0.035), light_mat)
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(0, 0.35, z)
+		lamp.light_color = Color(0.55, 0.72, 0.82)
+		lamp.light_energy = 0.22
+		lamp.omni_range = 4.5
+		lower.add_child(lamp)
+	_label("LOWER DECK ACCESS", Vector3(3.45, DECK_Y + 2.7, -7.6), 20)
+
+func alloy_material() -> Material:
+	return trim_mat
 
 func _room_wall_x(x: float, z_center: float, door_z: float) -> void:
 	var half_len := 4.8
@@ -130,6 +188,8 @@ func _build_passage_walls() -> void:
 		for room in room_data:
 			if int(room.side) == side:
 				openings.append(float(room.z))
+		if side == 1:
+			openings.append(STAIR_Z)
 		openings.sort()
 		var cursor := -36.0
 		for center in openings:
@@ -201,9 +261,9 @@ func _build_furniture() -> void:
 		_box(self, "Briefing display", Vector3(-5.25 + float(i) * 0.78, DECK_Y + 2.45, -19.0), Vector3(0.68, 1.15, 0.035), glass_mat)
 	# Communications racks
 	for x in [3.0, 4.6, 5.9]:
-		_box(self, "Communications rack", Vector3(x, DECK_Y + 1.45, -4.2), Vector3(0.9, 2.8, 1.0), dark_mat, true)
+		_box(self, "Communications rack", Vector3(x, DECK_Y + 1.45, -0.5), Vector3(0.9, 2.8, 1.0), dark_mat, true)
 		for row in range(5):
-			_box(self, "Rack module", Vector3(x, DECK_Y + 0.55 + float(row) * 0.43, -4.73), Vector3(0.72, 0.28, 0.05), trim_mat)
+			_box(self, "Rack module", Vector3(x, DECK_Y + 0.55 + float(row) * 0.43, -1.03), Vector3(0.72, 0.28, 0.05), trim_mat)
 	# Mess tables and seating
 	for x in [-4.2, -2.4]:
 		_box(self, "Mess table", Vector3(x, DECK_Y + 0.95, 9.4), Vector3(1.35, 0.12, 2.4), trim_mat, true)
