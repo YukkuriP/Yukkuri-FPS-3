@@ -15,12 +15,11 @@ var autopilot := false
 var clock := 8.0
 var consoles: Array[Dictionary] = []
 var active: Dictionary = {}
-var monitor_open := false
 var hud: Label
 var prompt: Label
-var monitor_layer: CanvasLayer
-var monitor_title: Label
-var monitor_text: Label
+var comms_messages := 0
+var cic_training := true
+var mess_status := true
 
 func _ready() -> void:
 	_input_map()
@@ -33,11 +32,10 @@ func _ready() -> void:
 	add_child(visual_upgrade)
 	_player()
 	_hud()
-	_monitor()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input_map() -> void:
-	var actions := {"fwd":KEY_W,"back":KEY_S,"left":KEY_A,"right":KEY_D,"use":KEY_E,"release":KEY_ESCAPE,"close":KEY_Q}
+	var actions := {"fwd":KEY_W,"back":KEY_S,"left":KEY_A,"right":KEY_D,"release":KEY_ESCAPE}
 	for name in actions:
 		var action := "fleet_"+name
 		if not InputMap.has_action(action): InputMap.add_action(action)
@@ -134,6 +132,16 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var label:=Label.new(); label.position=Vector2(22,20); label.size=Vector2(600,310); label.add_theme_font_size_override("font_size",24); label.add_theme_color_override("font_color",Color(0.4,0.9,0.86)); ui.add_child(label)
 	var surface:=MeshInstance3D.new(); var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.255)
 	var mat:=StandardMaterial3D.new(); mat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; mat.albedo_texture=vp.get_texture(); mat.emission_enabled=true; mat.emission_texture=vp.get_texture(); mat.emission_energy_multiplier=0.65; surface.material_override=mat; root.add_child(surface)
+	var hit_body:=StaticBody3D.new()
+	hit_body.name="ScreenHitArea"
+	hit_body.position=Vector3(0,0.73,-0.255)
+	var hit_shape:=CollisionShape3D.new()
+	var hit_box:=BoxShape3D.new()
+	hit_box.size=Vector3(1.52,0.79,0.12)
+	hit_shape.shape=hit_box
+	hit_body.add_child(hit_shape)
+	hit_body.set_meta("console_index",consoles.size())
+	root.add_child(hit_body)
 	consoles.append({"node":root,"kind":kind,"title":title,"label":label})
 
 func _player() -> void:
@@ -147,102 +155,67 @@ func _hud() -> void:
 	hud=Label.new(); hud.position=Vector2(28,22); hud.add_theme_font_size_override("font_size",17); layer.add_child(hud)
 	prompt=Label.new(); prompt.position=Vector2(28,82); prompt.add_theme_font_size_override("font_size",14); layer.add_child(prompt)
 
-func _monitor() -> void:
-	monitor_layer=CanvasLayer.new(); monitor_layer.visible=false; add_child(monitor_layer)
-	var shade:=ColorRect.new(); shade.color=Color(0.005,0.015,0.025,0.94); shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); monitor_layer.add_child(shade)
-	var panel:=PanelContainer.new(); panel.set_anchors_preset(Control.PRESET_CENTER); panel.position=Vector2(-390,-250); panel.size=Vector2(780,500); monitor_layer.add_child(panel)
-	var box:=VBoxContainer.new(); box.add_theme_constant_override("separation",14); panel.add_child(box)
-	monitor_title=Label.new(); monitor_title.add_theme_font_size_override("font_size",26); box.add_child(monitor_title)
-	monitor_text=Label.new(); monitor_text.custom_minimum_size=Vector2(700,300); monitor_text.add_theme_font_size_override("font_size",19); box.add_child(monitor_text)
-	var row:=HBoxContainer.new(); box.add_child(row)
-	_button(row,"情報更新",_refresh)
-	_button(row,"自動操船 切替",_autopilot)
-	_button(row,"針路 −5°",_left)
-	_button(row,"針路 ＋5°",_right)
-	_button(row,"速力 ＋1 kt",_speed_up)
-	_button(row,"速力 −1 kt",_speed_down)
-	_button(row,"主機出力 ＋5%",_power_up)
-	_button(row,"主機出力 −5%",_power_down)
-	_button(row,"閉じる",_close)
-
-func _button(parent: HBoxContainer, caption: String, action: Callable) -> void:
-	var b:=Button.new(); b.text=caption; b.custom_minimum_size=Vector2(125,48); b.pressed.connect(action); parent.add_child(b)
-
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and not monitor_open: Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-	if event is InputEventMouseMotion and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and not monitor_open:
+	if event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE: _click_console()
+	if event is InputEventMouseMotion and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		player.rotate_y(-event.relative.x*SENS); pitch=clampf(pitch-event.relative.y*SENS,-1.42,1.42); camera.rotation.x=pitch
 	if event.is_action_pressed("fleet_release"): Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
-	if event.is_action_pressed("fleet_close") and monitor_open: _close()
+
 
 func _physics_process(delta: float) -> void:
 	clock=fposmod(clock+delta*0.002,24.0)
-	if not monitor_open:
-		var v:=Vector2(Input.get_action_strength("fleet_right")-Input.get_action_strength("fleet_left"),Input.get_action_strength("fleet_back")-Input.get_action_strength("fleet_fwd"))
-		var dir:=(player.transform.basis*Vector3(v.x,0,v.y)).normalized()
-		player.velocity.x=dir.x*SPEED; player.velocity.z=dir.z*SPEED
-		if not player.is_on_floor(): player.velocity.y-=20*delta
-		else: player.velocity.y=0
-		player.move_and_slide()
-		for i in range(6):
-			if Input.is_action_just_pressed("fleet_role_"+str(i+1)): role=i
-		if Input.is_action_just_pressed("fleet_use"): _interact()
+	var v:=Vector2(Input.get_action_strength("fleet_right")-Input.get_action_strength("fleet_left"),Input.get_action_strength("fleet_back")-Input.get_action_strength("fleet_fwd"))
+	var dir:=(player.transform.basis*Vector3(v.x,0,v.y)).normalized()
+	player.velocity.x=dir.x*SPEED; player.velocity.z=dir.z*SPEED
+	if not player.is_on_floor(): player.velocity.y-=20*delta
+	else: player.velocity.y=0
+	player.move_and_slide()
+	for i in range(6):
+		if Input.is_action_just_pressed("fleet_role_"+str(i+1)): role=i
 	_update_screens()
 	_update_hud()
 
-func _nearest() -> Dictionary:
-	var result: Dictionary={}; var best:=3.0
-	for c in consoles:
-		var d:float=player.global_position.distance_to(c.node.global_position)
-		if d<best: best=d; result=c
-	return result
-
-func _interact() -> void:
-	var c:=_nearest()
-	if c.is_empty(): return
-	active=c; monitor_open=true; monitor_layer.visible=true; monitor_title.text=str(c.title)+" / "+str(c.kind)
-	_refresh(); Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
-
-func _refresh() -> void:
-	if active.is_empty(): return
-	var text := ""
-	match active.kind:
-		"BRIDGE": text="航海管理\n速力 %.1f kt\n針路 %03.0f°\n自動操船 %s\n海況 訓練用データ" % [ship_speed,heading,"ON" if autopilot else "OFF"]
-		"CIC": text="艦内状況統合\n航海データ 正常\nセンサー系統 オンライン\n訓練シナリオ 接続中"
-		"ENGINE": text="機関・電力管理\n主機出力 %.0f%%\n発電系統 正常\n冷却系統 正常" % engine_output
-		"COMMS": text="通信管理\n艦内回線 接続\n外部通信 待機\n受信メッセージ 0"
-		_: text="乗組員サービス\n食堂 営業中\n艦内案内 利用可能"
-	monitor_text.text=text+"\n\n担当ロール："+ROLES[role]+"\n情報はシミュレーション内の架空データです。"
-
-func _autopilot() -> void:
-	autopilot=not autopilot; _refresh()
-func _left() -> void:
-	heading=fposmod(heading-5,360); _refresh()
-func _right() -> void:
-	heading=fposmod(heading+5,360); _refresh()
-func _speed_up() -> void:
-	ship_speed=clampf(ship_speed+1.0,0.0,30.0); _refresh()
-func _speed_down() -> void:
-	ship_speed=clampf(ship_speed-1.0,0.0,30.0); _refresh()
-func _power_up() -> void:
-	engine_output=clampf(engine_output+5.0,0.0,100.0); _refresh()
-func _power_down() -> void:
-	engine_output=clampf(engine_output-5.0,0.0,100.0); _refresh()
-
-func _close() -> void:
-	monitor_open=false; monitor_layer.visible=false; active={}; Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+func _click_console() -> void:
+	var origin:=camera.project_ray_origin(get_viewport().get_mouse_position())
+	var direction:=camera.project_ray_normal(get_viewport().get_mouse_position())
+	var query:=PhysicsRayQueryParameters3D.create(origin,origin+direction*5.0)
+	query.collide_with_areas=false
+	var hit:=get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty(): return
+	var collider: Object=hit.collider
+	if not collider is StaticBody3D or not collider.has_meta("console_index"): return
+	var index:int=int(collider.get_meta("console_index"))
+	if index<0 or index>=consoles.size(): return
+	var c:Dictionary=consoles[index]
+	var local_hit:Vector3=c.node.to_local(hit.position)
+	var side:= -1 if local_hit.x<0.0 else 1
+	match c.kind:
+		"BRIDGE":
+			if absf(local_hit.x)<0.18:
+				ship_speed=clampf(ship_speed+float(side),0.0,30.0)
+			else:
+				heading=fposmod(heading+float(side)*5.0,360.0)
+		"ENGINE":
+			engine_output=clampf(engine_output+float(side)*5.0,0.0,100.0)
+		"CIC":
+			cic_training=not cic_training
+		"COMMS":
+			comms_messages+=1
+		_:
+			mess_status=not mess_status
+	_update_screens()
 
 func _update_screens() -> void:
 	for c in consoles:
 		var l:Label=c.label
 		match c.kind:
-			"BRIDGE": l.text="NAVIGATION\nSPEED  %.1f kt\nHEADING  %03.0f°\nAUTOPILOT  %s\nSHIP STATUS  NORMAL" % [ship_speed,heading,"ON" if autopilot else "OFF"]
-			"CIC": l.text="INTEGRATED STATUS\nNAV DATA  NORMAL\nSENSOR NETWORK  ONLINE\nTRAINING MODE  ACTIVE\nLINK  CONNECTED"
-			"ENGINE": l.text="ENGINE CONTROL\nOUTPUT  %.0f %%\nPOWER  NORMAL\nCOOLING  NORMAL\nAUXILIARY  ONLINE" % engine_output
-			"COMMS": l.text="COMMUNICATIONS\nINTERNAL LINK  UP\nEXTERNAL LINK  STANDBY\nINBOX  0\nLOG  NORMAL"
-			_: l.text="CREW SERVICES\nMESS HALL  OPEN\nNOTICE  NONE\nSHIP TIME  %02d:%02d" % [int(clock),int(fposmod(clock*60,60))]
+			"BRIDGE": l.text="NAVIGATION / LIVE\nSPEED  %.1f kt\nHEADING  %03.0f°\nAUTOPILOT  %s\nSTATUS  NORMAL\nCLICK: COURSE -/+5  |  CENTER: SPEED -/+" % [ship_speed,heading,"ON" if autopilot else "OFF"]
+			"CIC": l.text="INTEGRATED STATUS / LIVE\nNAV DATA  NORMAL\nSENSOR NETWORK  ONLINE\nTRAINING MODE  %s\nLINK  CONNECTED\nCLICK DISPLAY TO TOGGLE" % ("ACTIVE" if cic_training else "PAUSED")
+			"ENGINE": l.text="ENGINE / LIVE MONITOR\nOUTPUT  %.0f %%\nPOWER  NORMAL\nCOOLING  NORMAL\nAUXILIARY  ONLINE\nCLICK LEFT/RIGHT: OUTPUT -/+5%%" % engine_output
+			"COMMS": l.text="COMMUNICATIONS / LIVE\nINTERNAL LINK  UP\nEXTERNAL LINK  STANDBY\nINBOX  %d\nLOG  NORMAL\nCLICK DISPLAY: ACKNOWLEDGE" % comms_messages
+			_: l.text="CREW SERVICES / LIVE\nMESS HALL  %s\nNOTICE  NONE\nSHIP TIME  %02d:%02d\nCLICK DISPLAY: CHANGE STATUS" % ["OPEN" if mess_status else "CLOSED",int(clock),int(fposmod(clock*60,60))]
 
 func _update_hud() -> void:
 	hud.text="YUKKURI FLEET SIMULATOR  |  "+ROLES[role]+"\n速力 %.1f kt   針路 %03.0f°   艦内時刻 %02d:%02d" % [ship_speed,heading,int(clock),int(fposmod(clock*60,60))]
 	var c:=_nearest()
-	prompt.text="E：%s を操作" % c.title if not c.is_empty() else "WASD 移動 / マウス 視点 / 1～6 役職 / Q 端末を閉じる"
+	prompt.text="WASD 移動 / マウス 視点 / Esc カーソル切替 / 画面をクリックして直接操作"
