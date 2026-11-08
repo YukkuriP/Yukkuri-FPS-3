@@ -21,6 +21,14 @@ jobs:
           use-dotnet: false
           include-templates: false
 
+      - name: Install Blender for ship mesh generation check
+        run: sudo apt-get update && sudo apt-get install -y blender
+
+      - name: Generate ship exterior and verify GLB export
+        run: |
+          blender --background --python blender/generate_ship.py
+          test -s blender/fleet_destroyer_exterior.glb || test -s fleet_destroyer_exterior.glb
+
       - name: Print engine version
         run: godot --version
 
