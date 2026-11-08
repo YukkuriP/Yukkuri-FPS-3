@@ -122,8 +122,10 @@ func _run() -> void:
 	# Place the camera on the upper flight and look down the tread run.
 	# Oblique side view keeps the stairs in frame without a vertical camera singularity.
 	# Keep the camera inside the cut-out deck opening so the deck edge cannot occlude the flight.
-	capture_camera.position = Vector3(4.8, 0.95, -7.55)
-	capture_camera.look_at(Vector3(4.45, -0.95, -4.65), Vector3.UP)
+	# The inspection camera must remain above the weather-deck plane (Y=1.25).
+	# A shallow overhead oblique view exposes the complete stair flight through the cut-out.
+	capture_camera.position = Vector3(6.1, 4.1, -8.6)
+	capture_camera.look_at(Vector3(4.45, -0.25, -5.7), Vector3.FORWARD)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
