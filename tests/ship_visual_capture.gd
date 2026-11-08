@@ -72,10 +72,19 @@ func _run() -> void:
 		_fail("Could not capture aft hangar facade")
 		return
 
+	# Inside-facing check confirms the hangar closure panel is rendered on both sides.
+	capture_camera.position = hangar_leaf.global_position + Vector3(0.0, 0.0, -12.0)
+	capture_camera.look_at(hangar_leaf.global_position, Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("hangar_inside_closeup.png")):
+		_fail("Could not capture the inside face of the hangar closure")
+		return
+
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 82.0
-	capture_camera.position = Vector3(0.0, 4.0, -48.0)
-	capture_camera.look_at(Vector3(0.0, 2.5, -54.5), Vector3.UP)
+	capture_camera.position = Vector3(0.0, 4.2, -45.5)
+	capture_camera.look_at(Vector3(0.0, 2.5, -55.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
