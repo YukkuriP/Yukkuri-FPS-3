@@ -26,9 +26,10 @@ func _run() -> void:
 	var capture_camera := Camera3D.new()
 	capture_camera.name = "VisualCaptureCamera"
 	main.add_child(capture_camera)
-	capture_camera.fov = 55.0
-	capture_camera.fov = 50.0
-	capture_camera.position = Vector3(70.0, 42.0, 82.0)
+	# Orthographic establishing shot keeps the entire 155 m hull in frame.
+	capture_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	capture_camera.size = 190.0
+	capture_camera.position = Vector3(150.0, 118.0, 170.0)
 	capture_camera.look_at(Vector3(0.0, 2.0, 2.0), Vector3.UP)
 	capture_camera.current = true
 	await process_frame
