@@ -104,27 +104,17 @@ func _exterior() -> void:
 	for z in range(-34,38,4): _cube(self,"Deck seam",Vector3(0,1.12,float(z)),Vector3(16,0.015,0.04),Color(0.12,0.15,0.16))
 
 func _interior() -> void:
-	var floor:=_material(Color(0.22,0.26,0.27),0.4,0.75)
-	var wall:=_material(Color(0.58,0.63,0.63),0.2,0.8)
-	_cube(self,"Interior floor",Vector3(0,1.25,5),Vector3(13.5,0.22,76),Color.WHITE,true).material_override=floor
-	_cube(self,"Interior ceiling",Vector3(0,5.25,5),Vector3(13.5,0.18,76),Color.WHITE).material_override=wall
-	for x in [-6.85,6.85]: _cube(self,"Side bulkhead",Vector3(x,3.2,5),Vector3(0.22,4,76),Color.WHITE,true).material_override=wall
-	for z in [-31,-18,-3,15,27,43]:
-		for x in [-4,4]: _cube(self,"Bulkhead",Vector3(x,3.2,float(z)),Vector3(5.7,4,0.25),Color.WHITE,true).material_override=wall
-	_add_console(Vector3(-3.8,1.85,-24),"BRIDGE","航海・艦内状況")
-	_add_console(Vector3(3.8,1.85,-24),"BRIDGE","艦長用状況盤")
-	_add_console(Vector3(-4.2,1.85,-10),"CIC","統合状況")
-	_add_console(Vector3(0,1.85,-10),"CIC","センサー情報")
-	_add_console(Vector3(4.2,1.85,-10),"CIC","航行情報")
-	_add_console(Vector3(-5.4,1.85,5),"COMMS","通信管理")
-	_add_console(Vector3(0,1.85,20),"ENGINE","機関・電力")
-	_add_console(Vector3(4.2,1.85,20),"ENGINE","環境制御")
-	_add_console(Vector3(5.2,1.85,5),"MESS","食堂案内")
-	for x in [-4.5,4.5]:
-		for z in [32,36,40]:
-			_cube(self,"Bunk",Vector3(x,1.85,float(z)),Vector3(2.1,0.65,1),Color(0.28,0.33,0.36))
-	for z in range(-29,44,6):
-		var light:=OmniLight3D.new(); light.position=Vector3(0,4.9,float(z)); light.light_color=Color(0.72,0.84,1); light.light_energy=0.5; light.omni_range=8; add_child(light)
+	var plan := Node3D.new()
+	plan.name = "CompartmentedDeckPlan"
+	plan.set_script(load("res://scripts/deck_plan.gd"))
+	add_child(plan)
+	_add_console(Vector3(-3.8, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
+	_add_console(Vector3(3.8, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
+	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
+	_add_console(Vector3(4.1, 1.85, -15.0), "CIC", "訓練状況")
+	_add_console(Vector3(4.1, 1.85, -3.0), "COMMS", "通信管理")
+	_add_console(Vector3(4.1, 1.85, 21.0), "ENGINE", "機関・電力")
+	_add_console(Vector3(-4.1, 1.85, 9.0), "MESS", "食堂案内")
 
 func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var root:=Node3D.new(); root.position=pos; add_child(root)
@@ -150,7 +140,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	consoles.append({"node":root,"kind":kind,"title":title,"label":label})
 
 func _player() -> void:
-	player=CharacterBody3D.new(); player.position=Vector3(0,2.2,37); add_child(player)
+	player=CharacterBody3D.new(); player.position=Vector3(0,2.2,34); add_child(player)
 	var col:=CollisionShape3D.new(); var cap:=CapsuleShape3D.new(); cap.radius=0.34; cap.height=1.8; col.shape=cap; player.add_child(col)
 	camera=Camera3D.new(); camera.position=Vector3(0,0.65,0); camera.current=true; camera.fov=78; player.add_child(camera)
 
