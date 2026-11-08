@@ -137,25 +137,25 @@ func _build_furniture() -> void:
 	for i in range(7):
 		var x := -4.7 + float(i) * 1.45
 		_box(self, "Bridge window", Vector3(x, DECK_Y + 2.8, -31.45), Vector3(1.25, 1.15, 0.07), glass_mat)
-		_box(self, "Window mullion", Vector3(x + 0.66, DECK_Y + 2.8, -31.5), Vector3(0.06, 1.28, 0.1), trim_mat)
+		_box(self, "Window mullion", Vector3(x + 0.30, DECK_Y + 2.8, -31.5), Vector3(0.06, 1.28, 0.1), trim_mat)
 	# Crew operations / briefing room: generic training display wall, no weapon-control detail.
 	_box(self, "Briefing display wall", Vector3(-4.1, DECK_Y + 2.4, -19.1), Vector3(3.7, 1.65, 0.16), dark_mat)
 	for i in range(4):
 		_box(self, "Briefing display", Vector3(-5.25 + float(i) * 0.78, DECK_Y + 2.45, -19.0), Vector3(0.68, 1.15, 0.035), glass_mat)
 	# Communications racks
 	for x in [3.0, 4.6, 5.9]:
-		_box(self, "Communications rack", Vector3(x, DECK_Y + 1.45, -4.2), Vector3(0.9, 2.8, 1.0), dark_mat)
+		_box(self, "Communications rack", Vector3(x, DECK_Y + 1.45, -4.2), Vector3(0.9, 2.8, 1.0), dark_mat, true)
 		for row in range(5):
 			_box(self, "Rack module", Vector3(x, DECK_Y + 0.55 + float(row) * 0.43, -4.73), Vector3(0.72, 0.28, 0.05), trim_mat)
 	# Mess tables and seating
 	for x in [-4.2, -2.4]:
-		_box(self, "Mess table", Vector3(x, DECK_Y + 0.95, 9.4), Vector3(1.35, 0.12, 2.4), trim_mat)
+		_box(self, "Mess table", Vector3(x, DECK_Y + 0.95, 9.4), Vector3(1.35, 0.12, 2.4), trim_mat, true)
 		for z in [8.5, 10.3]:
-			_box(self, "Mess seat", Vector3(x, DECK_Y + 0.48, z), Vector3(0.7, 0.12, 0.7), dark_mat)
-	_box(self, "Serving counter", Vector3(-4.0, DECK_Y + 1.1, 12.1), Vector3(3.5, 0.95, 0.75), wall_mat)
+			_box(self, "Mess seat", Vector3(x, DECK_Y + 0.48, z), Vector3(0.7, 0.12, 0.7), dark_mat, true)
+	_box(self, "Serving counter", Vector3(-4.0, DECK_Y + 1.1, 12.1), Vector3(3.5, 0.95, 0.75), wall_mat, true)
 	# Machinery cabinets and pipework
 	for x in [3.0, 4.55, 5.9]:
-		_box(self, "Machinery cabinet", Vector3(x, DECK_Y + 1.45, 21.0), Vector3(0.9, 2.65, 1.25), trim_mat)
+		_box(self, "Machinery cabinet", Vector3(x, DECK_Y + 1.45, 21.0), Vector3(0.9, 2.65, 1.25), trim_mat, true)
 	for x in [3.1, 5.8]:
 		var pipe := MeshInstance3D.new()
 		var cylinder := CylinderMesh.new()
@@ -168,10 +168,10 @@ func _build_furniture() -> void:
 		add_child(pipe)
 	# Berthing bunks and lockers
 	for z in [30.2, 32.5, 34.8, 37.1]:
-		_box(self, "Bunk frame", Vector3(-4.0, DECK_Y + 0.75, z), Vector3(3.4, 0.35, 0.9), trim_mat)
-		_box(self, "Bunk mattress", Vector3(-4.0, DECK_Y + 0.96, z), Vector3(3.25, 0.12, 0.82), wall_mat)
+		_box(self, "Bunk frame", Vector3(-4.0, DECK_Y + 0.75, z), Vector3(3.4, 0.35, 0.9), trim_mat, true)
+		_box(self, "Bunk mattress", Vector3(-4.0, DECK_Y + 0.96, z), Vector3(3.25, 0.12, 0.82), wall_mat, true)
 	for z in [30.5, 33.0, 35.5, 38.0]:
-		_box(self, "Crew locker", Vector3(-6.0, DECK_Y + 1.25, z), Vector3(0.65, 2.3, 0.75), dark_mat)
+		_box(self, "Crew locker", Vector3(-6.0, DECK_Y + 1.25, z), Vector3(0.65, 2.3, 0.75), dark_mat, true)
 
 func _build_helm_station() -> void:
 	var wheel := MeshInstance3D.new()
@@ -179,7 +179,7 @@ func _build_helm_station() -> void:
 	torus.inner_radius = 0.43
 	torus.outer_radius = 0.5
 	wheel.mesh = torus
-	wheel.position = Vector3(0, DECK_Y + 1.65, -27.8)
+	wheel.position = Vector3(3.9, DECK_Y + 1.65, -27.8)
 	wheel.rotation.x = PI * 0.5
 	wheel.material_override = trim_mat
 	add_child(wheel)
@@ -192,4 +192,4 @@ func _build_helm_station() -> void:
 	hit.shape = shape
 	body.add_child(hit)
 	add_child(body)
-	_box(self, "Helm pedestal", Vector3(0, DECK_Y + 0.65, -27.8), Vector3(0.9, 1.25, 0.8), dark_mat)
+	_box(self, "Helm pedestal", Vector3(3.9, DECK_Y + 0.65, -27.8), Vector3(0.9, 1.25, 0.8), dark_mat)
