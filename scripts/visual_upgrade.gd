@@ -44,6 +44,39 @@ func _sphere(parent: Node3D, label: String, pos: Vector3, scale: Vector3, mat: M
 	var mesh:=SphereMesh.new(); mesh.radius=0.5; mesh.height=1.0; mesh.radial_segments=20; mesh.rings=12
 	var obj:=MeshInstance3D.new(); obj.name=label; obj.mesh=mesh; obj.position=pos; obj.scale=scale; obj.material_override=mat; parent.add_child(obj)
 
+func _frustum_box(parent: Node3D, label: String, center: Vector3, bottom: Vector2, top: Vector2, height: float, mat: Material) -> MeshInstance3D:
+	var points := PackedVector3Array([
+		Vector3(-bottom.x * 0.5, 0.0, -bottom.y * 0.5),
+		Vector3(bottom.x * 0.5, 0.0, -bottom.y * 0.5),
+		Vector3(bottom.x * 0.5, 0.0, bottom.y * 0.5),
+		Vector3(-bottom.x * 0.5, 0.0, bottom.y * 0.5),
+		Vector3(-top.x * 0.5, height, -top.y * 0.5),
+		Vector3(top.x * 0.5, height, -top.y * 0.5),
+		Vector3(top.x * 0.5, height, top.y * 0.5),
+		Vector3(-top.x * 0.5, height, top.y * 0.5)
+	])
+	var faces := PackedInt32Array([
+		0, 2, 1, 0, 3, 2,
+		4, 5, 6, 4, 6, 7,
+		0, 1, 5, 0, 5, 4,
+		1, 2, 6, 1, 6, 5,
+		2, 3, 7, 2, 7, 6,
+		3, 0, 4, 3, 4, 7
+	])
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for index in faces:
+		tool.add_vertex(points[index])
+	tool.generate_normals()
+	var mesh := tool.commit()
+	var obj := MeshInstance3D.new()
+	obj.name = label
+	obj.mesh = mesh
+	obj.position = center
+	obj.material_override = mat
+	parent.add_child(obj)
+	return obj
+
 func _replace_blocky_hull() -> void:
 	# Hide the placeholder box and build a tapered hull shell.
 	var old_hull:=get_parent().get_node_or_null("Hull")
@@ -54,6 +87,10 @@ func _replace_blocky_hull() -> void:
 	if old_main_deck != null: old_main_deck.visible = false
 	var old_forecastle := get_parent().get_node_or_null("Forecastle")
 	if old_forecastle != null: old_forecastle.visible = false
+	var old_upper_bridge := get_parent().get_node_or_null("Upper bridge")
+	if old_upper_bridge != null: old_upper_bridge.visible = false
+	var old_funnel := get_parent().get_node_or_null("Funnel")
+	if old_funnel != null: old_funnel.visible = false
 	var sections:Array[Vector3]=[
 		Vector3(0.55,-40.5,0.0),
 		Vector3(3.2,-39.2,0.0),
@@ -196,6 +233,32 @@ func _superstructure_finish() -> void:
 			_cylinder(self, "Deck bollard base", Vector3(side * 7.2, 1.22, z), 0.16, 0.10, dark, 12)
 			_cylinder(self, "Deck bollard", Vector3(side * 7.2, 1.42, z), 0.09, 0.38, trim, 12)
 			_box(self, "Deck drain cover", Vector3(side * 6.9, 1.13, z + 0.7), Vector3(0.22, 0.025, 0.42), dark, 0)
+
+	# Tapered bridge tier and weathered, layered glazing.
+	_frustum_box(self, "Tapered upper bridge", Vector3(0.0, 6.95, -21.0), Vector2(9.0, 10.0), Vector2(7.6, 8.8), 2.15, steel)
+	for i in range(5):
+		var x := -3.0 + float(i) * 1.5
+		_box(self, "Upper bridge forward window", Vector3(x, 8.05, -25.52), Vector3(1.18, 1.05, 0.055), glass, 0)
+		_box(self, "Upper bridge window mullion", Vector3(x + 0.62, 8.05, -25.56), Vector3(0.055, 1.15, 0.08), trim, 0)
+	_box(self, "Upper bridge brow", Vector3(0.0, 8.72, -25.62), Vector3(8.4, 0.14, 0.5), dark)
+	# Twin exhaust trunks with caps, rain lips and service grilles.
+	for side in [-1.0, 1.0]:
+		_frustum_box(self, "Exhaust trunk", Vector3(side * 2.05, 6.25, 14.0), Vector2(2.35, 3.1), Vector2(1.9, 2.7), 3.7, steel)
+		_box(self, "Exhaust rain cap", Vector3(side * 2.05, 10.02, 14.0), Vector3(2.25, 0.18, 2.95), dark)
+		for row in range(5):
+			_box(self, "Exhaust louvre", Vector3(side * 2.05, 8.0 + float(row) * 0.27, 12.43), Vector3(1.35, 0.07, 0.05), trim, 0)
+	# Tall, practical communications mast details and antenna whips.
+	for side in [-1.0, 1.0]:
+		var whip := _cylinder(self, "Communications whip antenna", Vector3(side * 2.2, 14.2, -21.0), 0.025, 3.0, trim, 8)
+		whip.rotation.z = side * 0.08
+		_box(self, "Mast equipment platform", Vector3(side * 1.9, 11.0, -21.0), Vector3(1.5, 0.10, 1.5), steel)
+	# Hangar door has inset panels, perimeter seals and warning lamps.
+	_box(self, "Hangar door perimeter frame", Vector3(0.0, 4.0, 34.18), Vector3(8.9, 4.45, 0.18), trim)
+	_box(self, "Hangar door inset panel", Vector3(0.0, 4.0, 34.06), Vector3(8.5, 4.05, 0.06), steel)
+	for x in [-3.4, -2.3, -1.15, 0.0, 1.15, 2.3, 3.4]:
+		_box(self, "Hangar door recessed rib", Vector3(x, 4.0, 34.0), Vector3(0.045, 3.85, 0.035), dark, 0)
+	for side in [-1.0, 1.0]:
+		_box(self, "Hangar door safety lamp", Vector3(side * 4.65, 6.45, 34.0), Vector3(0.22, 0.16, 0.12), glow, 0)
 
 func _interior_superstructure_finish() -> void:
 	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
