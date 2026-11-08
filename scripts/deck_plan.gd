@@ -25,6 +25,7 @@ func _ready() -> void:
 	light_mat.emission = Color(0.025, 0.22, 0.25)
 	_build_deck()
 	_build_compartments()
+	_build_passage_walls()
 	_build_passage_details()
 	_build_furniture()
 	_build_helm_station()
@@ -72,8 +73,6 @@ func _build_deck() -> void:
 	_box(self, "Passage ceiling", Vector3(0, DECK_Y + WALL_H, 2), Vector3(PASSAGE_HALF * 2.0, 0.18, 76), wall_mat)
 	for x in [-HULL_HALF, HULL_HALF]:
 		_box(self, "Outer bulkhead", Vector3(x, DECK_Y + WALL_H * 0.5, 2), Vector3(0.22, WALL_H, 76), wall_mat, true)
-	_box(self, "Port passage bulkhead", Vector3(-PASSAGE_HALF, DECK_Y + WALL_H * 0.5, 2), Vector3(0.18, WALL_H, 76), wall_mat, true)
-	_box(self, "Starboard passage bulkhead", Vector3(PASSAGE_HALF, DECK_Y + WALL_H * 0.5, 2), Vector3(0.18, WALL_H, 76), wall_mat, true)
 	# The centreline passage is continuous; each room opens into it through a real gap.
 
 func _room_wall_x(x: float, z_center: float, door_z: float) -> void:
@@ -110,12 +109,40 @@ func _build_compartments() -> void:
 		var cx := float(side) * (PASSAGE_HALF + (HULL_HALF - PASSAGE_HALF) * 0.5)
 		var width := HULL_HALF - PASSAGE_HALF
 		_box(self, String(item.name) + " ceiling", Vector3(cx, DECK_Y + WALL_H, z), Vector3(width, 0.18, 9.6), wall_mat)
-		_room_wall_x(float(side) * PASSAGE_HALF, z, z)
 		_room_end_wall(z - 4.8, side)
 		_room_end_wall(z + 4.8, side)
 		_label(String(item.name), Vector3(cx - 1.8, DECK_Y + WALL_H - 0.55, z - 4.45), 24)
 		_box(self, "Compartment sign", Vector3(float(side) * (PASSAGE_HALF + 0.15), DECK_Y + 2.95, z - 4.2), Vector3(0.06, 0.42, 1.8), dark_mat)
 		_box(self, "Sign indicator", Vector3(float(side) * (PASSAGE_HALF + 0.11), DECK_Y + 2.95, z - 4.2), Vector3(0.035, 0.07, 0.8), light_mat)
+
+
+func _build_passage_walls() -> void:
+	var room_data := [
+		{"z":-27.0, "side":1},
+		{"z":-15.0, "side":-1},
+		{"z":-3.0, "side":1},
+		{"z":9.0, "side":-1},
+		{"z":21.0, "side":1},
+		{"z":33.0, "side":-1}
+	]
+	for side in [-1, 1]:
+		var openings: Array[float] = []
+		for room in room_data:
+			if int(room.side) == side:
+				openings.append(float(room.z))
+		openings.sort()
+		var cursor := -36.0
+		for center in openings:
+			var segment_end := center - 0.9
+			if segment_end > cursor:
+				var length := segment_end - cursor
+				_box(self, "Passage bulkhead", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, cursor + length * 0.5), Vector3(0.18, WALL_H, length), wall_mat, true)
+			_box(self, "Door header", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H - 0.22, center), Vector3(0.24, 0.44, 1.8), trim_mat, true)
+			_box(self, "Door threshold", Vector3(float(side) * PASSAGE_HALF, DECK_Y + 0.035, center), Vector3(0.28, 0.07, 1.8), trim_mat)
+			cursor = center + 0.9
+		if cursor < 40.0:
+			var length := 40.0 - cursor
+			_box(self, "Passage bulkhead", Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, cursor + length * 0.5), Vector3(0.18, WALL_H, length), wall_mat, true)
 
 func _build_passage_details() -> void:
 	for z in range(-34, 40, 2):
