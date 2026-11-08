@@ -84,8 +84,9 @@ func _ocean_and_sky() -> void:
 	sm.sky_top_color=Color(0.12,0.25,0.42); sm.sky_horizon_color=Color(0.65,0.72,0.78)
 	sm.ground_bottom_color=Color(0.025,0.06,0.09); sm.ground_horizon_color=Color(0.38,0.46,0.52)
 	sky.sky_material=sm; env.sky=sky; env.ambient_light_source=Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_energy = 0.85
 	we.environment=env; add_child(we)
-	var sun:=DirectionalLight3D.new(); sun.rotation_degrees=Vector3(-32,-28,0); sun.light_energy=1.2; add_child(sun)
+	var sun:=DirectionalLight3D.new(); sun.rotation_degrees=Vector3(-32,-28,0); sun.light_energy=1.5; sun.light_color=Color(1.0,0.97,0.9); sun.shadow_enabled=true; add_child(sun)
 
 func _exterior() -> void:
 	var hull:=_material(Color(0.17,0.22,0.25),0.72,0.38)
