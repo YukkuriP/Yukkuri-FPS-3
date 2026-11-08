@@ -125,8 +125,9 @@ func _run() -> void:
 	# Keep the camera inside the cut-out deck opening so the deck edge cannot occlude the flight.
 	# The inspection camera must remain above the weather-deck plane (Y=1.25).
 	# A shallow overhead oblique view exposes the complete stair flight through the cut-out.
-	capture_camera.position = Vector3(4.45, 3.2, -20.0)
-	capture_camera.look_at(Vector3(4.45, -0.15, -11.0), Vector3.FORWARD)
+	# View upward from the lower landing to inspect the full flight and railings.
+	capture_camera.position = Vector3(4.45, -0.35, -6.0)
+	capture_camera.look_at(Vector3(4.45, 0.25, -14.5), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
@@ -137,9 +138,9 @@ func _run() -> void:
 	# Diagnostic isolated view: hide unrelated ship meshes to verify the stair model itself.
 	for mesh in main.find_children("*", "MeshInstance3D", true, false):
 		var mesh_name := mesh.name.to_lower()
-		mesh.visible = mesh_name.contains("stair") or mesh_name.contains("landing")
-	capture_camera.position = Vector3(4.45, 3.2, -20.0)
-	capture_camera.look_at(Vector3(4.45, -0.15, -11.0), Vector3.FORWARD)
+		mesh.visible = mesh_name.begins_with("stair tread") or mesh_name.begins_with("stair riser") or mesh_name.begins_with("stair ramp") or mesh_name.begins_with("stair side") or mesh_name.begins_with("stair handrail") or mesh_name.begins_with("stair stanchion") or mesh_name.begins_with("stair anti-slip") or mesh_name.begins_with("upper stair landing") or mesh_name.begins_with("lower stair landing")
+	capture_camera.position = Vector3(4.45, -0.35, -6.0)
+	capture_camera.look_at(Vector3(4.45, 0.25, -14.5), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("stairwell_isolated.png")):
