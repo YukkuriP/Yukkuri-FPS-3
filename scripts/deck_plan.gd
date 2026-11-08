@@ -16,23 +16,26 @@ var dark_mat: StandardMaterial3D
 var glass_mat: StandardMaterial3D
 var light_mat: StandardMaterial3D
 var ui_font: SystemFont
+var active_door: Node3D
+var active_door_side := 1
 
 func _ready() -> void:
 	ui_font = SystemFont.new()
 	ui_font.font_names = PackedStringArray(["Yu Gothic UI", "Meiryo UI", "Meiryo", "Noto Sans CJK JP"])
-	wall_mat = _mat(Color(0.48, 0.53, 0.54), 0.18, 0.82)
-	floor_mat = _mat(Color(0.16, 0.20, 0.21), 0.32, 0.88)
-	trim_mat = _mat(Color(0.34, 0.40, 0.42), 0.65, 0.38)
+	wall_mat = _mat(Color(0.57, 0.56, 0.51), 0.08, 0.9)
+	floor_mat = _mat(Color(0.19, 0.21, 0.21), 0.12, 0.94)
+	trim_mat = _mat(Color(0.31, 0.33, 0.32), 0.48, 0.62)
 	dark_mat = _mat(Color(0.035, 0.055, 0.065), 0.35, 0.48)
 	glass_mat = _mat(Color(0.018, 0.10, 0.13), 0.6, 0.2)
-	light_mat = _mat(Color(0.18, 0.72, 0.76), 0.15, 0.3)
+	light_mat = _mat(Color(0.72, 0.68, 0.53), 0.05, 0.65)
 	light_mat.emission_enabled = true
-	light_mat.emission = Color(0.025, 0.22, 0.25)
+	light_mat.emission = Color(0.035, 0.025, 0.008)
 	_build_deck()
 	_build_lower_deck_and_stairs()
 	_build_compartments()
 	_build_passage_walls()
 	_build_passage_details()
+	_build_wall_finish()
 	_build_furniture()
 	_build_helm_station()
 
@@ -209,33 +212,81 @@ func _build_passage_walls() -> void:
 
 
 func _add_auto_door(side: int, z: float) -> void:
-	var door := Node3D.new()
-	door.name = "AutomaticCompartmentDoor"
-	door.add_to_group("compartment_doors")
-	door.position = Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, z)
-	add_child(door)
-	_box(door, "Watertight-style sliding door panel", Vector3.ZERO, Vector3(0.12, 3.25, 1.62), trim_mat, true)
+	# Heavy painted-steel hinged door, swinging into the adjoining compartment.
+	var hinge := Node3D.new()
+	hinge.name = "AutomaticCompartmentDoor"
+	hinge.add_to_group("compartment_doors")
+	hinge.position = Vector3(float(side) * PASSAGE_HALF, DECK_Y + WALL_H * 0.5, z - 0.81)
+	add_child(hinge)
+	var leaf := AnimatableBody3D.new()
+	leaf.name = "DoorLeaf"
+	leaf.position = Vector3(0, 0, 0.81)
+	leaf.sync_to_physics = true
+	hinge.add_child(leaf)
+	_box(leaf, "Painted steel door leaf", Vector3.ZERO, Vector3(0.10, 3.18, 1.58), wall_mat)
+	var collision := CollisionShape3D.new()
+	var collision_box := BoxShape3D.new()
+	collision_box.size = Vector3(0.11, 3.18, 1.58)
+	collision.shape = collision_box
+	leaf.add_child(collision)
+	for y in [-1.12, 1.12]:
+		_box(leaf, "Door stiffening bead", Vector3(-float(side) * 0.058, y, 0), Vector3(0.018, 0.055, 1.34), trim_mat)
+	_box(leaf, "Door inspection plate", Vector3(-float(side) * 0.061, 0, 0), Vector3(0.018, 0.72, 0.48), dark_mat)
+	for y in [-1.18, 0.0, 1.18]:
+		var knuckle := MeshInstance3D.new()
+		var cylinder := CylinderMesh.new()
+		cylinder.top_radius = 0.055
+		cylinder.bottom_radius = 0.055
+		cylinder.height = 0.24
+		knuckle.mesh = cylinder
+		knuckle.position = Vector3(0, y, -0.73)
+		knuckle.material_override = trim_mat
+	hinge.add_child(knuckle)
+	var handle_x := -float(side) * 0.075
+	_box(leaf, "Door handle backing", Vector3(handle_x, 0, 0.48), Vector3(0.025, 0.22, 0.22), dark_mat)
+	var handle := MeshInstance3D.new()
+	var handle_mesh := CylinderMesh.new()
+	handle_mesh.top_radius = 0.025
+	handle_mesh.bottom_radius = 0.025
+	handle_mesh.height = 0.24
+	handle.mesh = handle_mesh
+	handle.position = Vector3(handle_x - float(side) * 0.035, 0, 0.48)
+	handle.rotation.x = PI * 0.5
+	handle.material_override = trim_mat
+	leaf.add_child(handle)
+	for z_offset in [-0.91, 0.91]:
+		_box(hinge, "Door frame jamb", Vector3(0, 0, z_offset), Vector3(0.16, 3.55, 0.14), trim_mat)
+	_box(hinge, "Door frame header", Vector3(0, 1.78, 0), Vector3(0.18, 0.12, 1.95), trim_mat)
+	_box(hinge, "Door sill", Vector3(0, -1.76, 0), Vector3(0.22, 0.08, 1.95), trim_mat)
 	var area := Area3D.new()
-	area.name = "DoorApproachSensor"
-	area.position = door.position
+	area.name = "DoorInteractionArea"
 	area.collision_layer = 0
 	area.collision_mask = 1
-	var sensor_shape := CollisionShape3D.new()
-	var sensor_box := BoxShape3D.new()
-	sensor_box.size = Vector3(2.8, 3.4, 2.8)
-	sensor_shape.shape = sensor_box
-	area.add_child(sensor_shape)
-	add_child(area)
-	area.body_entered.connect(_on_door_area_entered.bind(door, side))
-	area.body_exited.connect(_on_door_area_exited.bind(door, side))
+	var sensor := CollisionShape3D.new()
+	var sensor_shape := BoxShape3D.new()
+	sensor_shape.size = Vector3(3.0, 3.4, 3.2)
+	sensor.shape = sensor_shape
+	area.add_child(sensor)
+	hinge.add_child(area)
+	area.body_entered.connect(_on_door_area_entered.bind(hinge, side))
+	area.body_exited.connect(_on_door_area_exited.bind(hinge, side))
 
-func _on_door_area_entered(_body: Node3D, door: Node3D, side: int) -> void:
-	var tween := door.create_tween()
-	tween.tween_property(door, "position:x", float(side) * (PASSAGE_HALF + 2.0), 0.28)
+func _on_door_area_entered(body: Node3D, door: Node3D, side: int) -> void:
+	if body.name == "Player":
+		active_door = door
+		active_door_side = side
 
-func _on_door_area_exited(_body: Node3D, door: Node3D, side: int) -> void:
-	var tween := door.create_tween()
-	tween.tween_property(door, "position:x", float(side) * PASSAGE_HALF, 0.28)
+func _on_door_area_exited(body: Node3D, door: Node3D, _side: int) -> void:
+	if body.name == "Player" and active_door == door:
+		active_door = null
+
+func _process(_delta: float) -> void:
+	if active_door != null and Input.is_action_just_pressed("fleet_interact"):
+		var target_angle := 0.0 if absf(active_door.rotation.y) > 0.1 else float(active_door_side) * PI * 0.5
+		var tween := active_door.create_tween()
+		tween.set_trans(Tween.TRANS_SINE)
+		tween.set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(active_door, "rotation:y", target_angle, 0.65)
 
 func _build_passage_details() -> void:
 	for z in range(-34, 40, 2):
@@ -250,6 +301,41 @@ func _build_passage_details() -> void:
 		add_child(light)
 	for side in [-1.0, 1.0]:
 		_box(self, "Emergency guidance strip", Vector3(side * 1.22, DECK_Y + 0.08, 2), Vector3(0.035, 0.04, 72), light_mat)
+
+func _build_wall_finish() -> void:
+	var panel := _mat(Color(0.63, 0.62, 0.57), 0.04, 0.93)
+	var seam := _mat(Color(0.25, 0.27, 0.26), 0.18, 0.8)
+	var kick := _mat(Color(0.28, 0.30, 0.29), 0.42, 0.72)
+	var pipe_mat := _mat(Color(0.38, 0.40, 0.37), 0.62, 0.48)
+	for side in [-1.0, 1.0]:
+		var wall_x := side * 1.245
+		for z in range(-34, 39, 3):
+			_box(self, "Bulkhead removable wall panel", Vector3(wall_x, 3.05, float(z)), Vector3(0.025, 2.85, 2.82), panel)
+			_box(self, "Bulkhead panel joint", Vector3(wall_x - side * 0.018, 3.05, float(z) + 1.43), Vector3(0.018, 2.9, 0.025), seam)
+		for y in [1.72, 4.35]:
+			_box(self, "Bulkhead panel seam", Vector3(wall_x - side * 0.02, y, 2), Vector3(0.02, 0.025, 72), seam)
+		_box(self, "Bulkhead kick plate", Vector3(wall_x - side * 0.03, 1.78, 2), Vector3(0.055, 0.62, 72), kick)
+		_box(self, "Overhead cable trunk", Vector3(side * 1.12, 4.82, 2), Vector3(0.22, 0.18, 72), pipe_mat)
+		for z in range(-32, 39, 8):
+			_box(self, "Bulkhead stiffener", Vector3(wall_x - side * 0.035, 3.05, float(z)), Vector3(0.07, 3.1, 0.12), seam)
+		for z in [-25.0, -13.0, 1.0, 17.0, 31.0]:
+			_box(self, "Electrical access cover", Vector3(wall_x - side * 0.045, 3.25, z), Vector3(0.035, 0.62, 0.82), kick)
+			_box(self, "Access cover latch", Vector3(wall_x - side * 0.07, 3.25, z + 0.31), Vector3(0.025, 0.12, 0.08), trim_mat)
+		for z in [-19.0, 9.0, 27.0]:
+			_box(self, "Ventilation grille casing", Vector3(wall_x - side * 0.045, 4.25, z), Vector3(0.04, 0.34, 1.1), seam)
+			for row in range(5):
+				_box(self, "Vent grille slat", Vector3(wall_x - side * 0.075, 4.12 + float(row) * 0.065, z), Vector3(0.025, 0.025, 0.96), trim_mat)
+	for x in [-0.95, -0.48, 0.48, 0.95]:
+		var pipe := MeshInstance3D.new()
+		var cylinder := CylinderMesh.new()
+		cylinder.top_radius = 0.045
+		cylinder.bottom_radius = 0.045
+		cylinder.height = 72.0
+		pipe.mesh = cylinder
+		pipe.position = Vector3(x, 4.92, 2)
+		pipe.rotation.x = PI * 0.5
+		pipe.material_override = pipe_mat
+		add_child(pipe)
 
 func _build_furniture() -> void:
 	# Furnishings are kept clear of the doorway and passage collision volumes.
