@@ -55,10 +55,14 @@ func _run() -> void:
 		_fail("Could not capture aft superstructure close-up")
 		return
 
-	# Direct view of the hangar aft facade and stern working deck.
+	# Aim directly at the actual aft hangar door mesh.
+	var hangar_leaf := main.find_child("Hangar outer door leaf", true, false) as Node3D
+	if hangar_leaf == null:
+		_fail("Could not find the aft hangar door leaf")
+		return
 	capture_camera.fov = 62.0
-	capture_camera.position = Vector3(0.0, 4.0, 84.0)
-	capture_camera.look_at(Vector3(0.0, 4.0, 69.3), Vector3.UP)
+	capture_camera.position = hangar_leaf.global_position + Vector3(0.0, 0.0, 12.0)
+	capture_camera.look_at(hangar_leaf.global_position, Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hangar_aft_closeup.png")):
@@ -66,8 +70,6 @@ func _run() -> void:
 		return
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
-	capture_camera.fov = 72.0
-	capture_camera.fov = 78.0
 	capture_camera.fov = 82.0
 	capture_camera.position = Vector3(5.2, 3.8, -49.0)
 	capture_camera.look_at(Vector3(3.9, 2.4, -54.5), Vector3.UP)
@@ -101,10 +103,15 @@ func _run() -> void:
 		_fail("Could not capture hinged door")
 		return
 
-	# Overhead oblique view of the stairwell opening and the lower-deck stair.
+	# Inspect the stair geometry from a camera placed beside an actual tread.
+	var stair_treads := main.find_children("Stair tread", "MeshInstance3D", true, false)
+	if stair_treads.size() < 6:
+		_fail("Could not find the stair treads for visual inspection")
+		return
+	var stair_tread := stair_treads[5] as Node3D
 	capture_camera.fov = 68.0
-	capture_camera.position = Vector3(4.45, 2.8, -17.0)
-	capture_camera.look_at(Vector3(4.45, -0.7, -9.5), Vector3.UP)
+	capture_camera.position = stair_tread.global_position + Vector3(-2.0, 1.3, 2.5)
+	capture_camera.look_at(stair_tread.global_position, Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
