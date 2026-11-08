@@ -4,6 +4,7 @@ const SPEED := 4.2
 const SENS := 0.002
 const ROLES := ["艦長","操舵員","CIC士官","機関員","通信員","乗組員"]
 const KEYS: Array[Key] = [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6]
+var ship_root: Node3D
 var player: CharacterBody3D
 var camera: Camera3D
 var pitch := 0.0
@@ -24,12 +25,17 @@ var mess_status := true
 func _ready() -> void:
 	_input_map()
 	_ocean_and_sky()
+	ship_root = Node3D.new()
+	ship_root.name = "ShipGeometry"
+	# Public Flight IIA overall length is 155.29 m; beam remains 18 m.
+	ship_root.scale = Vector3(1.0, 1.0, 2.0)
+	add_child(ship_root)
 	_exterior()
 	_interior()
 	var visual_upgrade:=Node3D.new()
 	visual_upgrade.set_script(load("res://scripts/visual_upgrade.gd"))
 	visual_upgrade.name="VisualUpgrade"
-	add_child(visual_upgrade)
+	ship_root.add_child(visual_upgrade)
 	_player()
 	_hud()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -80,30 +86,30 @@ func _exterior() -> void:
 	var hull:=_material(Color(0.17,0.22,0.25),0.72,0.38)
 	var white:=_material(Color(0.68,0.72,0.72),0.25,0.6)
 	var deck:=_material(Color(0.29,0.33,0.34),0.45,0.65)
-	_cube(self,"Hull",Vector3(0,-0.9,2),Vector3(18,3.5,78),Color.WHITE).material_override=hull
-	_cube(self,"Bow",Vector3(0,-0.7,-39),Vector3(13,2.7,7),Color.WHITE).material_override=hull
-	_cube(self,"Main deck",Vector3(0,1.0,2),Vector3(17.5,0.22,76),Color.WHITE).material_override=deck
-	_cube(self,"Forecastle",Vector3(0,1.2,-28),Vector3(15,0.3,22),Color.WHITE,true).material_override=deck
-	_cube(self,"Forward deckhouse",Vector3(0,4,-21),Vector3(12,5.8,17),Color.WHITE).material_override=white
-	_cube(self,"Bridge glazing",Vector3(0,6.5,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
-	_cube(self,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
-	_cube(self,"Aft deckhouse",Vector3(0,3.6,13),Vector3(13,5,19),Color.WHITE).material_override=white
-	_cube(self,"Funnel",Vector3(0,7.4,15),Vector3(4,4,4),Color(0.12,0.15,0.17))
-	_cube(self,"Hangar",Vector3(0,4.8,28),Vector3(12,6,12),Color.WHITE).material_override=white
-	_cube(self,"Hangar door",Vector3(0,4,34.1),Vector3(8.5,4.2,0.15),Color(0.1,0.15,0.18))
-	_cube(self,"Mast",Vector3(0,10.4,-21),Vector3(0.8,5,0.8),Color(0.3,0.34,0.35))
-	_cube(self,"Mast yard",Vector3(0,12,-21),Vector3(6.5,0.2,0.2),Color(0.3,0.34,0.35))
-	_cube(self,"Mast top",Vector3(0,13.4,-21),Vector3(0.4,2.5,0.4),Color(0.3,0.34,0.35))
+	_cube(ship_root,"Hull",Vector3(0,-0.9,2),Vector3(18,3.5,78),Color.WHITE).material_override=hull
+	_cube(ship_root,"Bow",Vector3(0,-0.7,-39),Vector3(13,2.7,7),Color.WHITE).material_override=hull
+	_cube(ship_root,"Main deck",Vector3(0,1.0,2),Vector3(17.5,0.22,76),Color.WHITE).material_override=deck
+	_cube(ship_root,"Forecastle",Vector3(0,1.2,-28),Vector3(15,0.3,22),Color.WHITE,true).material_override=deck
+	_cube(ship_root,"Forward deckhouse",Vector3(0,4,-21),Vector3(12,5.8,17),Color.WHITE).material_override=white
+	_cube(ship_root,"Bridge glazing",Vector3(0,6.5,-29.55),Vector3(10.8,1.2,0.12),Color(0.025,0.14,0.2))
+	_cube(ship_root,"Upper bridge",Vector3(0,7.8,-21),Vector3(9,2,10),Color.WHITE).material_override=white
+	_cube(ship_root,"Aft deckhouse",Vector3(0,3.6,13),Vector3(13,5,19),Color.WHITE).material_override=white
+	_cube(ship_root,"Funnel",Vector3(0,7.4,15),Vector3(4,4,4),Color(0.12,0.15,0.17))
+	_cube(ship_root,"Hangar",Vector3(0,4.8,28),Vector3(12,6,12),Color.WHITE).material_override=white
+	_cube(ship_root,"Hangar door",Vector3(0,4,34.1),Vector3(8.5,4.2,0.15),Color(0.1,0.15,0.18))
+	_cube(ship_root,"Mast",Vector3(0,10.4,-21),Vector3(0.8,5,0.8),Color(0.3,0.34,0.35))
+	_cube(ship_root,"Mast yard",Vector3(0,12,-21),Vector3(6.5,0.2,0.2),Color(0.3,0.34,0.35))
+	_cube(ship_root,"Mast top",Vector3(0,13.4,-21),Vector3(0.4,2.5,0.4),Color(0.3,0.34,0.35))
 	for x in [-8.35,8.35]:
-		for z in range(-34,39,3): _cube(self,"Rail post",Vector3(x,2,float(z)),Vector3(0.12,1.8,0.12),Color(0.65,0.69,0.68))
-		_cube(self,"Rail",Vector3(x,2.9,2),Vector3(0.12,0.12,72),Color(0.7,0.73,0.72))
-	for z in range(-34,38,4): _cube(self,"Deck seam",Vector3(0,1.12,float(z)),Vector3(16,0.015,0.04),Color(0.12,0.15,0.16))
+		for z in range(-34,39,3): _cube(ship_root,"Rail post",Vector3(x,2,float(z)),Vector3(0.12,1.8,0.12),Color(0.65,0.69,0.68))
+		_cube(ship_root,"Rail",Vector3(x,2.9,2),Vector3(0.12,0.12,72),Color(0.7,0.73,0.72))
+	for z in range(-34,38,4): _cube(ship_root,"Deck seam",Vector3(0,1.12,float(z)),Vector3(16,0.015,0.04),Color(0.12,0.15,0.16))
 
 func _interior() -> void:
 	var plan := Node3D.new()
 	plan.name = "CompartmentedDeckPlan"
 	plan.set_script(load("res://scripts/deck_plan.gd"))
-	add_child(plan)
+	ship_root.add_child(plan)
 	_add_console(Vector3(3.2, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
 	_add_console(Vector3(4.9, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
 	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
@@ -113,7 +119,7 @@ func _interior() -> void:
 	_add_console(Vector3(-4.1, 1.85, 9.0), "MESS", "食堂案内")
 
 func _add_console(pos: Vector3, kind: String, title: String) -> void:
-	var root:=Node3D.new(); root.position=pos; add_child(root)
+	var root:=Node3D.new(); root.position=pos; ship_root.add_child(root)
 	_cube(root,"Console cabinet",Vector3(0,0,0),Vector3(1.8,1.15,0.85),Color(0.08,0.12,0.15),true)
 	_cube(root,"Bezel",Vector3(0,0.72,-0.18),Vector3(1.65,0.88,0.12),Color(0.02,0.04,0.05))
 	var vp:=SubViewport.new(); vp.size=Vector2i(640,360); vp.render_target_update_mode=SubViewport.UPDATE_ALWAYS; root.add_child(vp)
@@ -136,7 +142,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	consoles.append({"node":root,"kind":kind,"title":title,"label":label})
 
 func _player() -> void:
-	player=CharacterBody3D.new(); player.position=Vector3(0,2.2,34); add_child(player)
+	player=CharacterBody3D.new(); player.name="Player"; player.position=Vector3(0,2.2,68); add_child(player)
 	var col:=CollisionShape3D.new(); var cap:=CapsuleShape3D.new(); cap.radius=0.34; cap.height=1.8; col.shape=cap; player.add_child(col)
 	camera=Camera3D.new(); camera.position=Vector3(0,0.65,0); camera.current=true; camera.fov=78; player.add_child(camera)
 
