@@ -275,16 +275,22 @@ func _superstructure_finish() -> void:
 	closure_quad.size = Vector2(8.15, 3.72)
 	closure_face.mesh = closure_quad
 	closure_face.position = Vector3(0.0, 4.0, 36.24)
-	var closure_face_mat := _mat(Color(0.68, 0.70, 0.67), 0.05, 0.94)
+	var closure_face_mat := _mat(Color(0.72, 0.74, 0.71), 0.02, 0.92)
 	closure_face_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	closure_face_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	closure_face_mat.emission_enabled = true
+	closure_face_mat.emission = Color(0.22, 0.23, 0.21)
 	closure_face.material_override = closure_face_mat
 	add_child(closure_face)
 	for side in [-1.0, 1.0]:
 		_box(self, "Hangar closure vertical edge frame", Vector3(side * 4.0, 4.0, 36.12), Vector3(0.12, 3.7, 0.08), trim)
 	_box(self, "Hangar closure top frame", Vector3(0.0, 5.92, 36.12), Vector3(8.2, 0.12, 0.08), trim)
 	_box(self, "Hangar closure bottom frame", Vector3(0.0, 2.08, 36.12), Vector3(8.2, 0.12, 0.08), trim)
+	_box(self, "Hangar closure outer top frame", Vector3(0.0, 5.92, 36.36), Vector3(8.2, 0.12, 0.08), trim)
+	_box(self, "Hangar closure outer bottom frame", Vector3(0.0, 2.08, 36.36), Vector3(8.2, 0.12, 0.08), trim)
 	for y in [2.3, 3.15, 4.0, 4.85, 5.7]:
 		_box(self, "Aft hangar closure rib", Vector3(0.0, y, 36.11), Vector3(7.9, 0.075, 0.055), trim, 0)
+		_box(self, "Aft hangar outer rib", Vector3(0.0, y, 36.36), Vector3(7.9, 0.07, 0.06), trim, 0)
 	for x in [-3.4, -2.3, -1.15, 0.0, 1.15, 2.3, 3.4]:
 		_box(self, "Hangar door recessed rib", Vector3(x, 4.0, 34.0), Vector3(0.045, 3.85, 0.035), dark, 0)
 	for side in [-1.0, 1.0]:
