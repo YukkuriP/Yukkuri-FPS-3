@@ -269,6 +269,16 @@ func _superstructure_finish() -> void:
 	hangar_closure_mat.emission_enabled = true
 	hangar_closure_mat.emission = Color(0.28, 0.29, 0.26)
 	_box(self, "Aft hangar closure skin", Vector3(0.0, 4.0, 36.0), Vector3(8.25, 3.8, 0.16), hangar_closure_mat)
+	var closure_face := MeshInstance3D.new()
+	closure_face.name = "Hangar closure face panel"
+	var closure_quad := QuadMesh.new()
+	closure_quad.size = Vector2(8.15, 3.72)
+	closure_face.mesh = closure_quad
+	closure_face.position = Vector3(0.0, 4.0, 36.24)
+	var closure_face_mat := _mat(Color(0.68, 0.70, 0.67), 0.05, 0.94)
+	closure_face_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	closure_face.material_override = closure_face_mat
+	add_child(closure_face)
 	for side in [-1.0, 1.0]:
 		_box(self, "Hangar closure vertical edge frame", Vector3(side * 4.0, 4.0, 36.12), Vector3(0.12, 3.7, 0.08), trim)
 	_box(self, "Hangar closure top frame", Vector3(0.0, 5.92, 36.12), Vector3(8.2, 0.12, 0.08), trim)
