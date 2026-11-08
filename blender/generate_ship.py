@@ -1,6 +1,7 @@
 # Blender 4.x procedural ship exterior generator. Run from Scripting workspace.
 import bpy
 import bmesh
+import os
 from mathutils import Vector
 
 bpy.ops.object.select_all(action='SELECT')
@@ -395,6 +396,9 @@ cam = bpy.context.object
 cam.rotation_euler = (Vector((0, 0, 2)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
 bpy.context.scene.camera = cam
 
-bpy.ops.wm.save_as_mainfile(filepath="//fleet_destroyer_exterior.blend")
-bpy.ops.export_scene.gltf(filepath="//fleet_destroyer_exterior.glb", export_format='GLB')
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+BLEND_OUTPUT = os.path.join(OUTPUT_DIR, "fleet_destroyer_exterior.blend")
+GLB_OUTPUT = os.path.join(OUTPUT_DIR, "fleet_destroyer_exterior.glb")
+bpy.ops.wm.save_as_mainfile(filepath=BLEND_OUTPUT)
+bpy.ops.export_scene.gltf(filepath=GLB_OUTPUT, export_format='GLB')
 print(f"Export complete: {PUBLISHED_LENGTH_M:.2f} m overall length")
