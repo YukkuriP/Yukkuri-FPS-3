@@ -107,11 +107,14 @@ func _build_lower_deck_and_stairs() -> void:
 	stair.name = "Stairwell"
 	stair.position = Vector3(STAIR_X, -0.095, STAIR_Z)
 	var angle := atan2(2.69, 4.4)
-	stair.rotation.x = angle
+	# Keep the stair assembly unrotated: each tread is level in world space.
+	# Only the sloped ramp and longitudinal members receive the incline.
 	lower.add_child(stair)
-	_box(stair, "Stair ramp visual", Vector3.ZERO, Vector3(1.25, 0.16, 5.16), trim_mat)
+	var ramp_visual := _box(stair, "Stair ramp visual", Vector3.ZERO, Vector3(1.25, 0.16, 5.16), trim_mat)
+	ramp_visual.rotation.x = angle
 	var ramp_body := StaticBody3D.new()
 	ramp_body.name = "Stair ramp collision"
+	ramp_body.rotation.x = angle
 	var ramp_shape := CollisionShape3D.new()
 	var ramp_box := BoxShape3D.new()
 	ramp_box.size = Vector3(1.25, 0.16, 5.16)
@@ -141,18 +144,29 @@ func _build_lower_deck_and_stairs() -> void:
 		var step_y := 1.16 - float(i) * 0.25
 		_box(self, "Stair riser", Vector3(STAIR_X, step_y - 0.09, step_z - 0.18), Vector3(1.25, 0.18, 0.06), dark_mat)
 	for side in [-1.0, 1.0]:
-		_box(stair, "Stair side stringer", Vector3(side * 0.69, 0.0, 0.0), Vector3(0.12, 0.22, 5.0), trim_mat)
-		# Sloped handrail with visible uprights at regular intervals.
-		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.075, 0.075, 5.0), trim_mat)
+		var stringer := _box(stair, "Stair side stringer", Vector3(side * 0.69, 0.0, 0.0), Vector3(0.12, 0.22, 5.0), trim_mat)
+		stringer.rotation.x = angle
+		# The rail follows the stair pitch while each stanchion remains vertical.
+		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.88, 0.0), Vector3(0.075, 0.075, 5.0), trim_mat)
+		rail.rotation.x = angle
 		for post_index in range(6):
-			var post_z := -2.25 + float(post_index) * 0.9
-			var post := _box(stair, "Stair handrail stanchion", Vector3(side * 0.82, 0.36, post_z), Vector3(0.065, 0.72, 0.065), trim_mat)
-			post.rotation.x = 0.0
-			var foot := _box(stair, "Stair stanchion foot", Vector3(side * 0.82, 0.04, post_z), Vector3(0.16, 0.06, 0.16), dark_mat)
-		# Bright nosing strips separate every tread visually.
-		for tread_index in range(11):
-			var local_z := -2.0 + float(tread_index) * 0.4
-			_box(stair, "Stair tread nosing", Vector3(0, 0.0, local_z), Vector3(1.18, 0.035, 0.045), light_mat)
+			var step_index := mini(post_index * 2, 10)
+			var post_z := -8.0 + float(step_index) * 0.4
+			var step_y := 1.16 - float(step_index) * 0.25
+			var local_z := post_z - STAIR_Z
+			var local_y := step_y + 0.48 - stair.position.y
+			_box(stair, "Stair handrail stanchion", Vector3(side * 0.82, local_y, local_z), Vector3(0.065, 0.92, 0.065), trim_mat)
+			_box(stair, "Stair stanchion foot", Vector3(side * 0.82, local_y - 0.46, local_z), Vector3(0.16, 0.06, 0.16), dark_mat)
+	# High-contrast nosing and anti-slip strips are level with each tread.
+	for tread_index in range(11):
+		var step_z := -8.0 + float(tread_index) * 0.4
+		var step_y := 1.16 - float(tread_index) * 0.25
+		var local_z := step_z - STAIR_Z
+		var local_y := step_y + 0.04 - stair.position.y
+		_box(stair, "Stair tread nosing", Vector3(0.0, local_y, local_z - 0.15), Vector3(1.18, 0.035, 0.045), light_mat)
+		for strip_index in range(3):
+			var strip_x := -0.34 + float(strip_index) * 0.34
+			_box(stair, "Stair anti-slip strip", Vector3(strip_x, local_y - 0.025, local_z + 0.035), Vector3(0.22, 0.018, 0.20), dark_mat)
 	# Lower-deck equipment, service lockers and low-level lighting.
 	for z in [-28.0, -18.0, -2.0, 12.0, 26.0]:
 		for side in [-1.0, 1.0]:
