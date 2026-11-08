@@ -90,8 +90,10 @@ func _bridge() -> void:
 	# Forward bridge glazing, instrument brow and a tactile helm station.
 	for i in range(9):
 		var x := -4.8 + float(i) * 1.2
-		_box(self, "Bridge inner glazing", Vector3(x, 6.45, -29.38), Vector3(1.05, 0.88, 0.07), glass_mat)
-		_box(self, "Bridge window frame", Vector3(x + 0.55, 6.45, -29.43), Vector3(0.055, 1.02, 0.09), alloy_mat)
+		# Match the outer bridge window band; the former high strip sat above the glazing.
+		_box(self, "Bridge inner glazing", Vector3(x, 4.8, -29.38), Vector3(0.92, 2.72, 0.07), glass_mat)
+		_box(self, "Bridge window frame", Vector3(x + 0.55, 4.8, -29.43), Vector3(0.055, 2.88, 0.09), alloy_mat)
+		_box(self, "Bridge window lower sill", Vector3(x, 3.39, -29.42), Vector3(0.98, 0.08, 0.12), alloy_mat)
 	_box(self, "Bridge instrument brow", Vector3(0, 5.75, -28.55), Vector3(10.8, 0.22, 1.0), panel_mat)
 	for x in [-4.2, -2.8, 2.8, 4.2]:
 		_box(self, "Bridge switch panel", Vector3(x, 5.9, -28.05), Vector3(1.0, 0.08, 0.48), dark_mat)
