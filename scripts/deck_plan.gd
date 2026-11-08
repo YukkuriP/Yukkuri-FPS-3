@@ -115,7 +115,7 @@ func _build_lower_deck_and_stairs() -> void:
 		var step_y := 1.16 - float(i) * 0.25
 		_box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
 	for side in [-1.0, 1.0]:
-		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat))
+		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat)
 		rail.rotation.x = 0.0
 	# Lower-deck equipment, service lockers and low-level lighting.
 	for z in [-28.0, -18.0, -2.0, 12.0, 26.0]:
