@@ -34,8 +34,8 @@ func _run() -> void:
 	if player == null or player.name != "Player":
 		_fail("Player character was not created")
 		return
-	if not is_equal_approx(player.position.z, 68.0):
-		_fail("Player spawn is not aligned with the scaled deck plan")
+	if not is_equal_approx(player.position.z, 58.0):
+		_fail("Player spawn is not aligned with the aft passage")
 		return
 
 	var door_count := _count_named(deck, "AutomaticCompartmentDoor")
