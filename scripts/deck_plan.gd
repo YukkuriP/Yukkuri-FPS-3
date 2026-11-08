@@ -310,6 +310,12 @@ func _build_wall_finish() -> void:
 	for side in [-1.0, 1.0]:
 		var wall_x: float = side * 1.245
 		for z in range(-34, 39, 3):
+			var near_door := false
+			for door_z in [-27.0, -15.0, -3.0, 9.0, 21.0, 33.0, STAIR_Z]:
+				if absf(float(z) - door_z) < 2.5:
+					near_door = true
+			if near_door:
+				continue
 			_box(self, "Bulkhead removable wall panel", Vector3(wall_x, 3.05, float(z)), Vector3(0.025, 2.85, 2.82), panel)
 			_box(self, "Bulkhead panel joint", Vector3(wall_x - side * 0.018, 3.05, float(z) + 1.43), Vector3(0.018, 2.9, 0.025), seam)
 		for y in [1.72, 4.35]:
