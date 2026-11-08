@@ -165,7 +165,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var hit_body:=StaticBody3D.new()
 	hit_body.name="ScreenHitArea"
 	hit_body.position=Vector3(0,0.73,-0.255)
-	hit_body.rotation.x=PI/2
+	hit_body.rotation.x=0.0
 	var hit_shape:=CollisionShape3D.new()
 	var hit_box:=BoxShape3D.new()
 	hit_box.size=Vector3(1.52,0.79,0.12)
