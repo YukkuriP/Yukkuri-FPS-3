@@ -128,10 +128,10 @@ func _build_lower_deck_and_stairs() -> void:
 	for light_pos in [Vector3(3.35, 1.1, -7.2), Vector3(5.55, -0.1, -5.0)]:
 		var stair_light := OmniLight3D.new()
 		stair_light.position = light_pos
-		stair_light.light_color = Color(0.88, 0.82, 0.68)
-		stair_light.light_energy = 1.45
-		stair_light.omni_range = 7.0
-		stair_light.shadow_enabled = true
+		stair_light.light_color = Color(0.92, 0.86, 0.73)
+		stair_light.light_energy = 1.8
+		stair_light.omni_range = 7.5
+		stair_light.shadow_enabled = false
 		add_child(stair_light)
 	# Landing plates and sloped stringers make the stair read as a real shipboard stair, not a corridor.
 	_box(lower, "Upper stair landing", Vector3(STAIR_X, 1.18, -8.75), Vector3(1.55, 0.12, 1.15), trim_mat, true)
