@@ -101,7 +101,7 @@ func _exterior() -> void:
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Forward deckhouse side shell",Vector3(side*5.9,4.0,-21.0),Vector3(0.2,5.8,17.0),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Forward deckhouse aft bulkhead",Vector3(0,4.0,-12.5),Vector3(12,5.8,0.2),Color.WHITE,true).material_override=white
-	_cube(ship_root,"Forward deckhouse forward lower bulkhead",Vector3(0,2.1,-29.5),Vector3(12,1.7,0.2),Color.WHITE,true).material_override=white
+	_cube(ship_root,"Forward deckhouse forward lower coaming",Vector3(0,1.48,-29.5),Vector3(12,0.42,0.2),Color.WHITE,true).material_override=white
 	_cube(ship_root,"Forward deckhouse forward upper lintel",Vector3(0,6.6,-29.5),Vector3(12,0.5,0.2),Color.WHITE,true).material_override=white
 	for side in [-1.0, 1.0]:
 		_cube(ship_root,"Bridge window pillar",Vector3(side*5.7,4.8,-29.5),Vector3(0.6,3.2,0.2),Color.WHITE,true).material_override=white
@@ -145,8 +145,8 @@ func _interior() -> void:
 	plan.name = "CompartmentedDeckPlan"
 	plan.set_script(load("res://scripts/deck_plan.gd"))
 	ship_root.add_child(plan)
-	_add_console(Vector3(-2.7, 1.85, -27.0), "BRIDGE", "航海・艦内状況")
-	_add_console(Vector3(2.7, 1.85, -27.0), "BRIDGE", "艦長用状況盤")
+	_add_console(Vector3(-4.0, 1.85, -24.8), "BRIDGE", "航海・艦内状況")
+	_add_console(Vector3(4.0, 1.85, -24.8), "BRIDGE", "艦長用状況盤")
 	_add_console(Vector3(-4.1, 1.85, -15.0), "CIC", "乗員訓練・艦内状況")
 	_add_console(Vector3(-2.8, 1.85, -15.0), "CIC", "訓練状況")
 	_add_console(Vector3(4.1, 1.85, -3.0), "COMMS", "通信管理")
