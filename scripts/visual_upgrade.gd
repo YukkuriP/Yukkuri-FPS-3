@@ -245,7 +245,7 @@ func _bridge_furnishings() -> void:
 	for x in [2.0, 3.8, 5.6]:
 		_box(self, "Bridge overhead cable ladder", Vector3(x, 4.95, -22.0), Vector3(0.12, 0.10, 14.0), trim)
 	for z in [-25.0, -21.0, -17.0]:
-		_box(self, "Bridge document holder", Vector3(5.72, 3.4, z), Vector3(0.10, 0.58, 0.72), inset)
+		_box(self, "Bridge document holder", Vector3(5.72, 3.4, z), Vector3(0.10, 0.58, 0.72), chair_mat)
 
 func _interior_detail() -> void:
 	# Floor panels, ceiling cable trays and door frames make the passage feel built.
