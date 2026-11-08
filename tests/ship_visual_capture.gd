@@ -92,28 +92,19 @@ func _run() -> void:
 		_fail("Could not capture bridge compartment")
 		return
 
-	# Inspect a door leaf swung open into the adjoining room.
-	var deck: Node3D = main.get_node_or_null("ShipGeometry/CompartmentedDeckPlan")
-	if deck == null:
-		_fail("Compartmented deck is missing")
+	# Inspect the bridge aft watertight-style access door head-on.
+	var door: Node3D = deck.find_child("BridgeAftHingedDoor", true, false)
+	if door == null:
+		_fail("Could not find the bridge aft hinged door")
 		return
-	var doors := deck.get_tree().get_nodes_in_group("compartment_doors")
-	if doors.size() != 7:
-		_fail("Expected seven hinged doors for visual capture")
-		return
-	var door: Node3D = doors[0]
-	for candidate in doors:
-		if candidate.global_position.x < 0.0 and absf(candidate.global_position.z - 16.38) < absf(door.global_position.z - 16.38):
-			door = candidate
-	door.rotation.y = -PI * 0.5
-	var door_center_z := door.global_position.z + 1.62
-	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(2.5, 4.0, door_center_z - 7.0)
-	capture_camera.look_at(Vector3(door.global_position.x - 1.62, 3.0, door.global_position.z), Vector3.UP)
+	door.rotation.y = 0.0
+	capture_camera.fov = 58.0
+	capture_camera.position = door.global_position + Vector3(0.0, 0.2, 6.0)
+	capture_camera.look_at(door.global_position + Vector3(0.0, 0.0, 0.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hinged_door.png")):
-		_fail("Could not capture hinged door")
+		_fail("Could not capture bridge aft hinged door")
 		return
 
 	# Inspect the stair geometry from a camera placed beside an actual tread.
