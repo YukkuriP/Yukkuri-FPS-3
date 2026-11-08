@@ -294,6 +294,24 @@ func _superstructure_finish() -> void:
 		for side in [-1.0, 1.0]:
 			_box(self, "External ladder rail", Vector3(6.63, 3.35, z + side * 0.36), Vector3(0.10, 3.0, 0.07), steel)
 
+	# Faceted, inward-raked deckhouse sides break up the flat box silhouette.
+	for side in [-1.0, 1.0]:
+		var forward_facet := _box(self, "Forward deckhouse raked side panel", Vector3(side * 6.08, 4.05, -21.0), Vector3(0.16, 5.65, 16.6), steel)
+		forward_facet.rotation.z = side * 0.075
+		var aft_facet := _box(self, "Aft deckhouse raked side panel", Vector3(side * 6.60, 3.65, 13.0), Vector3(0.16, 4.9, 18.2), steel)
+		aft_facet.rotation.z = side * 0.055
+		for z in [-27.0, -22.0, -17.0]:
+			_box(self, "Forward deckhouse panel reveal", Vector3(side * 6.18, 4.0, z), Vector3(0.035, 4.8, 0.07), dark, 0)
+		for z in [7.0, 13.0, 19.0]:
+			_box(self, "Aft deckhouse panel reveal", Vector3(side * 6.69, 3.6, z), Vector3(0.035, 4.0, 0.07), dark, 0)
+	# Aft upper service gallery with guardrails and deck-level floodlight housings.
+	for side in [-1.0, 1.0]:
+		for z in [25.0, 29.0, 33.0]:
+			_box(self, "Aft gallery support", Vector3(side * 5.7, 5.0, z), Vector3(0.14, 2.4, 0.14), trim)
+		_box(self, "Aft gallery handrail", Vector3(side * 5.7, 6.25, 29.0), Vector3(0.08, 0.08, 8.0), trim)
+		for z in [24.0, 31.0]:
+			_box(self, "Aft floodlight housing", Vector3(side * 5.45, 6.1, z), Vector3(0.35, 0.25, 0.55), dark)
+
 func _interior_superstructure_finish() -> void:
 	var liner := _mat(Color(0.47, 0.48, 0.45), 0.08, 0.92)
 	var inset := _mat(Color(0.26, 0.29, 0.28), 0.22, 0.78)
