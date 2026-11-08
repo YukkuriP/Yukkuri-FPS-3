@@ -84,8 +84,9 @@ func _run() -> void:
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(0.0, 3.8, -54.0)
-	capture_camera.look_at(Vector3(0.0, 3.2, -62.0), Vector3.UP)
+	# View from the aft side of the helm so the live monitor faces are visible.
+	capture_camera.position = Vector3(0.0, 3.8, -22.5)
+	capture_camera.look_at(Vector3(0.0, 3.2, -29.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
