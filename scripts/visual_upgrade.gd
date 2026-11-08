@@ -30,6 +30,7 @@ func _ready() -> void:
 	_bridge_furnishings()
 	_hangar_interior_finish()
 	_interior_detail()
+	_weather_deck_finish()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -559,3 +560,36 @@ func _interior_detail() -> void:
 		var lamp:=OmniLight3D.new(); lamp.position=Vector3(0,4.8,float(z)); lamp.light_color=Color(0.72,0.84,1); lamp.light_energy=0.32; lamp.omni_range=7.0; add_child(lamp)
 	for side in [-1.0,1.0]:
 		_box(self,"Emergency floor strip",Vector3(side*6.55,1.43,5),Vector3(0.04,0.035,72),glow,0)
+
+
+func _weather_deck_finish() -> void:
+	# Additional non-functional deck dressing: painted walkways, access panels,
+	# drainage details and practical low-profile lighting.
+	var walkway := _mat(Color(0.38, 0.39, 0.34), 0.05, 0.94)
+	var marking := _mat(Color(0.62, 0.56, 0.36), 0.02, 0.9)
+	var panel := _mat(Color(0.23, 0.26, 0.25), 0.24, 0.86)
+	var recess := _mat(Color(0.075, 0.085, 0.082), 0.12, 0.9)
+	# Narrow non-slip service walkways follow the deck shoulders.
+	for side in [-1.0, 1.0]:
+		_box(self, "Non-slip service walkway", Vector3(side * 6.15, 1.145, 1.0), Vector3(1.05, 0.025, 64.0), walkway, 0)
+		_box(self, "Walkway inner safety line", Vector3(side * 5.52, 1.16, 1.0), Vector3(0.045, 0.018, 63.0), marking, 0)
+		_box(self, "Walkway outer safety line", Vector3(side * 6.78, 1.16, 1.0), Vector3(0.045, 0.018, 63.0), marking, 0)
+		# Repeated shallow access plates and drain slots break up broad blank deck areas.
+		for z in [-29.0, -21.0, -13.0, -5.0, 3.0, 11.0, 19.0, 27.0]:
+			_box(self, "Deck service access plate", Vector3(side * 4.95, 1.17, z), Vector3(0.72, 0.035, 1.05), panel, 0)
+			_box(self, "Deck access plate inset", Vector3(side * 4.95, 1.192, z), Vector3(0.52, 0.012, 0.78), recess, 0)
+			for slot in range(5):
+				_box(self, "Deck access plate grip", Vector3(side * 4.95, 1.205, z - 0.28 + float(slot) * 0.14), Vector3(0.36, 0.012, 0.025), trim, 0)
+		for z in [-25.0, -9.0, 7.0, 23.0]:
+			_box(self, "Deck drainage channel", Vector3(side * 7.35, 1.14, z), Vector3(0.16, 0.025, 3.2), recess, 0)
+			for slot in range(9):
+				_box(self, "Drain channel grate", Vector3(side * 7.35, 1.158, z - 1.35 + float(slot) * 0.34), Vector3(0.12, 0.018, 0.045), trim, 0)
+	# Subtle painted keep-clear borders around the aft working deck.
+	for side in [-1.0, 1.0]:
+		_box(self, "Aft deck boundary stripe", Vector3(side * 5.5, 1.16, 29.0), Vector3(0.07, 0.018, 8.0), marking, 0)
+	_box(self, "Aft deck boundary transverse stripe", Vector3(0.0, 1.16, 25.0), Vector3(11.0, 0.018, 0.07), marking, 0)
+	# Small low-profile deck lights with shielded housings.
+	for z in [-30.0, -18.0, -6.0, 6.0, 18.0, 30.0]:
+		for side in [-1.0, 1.0]:
+			_box(self, "Shielded deck courtesy light", Vector3(side * 7.55, 1.38, z), Vector3(0.22, 0.20, 0.34), dark, 0)
+			_box(self, "Courtesy light lens", Vector3(side * 7.55, 1.39, z - 0.08), Vector3(0.12, 0.08, 0.10), glow, 0)
