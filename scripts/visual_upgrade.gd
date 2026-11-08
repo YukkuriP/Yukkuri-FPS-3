@@ -177,23 +177,6 @@ func _replace_blocky_hull() -> void:
 	hull.position.z = 2.0
 	add_child(hull)
 
-	# Add a slim, hull-following waterline belt without changing collision.
-	var belt_mat := _mat(Color(0.055, 0.075, 0.085), 0.38, 0.55)
-	for side in [-1.0, 1.0]:
-		var belt_points := PackedVector3Array()
-		for station in stations:
-			belt_points.append(Vector3(side * station.y * 0.985, -0.12, station.x))
-		var curve := Curve3D.new()
-		for point in belt_points:
-			curve.add_point(point)
-		var belt := MeshInstance3D.new()
-		belt.name = "HullWaterlineBelt"
-		var ribbon := RibbonTrailMesh.new()
-		ribbon.size = 0.10
-		belt.mesh = ribbon
-		# Curve-following details are added by the existing exterior pass.
-		belt.visible = false
-		add_child(belt)
 
 func _exterior_detail() -> void:
 	# Hull waterline belt and bow/stern detailing
