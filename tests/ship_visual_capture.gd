@@ -118,8 +118,9 @@ func _run() -> void:
 		return
 	var stair_tread := stair_treads[5] as Node3D
 	capture_camera.fov = 68.0
-	capture_camera.position = stair_tread.global_position + Vector3(-4.5, 4.0, 7.0)
-	capture_camera.look_at(stair_tread.global_position + Vector3(0.0, 0.6, -1.0), Vector3.UP)
+	# View from the port side into the actual deck opening, not down the passage.
+	capture_camera.position = Vector3(2.45, 3.45, -10.2)
+	capture_camera.look_at(Vector3(4.45, -0.05, -5.8), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
