@@ -19,7 +19,6 @@ func _ready() -> void:
 	rubber=_mat(Color(0.055,0.065,0.07),0.05,0.9)
 	_replace_blocky_hull()
 	_exterior_detail()
-	_interior_detail()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
