@@ -36,6 +36,7 @@ func _ready() -> void:
 	_build_passage_walls()
 	_build_passage_details()
 	_build_wall_finish()
+	_build_room_wall_finish()
 	_build_furniture()
 	_build_helm_station()
 
@@ -343,6 +344,34 @@ func _build_wall_finish() -> void:
 		pipe.rotation.x = PI * 0.5
 		pipe.material_override = pipe_mat
 		add_child(pipe)
+
+
+func _build_room_wall_finish() -> void:
+	var panel_mat := _mat(Color(0.48, 0.49, 0.46), 0.10, 0.88)
+	var inset_mat := _mat(Color(0.31, 0.33, 0.32), 0.24, 0.76)
+	var seal_mat := _mat(Color(0.16, 0.18, 0.17), 0.30, 0.72)
+	for side in [-1.0, 1.0]:
+		var wall_x := side * 6.31
+		for room_z in [-27.0, -15.0, -3.0, 9.0, 21.0, 33.0]:
+			for panel_index in range(4):
+				var pz := room_z - 3.6 + float(panel_index) * 2.4
+				_box(self, "Removable bulkhead liner", Vector3(wall_x, DECK_Y + 1.75, pz), Vector3(0.045, 3.25, 2.15), panel_mat)
+				_box(self, "Bulkhead liner seam", Vector3(wall_x - side * 0.028, DECK_Y + 1.75, pz + 1.12), Vector3(0.018, 3.25, 0.035), seal_mat)
+			_box(self, "Bulkhead kick plate", Vector3(wall_x - side * 0.035, DECK_Y + 0.25, room_z), Vector3(0.035, 0.48, 9.0), inset_mat)
+			_box(self, "Service access hatch", Vector3(wall_x - side * 0.06, DECK_Y + 2.0, room_z - 2.9), Vector3(0.04, 1.05, 0.95), inset_mat)
+			for y_offset in [-0.32, 0.32]:
+				_box(self, "Access hatch hinge", Vector3(wall_x - side * 0.09, DECK_Y + 2.0 + y_offset, room_z - 3.38), Vector3(0.035, 0.06, 0.12), trim_mat)
+			_box(self, "Ventilation grille frame", Vector3(wall_x - side * 0.07, DECK_Y + 2.85, room_z + 2.6), Vector3(0.045, 0.48, 1.55), inset_mat)
+			for slat in range(6):
+				_box(self, "Ventilation grille slat", Vector3(wall_x - side * 0.105, DECK_Y + 2.64 + float(slat) * 0.08, room_z + 2.6), Vector3(0.025, 0.025, 1.38), trim_mat)
+			# Overhead cable trunk and a practical bulkhead light.
+			_box(self, "Room cable trunk", Vector3(side * 5.95, DECK_Y + 3.55, room_z), Vector3(0.22, 0.18, 8.8), inset_mat)
+			var lamp := OmniLight3D.new()
+			lamp.position = Vector3(side * 4.1, DECK_Y + 3.15, room_z)
+			lamp.light_color = Color(0.82, 0.79, 0.68)
+			lamp.light_energy = 0.48
+			lamp.omni_range = 5.5
+			add_child(lamp)
 
 func _build_furniture() -> void:
 	# Furnishings are kept clear of the doorway and passage collision volumes.
