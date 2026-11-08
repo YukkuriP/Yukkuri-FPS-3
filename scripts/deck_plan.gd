@@ -295,9 +295,10 @@ func _build_passage_details() -> void:
 		_box(self, "Ceiling light housing", Vector3(0, DECK_Y + WALL_H - 0.12, float(z)), Vector3(1.1, 0.12, 0.32), dark_mat)
 		var light := OmniLight3D.new()
 		light.position = Vector3(0, DECK_Y + WALL_H - 0.35, float(z))
-		light.light_color = Color(0.68, 0.82, 0.9)
-		light.light_energy = 0.35
-		light.omni_range = 5.5
+		light.light_color = Color(0.86, 0.82, 0.72)
+		light.light_energy = 0.85
+		light.omni_range = 8.0
+		light.shadow_enabled = true
 		add_child(light)
 	for side in [-1.0, 1.0]:
 		_box(self, "Emergency guidance strip", Vector3(side * 1.22, DECK_Y + 0.08, 2), Vector3(0.035, 0.04, 72), light_mat)
