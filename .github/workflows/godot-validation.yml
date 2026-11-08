@@ -32,3 +32,17 @@ jobs:
 
       - name: Ship geometry and collision smoke test
         run: godot --headless --path . --script res://tests/ship_smoke_test.gd
+
+      - name: Install software display for visual test
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri
+
+      - name: Capture ship exterior and interior views
+        run: xvfb-run -a godot --path . --rendering-method gl_compatibility --script res://tests/ship_visual_capture.gd
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ship-visual-evidence
+          path: artifacts/*.png
+          if-no-files-found: ignore
