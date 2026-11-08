@@ -38,8 +38,8 @@ func _run() -> void:
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(2.1, 3.7, -55.0)
-	capture_camera.look_at(Vector3(5.9, 3.0, -57.0), Vector3.UP)
+	capture_camera.position = Vector3(2.6, 4.2, -55.5)
+	capture_camera.look_at(Vector3(5.6, 3.2, -53.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -57,12 +57,12 @@ func _run() -> void:
 		return
 	var door: Node3D = doors[0]
 	for candidate in doors:
-		if candidate.global_position.x > 0.0 and absf(candidate.global_position.z + 55.62) < absf(door.global_position.z + 55.62):
+		if candidate.global_position.x > 0.0 and absf(candidate.global_position.z + 7.62) < absf(door.global_position.z + 7.62):
 			door = candidate
 	door.rotation.y = PI * 0.5
 	var door_center_z := door.global_position.z + 1.62
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(0.0, 3.0, door_center_z)
+	capture_camera.position = Vector3(4.8, 3.1, door_center_z)
 	capture_camera.look_at(Vector3(door.global_position.x, 3.0, door_center_z), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -71,7 +71,7 @@ func _run() -> void:
 		return
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
-	capture_camera.position = Vector3(8.5, 8.0, -7.0)
+	capture_camera.position = Vector3(4.45, 9.0, -12.0)
 	capture_camera.look_at(Vector3(4.45, 0.5, -12.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
