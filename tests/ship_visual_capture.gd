@@ -40,8 +40,8 @@ func _run() -> void:
 	capture_camera.fov = 72.0
 	capture_camera.fov = 78.0
 	capture_camera.fov = 78.0
-	capture_camera.position = Vector3(5.4, 3.8, -57.0)
-	capture_camera.look_at(Vector3(3.8, 2.4, -53.5), Vector3.UP)
+	capture_camera.position = Vector3(4.2, 4.2, -48.0)
+	capture_camera.look_at(Vector3(4.2, 3.0, -60.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -74,8 +74,8 @@ func _run() -> void:
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
 	capture_camera.fov = 68.0
-	capture_camera.position = Vector3(5.0, 0.0, -14.0)
-	capture_camera.look_at(Vector3(4.45, -0.1, -12.0), Vector3.UP)
+	capture_camera.position = Vector3(4.45, 6.0, -18.0)
+	capture_camera.look_at(Vector3(4.45, -0.5, -12.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
