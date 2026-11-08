@@ -181,7 +181,7 @@ func _player() -> void:
 	camera=Camera3D.new(); camera.position=Vector3(0,0.65,0); camera.current=true; camera.fov=78; player.add_child(camera)
 
 func _hud() -> void:
-	var layer:=CanvasLayer.new(); add_child(layer)
+	var layer:=CanvasLayer.new(); layer.add_to_group("runtime_hud"); add_child(layer)
 	var panel:=ColorRect.new(); panel.color=Color(0.01,0.025,0.04,0.8); panel.position=Vector2(14,14); panel.size=Vector2(490,112); layer.add_child(panel)
 	hud=Label.new(); hud.position=Vector2(28,22); hud.add_theme_font_size_override("font_size",17); hud.add_theme_font_override("font",ui_font); layer.add_child(hud)
 	prompt=Label.new(); prompt.position=Vector2(28,82); prompt.add_theme_font_size_override("font_size",14); prompt.add_theme_font_override("font",ui_font); layer.add_child(prompt)
