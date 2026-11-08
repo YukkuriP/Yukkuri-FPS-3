@@ -38,7 +38,7 @@ func _run() -> void:
 		_fail("Player spawn is not aligned with the aft passage")
 		return
 
-	var door_count := _count_named(deck, "AutomaticCompartmentDoor")
+	var door_count := _count_group(deck, "compartment_doors")
 	if door_count != 7:
 		_fail("Expected seven compartment doors including lower-deck access; found %d" % door_count)
 		return
@@ -67,6 +67,12 @@ func _count_named(node: Node, target_name: String) -> int:
 	var total := 1 if node.name == target_name else 0
 	for child in node.get_children():
 		total += _count_named(child, target_name)
+	return total
+
+func _count_group(node: Node, group_name: String) -> int:
+	var total := 1 if node.is_in_group(group_name) else 0
+	for child in node.get_children():
+		total += _count_group(child, group_name)
 	return total
 
 func _count_type(node: Node, target_type: Variant) -> int:
