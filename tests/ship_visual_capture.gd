@@ -46,6 +46,15 @@ func _run() -> void:
 		_fail("Could not capture superstructure close-up")
 		return
 
+	# Aft deckhouse, twin exhaust trunks and hangar facade inspection.
+	capture_camera.position = Vector3(30.0, 16.0, 70.0)
+	capture_camera.look_at(Vector3(0.0, 5.0, 34.0), Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("aft_superstructure_closeup.png")):
+		_fail("Could not capture aft superstructure close-up")
+		return
+
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
 	capture_camera.fov = 78.0
