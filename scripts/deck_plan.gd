@@ -241,7 +241,7 @@ func _add_auto_door(side: int, z: float) -> void:
 		knuckle.mesh = cylinder
 		knuckle.position = Vector3(0, y, -0.73)
 		knuckle.material_override = trim_mat
-	hinge.add_child(knuckle)
+		hinge.add_child(knuckle)
 	var handle_x := -float(side) * 0.075
 	_box(leaf, "Door handle backing", Vector3(handle_x, 0, 0.48), Vector3(0.025, 0.22, 0.22), dark_mat)
 	var handle := MeshInstance3D.new()
