@@ -62,7 +62,7 @@ func _replace_blocky_hull() -> void:
 		verts.append(Vector3(-w*0.70,-2.55,z))
 	var indices:=PackedInt32Array()
 	for ring in range(sections.size()-1):
-		for edge in [1,2,3]:
+		for edge in range(4):
 			var a: int = ring * 4 + edge
 			var b: int = ring * 4 + ((edge + 1) % 4)
 			var c: int = (ring + 1) * 4 + ((edge + 1) % 4)
@@ -71,12 +71,12 @@ func _replace_blocky_hull() -> void:
 	indices.append_array(PackedInt32Array([0,3,2,0,2,1]))
 	var last:int=(sections.size()-1)*4
 	indices.append_array(PackedInt32Array([last,last+1,last+2,last,last+2,last+3]))
-	var arrays:Array=[]
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX]=verts
-	arrays[Mesh.ARRAY_INDEX]=indices
-	var mesh:=ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
+	var surface_tool := SurfaceTool.new()
+	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for vertex_index in indices:
+		surface_tool.add_vertex(verts[vertex_index])
+	surface_tool.generate_normals()
+	var mesh := surface_tool.commit()
 	var hull_mat:=_mat(Color(0.16,0.22,0.26),0.78,0.32)
 	hull_mat.cull_mode=BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0,hull_mat)
