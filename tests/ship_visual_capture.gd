@@ -121,8 +121,8 @@ func _run() -> void:
 	# View from the port side into the actual deck opening, not down the passage.
 	# Place the camera on the upper flight and look down the tread run.
 	# Oblique side view keeps the stairs in frame without a vertical camera singularity.
-	capture_camera.position = Vector3(1.9, 3.1, -5.8)
-	capture_camera.look_at(Vector3(4.45, -0.35, -6.0), Vector3.UP)
+	capture_camera.position = Vector3(5.85, 3.0, -5.8)
+	capture_camera.look_at(Vector3(4.45, -0.45, -6.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
