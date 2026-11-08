@@ -1,0 +1,31 @@
+name: Godot 4.7.2 validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.2
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.2
+          use-dotnet: false
+          include-templates: false
+
+      - name: Print engine version
+        run: godot --version
+
+      - name: Import and parse project
+        run: godot --headless --editor --path . --quit
+
+      - name: Headless startup smoke test
+        run: godot --headless --path . --quit-after 5
