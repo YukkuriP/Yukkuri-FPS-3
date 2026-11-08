@@ -11,17 +11,17 @@ var amber_mat: StandardMaterial3D
 var floor_mat: StandardMaterial3D
 
 func _ready() -> void:
-	panel_mat = _mat(Color(0.105, 0.145, 0.16), 0.58, 0.48)
-	dark_mat = _mat(Color(0.018, 0.032, 0.041), 0.35, 0.38)
-	alloy_mat = _mat(Color(0.42, 0.49, 0.51), 0.78, 0.3)
-	glass_mat = _mat(Color(0.012, 0.12, 0.16), 0.62, 0.2)
-	cyan_mat = _mat(Color(0.04, 0.65, 0.72), 0.22, 0.3)
+	panel_mat = _mat(Color(0.22, 0.24, 0.23), 0.28, 0.72)
+	dark_mat = _mat(Color(0.055, 0.065, 0.064), 0.18, 0.72)
+	alloy_mat = _mat(Color(0.42, 0.43, 0.40), 0.48, 0.58)
+	glass_mat = _mat(Color(0.06, 0.075, 0.073), 0.38, 0.32)
+	cyan_mat = _mat(Color(0.50, 0.52, 0.47), 0.08, 0.65)
 	cyan_mat.emission_enabled = true
-	cyan_mat.emission = Color(0.015, 0.25, 0.32)
-	amber_mat = _mat(Color(0.95, 0.48, 0.12), 0.2, 0.42)
+	cyan_mat.emission = Color(0.008, 0.009, 0.006)
+	amber_mat = _mat(Color(0.66, 0.43, 0.20), 0.08, 0.68)
 	amber_mat.emission_enabled = true
-	amber_mat.emission = Color(0.3, 0.09, 0.015)
-	floor_mat = _mat(Color(0.12, 0.17, 0.19), 0.22, 0.92)
+	amber_mat.emission = Color(0.018, 0.008, 0.002)
+	floor_mat = _mat(Color(0.20, 0.21, 0.19), 0.08, 0.96)
 	_bridge()
 	_cic()
 	_communications()
