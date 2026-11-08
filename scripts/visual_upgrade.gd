@@ -197,9 +197,9 @@ func _interior_superstructure_finish() -> void:
 		_box(self, "Bridge lower kick strip", Vector3(side * 5.73, 2.35, -21.5), Vector3(0.06, 0.35, 15.0), inset)
 		_box(self, "Aft lower kick strip", Vector3(side * 6.23, 2.15, 14.0), Vector3(0.06, 0.35, 17.0), inset)
 		for z in [-28.0, -22.0, -16.0, 7.0, 13.0, 19.0]:
-			var hatch_z := z
-			var hatch_y := 4.0 if z < 0.0 else 3.55
-			var wall_x := side * (5.70 if z < 0.0 else 6.20)
+			var hatch_z: float = z
+			var hatch_y: float = 4.0 if z < 0.0 else 3.55
+			var wall_x: float = side * (5.70 if z < 0.0 else 6.20)
 			_box(self, "Electrical service cabinet", Vector3(wall_x, hatch_y, hatch_z), Vector3(0.06, 1.1, 0.9), inset)
 			_box(self, "Electrical cabinet inset", Vector3(wall_x - side * 0.04, hatch_y, hatch_z), Vector3(0.025, 0.82, 0.65), liner, 0)
 			for row in range(4):
