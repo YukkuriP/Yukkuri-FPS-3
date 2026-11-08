@@ -104,20 +104,22 @@ if abs(actual_beam - 18.0) > 0.01:
 # Raised forecastle deck follows the narrowing bow rather than ending as a
 # rectangular slab. The top is a fan of quads between matching stations.
 deck_verts = []
-for y, half_beam, flare in stations[:8]:
+for y, half_beam, flare in stations:
     deck_verts.extend([
-        (-half_beam * 0.985, y * LONG_SCALE, 0.96),
-        ( half_beam * 0.985, y * LONG_SCALE, 0.96)
+        (-half_beam * 0.985, y * LONG_SCALE, 0.965),
+        ( half_beam * 0.985, y * LONG_SCALE, 0.965)
     ])
 deck_faces = []
-for i in range(7):
+for i in range(len(stations) - 1):
     a = i * 2
     deck_faces.append((a, a + 1, a + 3, a + 2))
-deck_mesh = bpy.data.meshes.new("ForecastleDeckMesh")
+deck_mesh = bpy.data.meshes.new("FullLengthDeckMesh")
 deck_mesh.from_pydata(deck_verts, [], deck_faces)
 deck_mesh.materials.append(deck)
-deck_obj = bpy.data.objects.new("Tapered forecastle deck", deck_mesh)
+deck_obj = bpy.data.objects.new("Hull-following main deck", deck_mesh)
 bpy.context.collection.objects.link(deck_obj)
+deck_solid = deck_obj.modifiers.new("Deck plate thickness", "SOLIDIFY")
+deck_solid.thickness = 0.08
 
 # Bow stem reinforcement and paired anchor hawse openings.
 def cylinder_between(name, p1, p2, radius, mat, vertices=24):
@@ -180,8 +182,6 @@ for side in (-1, 1):
             0.10, metal
         )
 
-cube("Flight deck", (0, 0, 1.05), (17.4, 75, .25), deck)
-cube("Forecastle", (0, -25, 1.25), (15, 24, .3), deck)
 cube("Forward superstructure", (0, -20, 4), (12, 17, 5.8), white)
 cube("Bridge tier", (0, -21, 7.7), (9, 10, 1.9), white)
 cube("Bridge glass", (0, -28.55, 6.5), (10.5, .1, 1.2), glass)
@@ -201,10 +201,31 @@ for x in [-2, 2]:
     bpy.context.object.name = "Antenna radome"
     bpy.context.object.data.materials.append(white)
 
-for x in [-8.25, 8.25]:
-    for y in range(-34, 37, 3):
-        cube("Rail stanchion", (x, y, 2), (.12, .12, 1.65), metal)
-    cube("Continuous handrail", (x, 1, 2.85), (.12, 72, .12), metal)
+# Side rails follow the narrowing hull sheer instead of remaining parallel.
+def beam_at(source_y):
+    for idx in range(len(stations) - 1):
+        y0, b0, _ = stations[idx]
+        y1, b1, _ = stations[idx + 1]
+        if y0 <= source_y <= y1:
+            t = (source_y - y0) / (y1 - y0)
+            return b0 + (b1 - b0) * t
+    return stations[0][1] if source_y < stations[0][0] else stations[-1][1]
+
+for side in (-1, 1):
+    rail_points = []
+    for source_y in range(-35, 37, 2):
+        x = side * (beam_at(float(source_y)) * 0.94)
+        rail_points.append((x, source_y, 2.0))
+        cube("Rail stanchion", (x, source_y, 2), (.12, .12, 1.65), metal)
+    for idx in range(len(rail_points) - 1):
+        p0 = rail_points[idx]
+        p1 = rail_points[idx + 1]
+        cylinder_between(
+            "Continuous handrail segment",
+            (p0[0], p0[1] * LONG_SCALE, 2.85),
+            (p1[0], p1[1] * LONG_SCALE, 2.85),
+            0.055, metal, vertices=12
+        )
 
 for y in range(-34, 37, 4):
     cube("Deck expansion seam", (0, y, 1.22), (16, .035, .012), metal)
