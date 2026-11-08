@@ -19,15 +19,15 @@ func _run() -> void:
 		_fail("Could not create screenshot output directory")
 		return
 
-	var hud_layer := main.get_node_or_null("CanvasLayer")
-	if hud_layer != null:
-		hud_layer.queue_free()
+	for hud_layer in main.get_tree().get_nodes_in_group("runtime_hud"):
+		hud_layer.visible = false
+	await process_frame
 
 	var capture_camera := Camera3D.new()
 	capture_camera.name = "VisualCaptureCamera"
 	main.add_child(capture_camera)
 	capture_camera.fov = 55.0
-	capture_camera.position = Vector3(110.0, 65.0, 130.0)
+	capture_camera.position = Vector3(82.0, 48.0, 98.0)
 	capture_camera.look_at(Vector3(0.0, 2.0, 2.0), Vector3.UP)
 	capture_camera.current = true
 	await process_frame
@@ -38,8 +38,8 @@ func _run() -> void:
 
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
-	capture_camera.position = Vector3(4.2, 4.0, -57.0)
-	capture_camera.look_at(Vector3(4.2, 3.9, -62.0), Vector3.UP)
+	capture_camera.position = Vector3(2.1, 3.7, -55.0)
+	capture_camera.look_at(Vector3(5.9, 3.0, -57.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -57,11 +57,13 @@ func _run() -> void:
 		return
 	var door: Node3D = doors[0]
 	for candidate in doors:
-		if absf(candidate.global_position.z + 54.0) < absf(door.global_position.z + 54.0):
+		if candidate.global_position.x > 0.0 and absf(candidate.global_position.z + 55.62) < absf(door.global_position.z + 55.62):
 			door = candidate
 	door.rotation.y = PI * 0.5
-	capture_camera.position = Vector3(-3.0, 3.2, -54.0)
-	capture_camera.look_at(Vector3(1.25, 3.0, -54.0), Vector3.UP)
+	var door_center_z := door.global_position.z + 1.62
+	capture_camera.fov = 72.0
+	capture_camera.position = Vector3(0.0, 3.0, door_center_z)
+	capture_camera.look_at(Vector3(door.global_position.x, 3.0, door_center_z), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hinged_door.png")):
@@ -69,8 +71,8 @@ func _run() -> void:
 		return
 
 	# Overhead oblique view of the stairwell opening and the lower-deck stair.
-	capture_camera.position = Vector3(5.8, 4.65, -11.0)
-	capture_camera.look_at(Vector3(4.45, -0.1, -12.0), Vector3.UP)
+	capture_camera.position = Vector3(8.5, 8.0, -7.0)
+	capture_camera.look_at(Vector3(4.45, 0.5, -12.0), Vector3.UP)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
