@@ -197,7 +197,7 @@ func _replace_blocky_hull() -> void:
 	hull_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0, hull_mat)
 	var hull := MeshInstance3D.new()
-	hull.name = "HighResolutionLoftedHull"
+	hull.name = "Tapered hull shell"
 	hull.mesh = mesh
 	hull.position.z = 2.0
 	add_child(hull)
