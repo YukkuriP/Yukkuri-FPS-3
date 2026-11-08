@@ -18,6 +18,11 @@ func _ready() -> void:
 	glow=_mat(Color(0.58,0.54,0.40),0.08,0.62)
 	glow.emission_enabled=true; glow.emission=Color(0.025,0.018,0.006)
 	rubber=_mat(Color(0.055,0.065,0.07),0.05,0.9)
+	# Procedural micro-roughness breaks up the otherwise perfectly uniform paint.
+	# These are generated locally by Godot; no paid texture pack is required.
+	steel.roughness_texture = _roughness_texture(1701, 0.045)
+	deck.roughness_texture = _roughness_texture(1702, 0.075)
+	trim.roughness_texture = _roughness_texture(1703, 0.055)
 	_replace_blocky_hull()
 	_exterior_detail()
 	_superstructure_finish()
@@ -29,6 +34,20 @@ func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
 	m.albedo_color=color; m.metallic=metal; m.roughness=rough
 	return m
+
+func _roughness_texture(seed_value: int, frequency: float) -> NoiseTexture2D:
+	var noise := FastNoiseLite.new()
+	noise.seed = seed_value
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	noise.frequency = frequency
+	noise.fractal_octaves = 3
+	var texture := NoiseTexture2D.new()
+	texture.width = 512
+	texture.height = 512
+	texture.seamless = true
+	texture.normalize = true
+	texture.noise = noise
+	return texture
 
 func _box(parent: Node3D, label: String, pos: Vector3, size: Vector3, mat: Material, bevel:=0.025) -> MeshInstance3D:
 	var mesh:=BoxMesh.new(); mesh.size=size
@@ -165,10 +184,16 @@ func _replace_blocky_hull() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for index in indices:
-		st.add_vertex(vertices[index])
+		var vertex: Vector3 = vertices[index]
+		st.set_uv(Vector2(vertex.x * 0.18, vertex.z * 0.12))
+		st.add_vertex(vertex)
+	# Weld duplicate triangle vertices before normal generation. Without this,
+	# the loft shades faceted even though its station curve is smooth.
+	st.index()
 	st.generate_normals()
 	var mesh := st.commit()
 	var hull_mat := _mat(Color(0.18, 0.22, 0.24), 0.62, 0.46)
+	hull_mat.roughness_texture = steel.roughness_texture
 	hull_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0, hull_mat)
 	var hull := MeshInstance3D.new()
