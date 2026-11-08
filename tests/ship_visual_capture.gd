@@ -85,8 +85,8 @@ func _run() -> void:
 	# Camera inside the forward compartment, aimed across the console and glazing.
 	capture_camera.fov = 72.0
 	# View from the aft side of the helm so the live monitor faces are visible.
-	capture_camera.position = Vector3(0.0, 3.8, -23.5)
-	capture_camera.look_at(Vector3(0.0, 3.2, -29.0), Vector3.UP)
+	capture_camera.position = Vector3(0.0, 2.55, -23.5)
+	capture_camera.look_at(Vector3(0.0, 2.45, -29.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("bridge_compartment.png")):
@@ -125,8 +125,8 @@ func _run() -> void:
 	# Keep the camera inside the cut-out deck opening so the deck edge cannot occlude the flight.
 	# The inspection camera must remain above the weather-deck plane (Y=1.25).
 	# A shallow overhead oblique view exposes the complete stair flight through the cut-out.
-	capture_camera.position = Vector3(2.25, 3.0, -6.0)
-	capture_camera.look_at(Vector3(4.45, -0.25, -6.0), Vector3.UP)
+	capture_camera.position = Vector3(4.45, 3.2, -10.0)
+	capture_camera.look_at(Vector3(4.45, -0.15, -5.5), Vector3.FORWARD)
 	for _frame in range(2):
 		await process_frame
 	await RenderingServer.frame_post_draw
