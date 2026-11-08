@@ -22,6 +22,7 @@ func _ready() -> void:
 	_exterior_detail()
 	_superstructure_finish()
 	_interior_superstructure_finish()
+	_bridge_furnishings()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -49,6 +50,10 @@ func _replace_blocky_hull() -> void:
 	if old_hull != null: old_hull.visible=false
 	var old_bow:=get_parent().get_node_or_null("Bow")
 	if old_bow != null: old_bow.visible=false
+	var old_main_deck := get_parent().get_node_or_null("Main deck")
+	if old_main_deck != null: old_main_deck.visible = false
+	var old_forecastle := get_parent().get_node_or_null("Forecastle")
+	if old_forecastle != null: old_forecastle.visible = false
 	var sections:Array[Vector3]=[
 		Vector3(0.55,-40.5,0.0),
 		Vector3(3.2,-39.2,0.0),
@@ -86,7 +91,7 @@ func _replace_blocky_hull() -> void:
 		surface_tool.add_index(vertex_index)
 	surface_tool.generate_normals()
 	var mesh := surface_tool.commit()
-	var hull_mat:=_mat(Color(0.16,0.22,0.26),0.78,0.32)
+	var hull_mat:=_mat(Color(0.20,0.24,0.25),0.58,0.48)
 	hull_mat.cull_mode=BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0,hull_mat)
 	var hull:=MeshInstance3D.new()
@@ -224,6 +229,23 @@ func _interior_superstructure_finish() -> void:
 		lamp.light_energy = 0.62
 		lamp.omni_range = 6.5
 		add_child(lamp)
+
+
+func _bridge_furnishings() -> void:
+	var chair_mat := _mat(Color(0.12, 0.14, 0.14), 0.28, 0.72)
+	var cushion_mat := _mat(Color(0.28, 0.30, 0.28), 0.05, 0.94)
+	for x in [2.8, 5.2]:
+		var base := _cylinder(self, "Bridge chair pedestal", Vector3(x, 1.55, -25.2), 0.12, 0.55, steel, 16)
+		_cylinder(self, "Bridge chair foot ring", Vector3(x, 1.45, -25.2), 0.34, 0.055, trim, 16)
+		_box(self, "Bridge chair seat", Vector3(x, 1.92, -25.2), Vector3(0.72, 0.16, 0.72), cushion_mat)
+		_box(self, "Bridge chair back", Vector3(x, 2.35, -25.52), Vector3(0.72, 0.78, 0.16), chair_mat)
+		for side in [-1.0, 1.0]:
+			_box(self, "Bridge chair arm", Vector3(x + side * 0.36, 2.08, -25.2), Vector3(0.10, 0.12, 0.58), chair_mat)
+	# A practical overhead cable ladder and wall-mounted document holders.
+	for x in [2.0, 3.8, 5.6]:
+		_box(self, "Bridge overhead cable ladder", Vector3(x, 4.95, -22.0), Vector3(0.12, 0.10, 14.0), trim)
+	for z in [-25.0, -21.0, -17.0]:
+		_box(self, "Bridge document holder", Vector3(5.72, 3.4, z), Vector3(0.10, 0.58, 0.72), inset)
 
 func _interior_detail() -> void:
 	# Floor panels, ceiling cable trays and door frames make the passage feel built.
