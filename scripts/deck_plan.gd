@@ -469,8 +469,10 @@ func _build_furniture() -> void:
 	# Bridge: forward-facing windows and a compact helm station.
 	for i in range(7):
 		var x := -4.7 + float(i) * 1.45
-		_box(self, "Bridge window", Vector3(x, DECK_Y + 2.8, -31.45), Vector3(1.25, 1.15, 0.07), glass_mat)
-		_box(self, "Window mullion", Vector3(x + 0.30, DECK_Y + 2.8, -31.5), Vector3(0.06, 1.28, 0.1), trim_mat)
+		# Interior glass sits just aft of the outer glazing and fills the tall bridge window band.
+		_box(self, "Bridge inner window gasket", Vector3(x, 4.8, -29.34), Vector3(1.28, 2.72, 0.055), dark_mat)
+		_box(self, "Bridge inner window glass", Vector3(x, 4.8, -29.30), Vector3(1.16, 2.58, 0.025), glass_mat)
+		_box(self, "Window mullion", Vector3(x + 0.66, 4.8, -29.38), Vector3(0.055, 2.82, 0.08), trim_mat)
 	# Crew operations / briefing room: generic training display wall, no weapon-control detail.
 	_box(self, "Briefing display wall", Vector3(-4.1, DECK_Y + 2.4, -19.1), Vector3(3.7, 1.65, 0.16), dark_mat)
 	for i in range(4):
