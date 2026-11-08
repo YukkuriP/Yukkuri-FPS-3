@@ -54,10 +54,10 @@ func _run() -> void:
 	if doors.size() != 7:
 		_fail("Expected seven hinged doors for visual capture")
 		return
-	var door: Node3D = doors[1]
+	var door: Node3D = doors[3]
 	door.rotation.y = PI * 0.5
-	capture_camera.position = Vector3(4.8, 3.0, -54.0)
-	capture_camera.look_at(Vector3(2.7, 3.0, -54.0), Vector3.UP)
+	capture_camera.position = Vector3(4.2, 3.0, -55.0)
+	capture_camera.look_at(Vector3(2.1, 3.0, -54.0), Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hinged_door.png")):
