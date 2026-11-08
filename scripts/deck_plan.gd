@@ -351,10 +351,10 @@ func _build_room_wall_finish() -> void:
 	var inset_mat := _mat(Color(0.31, 0.33, 0.32), 0.24, 0.76)
 	var seal_mat := _mat(Color(0.16, 0.18, 0.17), 0.30, 0.72)
 	for side in [-1.0, 1.0]:
-		var wall_x := side * 6.31
+		var wall_x: float = side * 6.31
 		for room_z in [-27.0, -15.0, -3.0, 9.0, 21.0, 33.0]:
 			for panel_index in range(4):
-				var pz := room_z - 3.6 + float(panel_index) * 2.4
+				var pz: float = room_z - 3.6 + float(panel_index) * 2.4
 				_box(self, "Removable bulkhead liner", Vector3(wall_x, DECK_Y + 1.75, pz), Vector3(0.045, 3.25, 2.15), panel_mat)
 				_box(self, "Bulkhead liner seam", Vector3(wall_x - side * 0.028, DECK_Y + 1.75, pz + 1.12), Vector3(0.018, 3.25, 0.035), seal_mat)
 			_box(self, "Bulkhead kick plate", Vector3(wall_x - side * 0.035, DECK_Y + 0.25, room_z), Vector3(0.035, 0.48, 9.0), inset_mat)
