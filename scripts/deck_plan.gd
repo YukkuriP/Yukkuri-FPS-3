@@ -89,8 +89,8 @@ func _build_lower_deck_and_stairs() -> void:
 	_box(lower, "Lower deck plating", Vector3(0, -1.55, 2), Vector3(13.0, 0.22, 76.0), floor_mat, true)
 	# Lower service passage and its watertight-style bulkheads.
 	_box(lower, "Lower passage port bulkhead", Vector3(-PASSAGE_HALF, -0.48, 2), Vector3(0.18, 1.9, 76.0), wall_mat, true)
-	_box(lower, "Lower passage starboard forward bulkhead", Vector3(PASSAGE_HALF, -0.48, -21.45), Vector3(0.18, 1.9, 29.1), wall_mat, true)
-	_box(lower, "Lower passage starboard aft bulkhead", Vector3(PASSAGE_HALF, -0.48, 17.45), Vector3(0.18, 1.9, 45.1), wall_mat, true)
+	_box(lower, "Lower passage starboard forward bulkhead", Vector3(PASSAGE_HALF, -0.48, -20.35), Vector3(0.18, 1.9, 31.3), wall_mat, true)
+	_box(lower, "Lower passage starboard aft bulkhead", Vector3(PASSAGE_HALF, -0.48, 18.55), Vector3(0.18, 1.9, 42.9), wall_mat, true)
 	for x in [-HULL_HALF, HULL_HALF]:
 		_box(lower, "Lower deck outer bulkhead", Vector3(x, -0.48, 2), Vector3(0.22, 1.9, 76.0), wall_mat, true)
 	# A sloped collision ramp under individually modeled stair treads makes the
@@ -115,7 +115,7 @@ func _build_lower_deck_and_stairs() -> void:
 		var step_y := 1.16 - float(i) * 0.25
 		_box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
 	for side in [-1.0, 1.0]:
-		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), alloy_material())
+		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat))
 		rail.rotation.x = 0.0
 	# Lower-deck equipment, service lockers and low-level lighting.
 	for z in [-28.0, -18.0, -2.0, 12.0, 26.0]:
@@ -130,8 +130,6 @@ func _build_lower_deck_and_stairs() -> void:
 		lower.add_child(lamp)
 	_label("LOWER DECK ACCESS", Vector3(3.45, DECK_Y + 2.7, -7.6), 20)
 
-func alloy_material() -> Material:
-	return trim_mat
 
 func _room_wall_x(x: float, z_center: float, door_z: float) -> void:
 	var half_len := 4.8
