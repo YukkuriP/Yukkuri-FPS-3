@@ -164,7 +164,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var header:=Label.new(); header.text=title.to_upper(); header.position=Vector2(22,7); header.size=Vector2(590,34); header.add_theme_font_size_override("font_size",20); header.add_theme_color_override("font_color",Color(0.78,0.96,0.91)); header.add_theme_font_override("font",ui_font); ui.add_child(header)
 	var divider:=ColorRect.new(); divider.position=Vector2(18,49); divider.size=Vector2(604,3); divider.color=Color(0.18,0.62,0.58); ui.add_child(divider)
 	var label:=Label.new(); label.position=Vector2(22,66); label.size=Vector2(600,275); label.add_theme_font_size_override("font_size",27); label.add_theme_color_override("font_color",Color(0.58,0.98,0.88)); label.add_theme_font_override("font",ui_font); ui.add_child(label)
-	var surface:=MeshInstance3D.new(); var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.12); surface.rotation.x=PI/2
+	var surface:=MeshInstance3D.new(); surface.name="ConsoleDisplaySurface"; var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.12); surface.rotation.x=PI/2
 	var mat:=StandardMaterial3D.new(); mat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; mat.albedo_texture=vp.get_texture(); mat.emission_enabled=true; mat.emission_texture=vp.get_texture(); mat.emission_energy_multiplier=1.25; surface.material_override=mat; root.add_child(surface)
 	var hit_body:=StaticBody3D.new()
 	hit_body.name="ScreenHitArea"
