@@ -20,6 +20,7 @@ func _ready() -> void:
 	rubber=_mat(Color(0.055,0.065,0.07),0.05,0.9)
 	_replace_blocky_hull()
 	_exterior_detail()
+	_superstructure_finish()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -145,6 +146,40 @@ func _exterior_detail() -> void:
 		for side in [-1.0,1.0]:
 			_box(self,"Deck light base",Vector3(side*7.8,1.25,float(z)),Vector3(0.28,0.16,0.28),dark)
 			var l:=OmniLight3D.new(); l.position=Vector3(side*7.8,1.55,float(z)); l.light_color=Color(0.65,0.82,1); l.light_energy=0.25; l.omni_range=2.8; add_child(l)
+
+func _superstructure_finish() -> void:
+	# Non-combat ship architecture: layered deckhouse, access fittings, rails,
+	# ventilation, hatches and practical service details.
+	for side in [-1.0, 1.0]:
+		_box(self, "Bridge wing deck", Vector3(side * 6.15, 3.05, -22.0), Vector3(1.0, 0.16, 12.5), deck)
+		for z in range(-28, -15, 2):
+			_cylinder(self, "Bridge wing stanchion", Vector3(side * 6.55, 3.72, float(z)), 0.035, 1.25, trim, 10)
+		_box(self, "Bridge wing handrail", Vector3(side * 6.55, 4.34, -21.5), Vector3(0.07, 0.07, 12.0), trim)
+		for z in range(-30, 34, 6):
+			_box(self, "Hull service access cover", Vector3(side * 8.88, -0.2, float(z)), Vector3(0.035, 0.55, 1.0), steel)
+		for z in [8.0, 13.0, 18.0]:
+			_box(self, "Aft ventilation recess", Vector3(side * 6.52, 4.0, z), Vector3(0.045, 1.25, 1.75), dark, 0)
+			for row in range(7):
+				_box(self, "Ventilation louvre", Vector3(side * 6.48, 3.48 + float(row) * 0.17, z), Vector3(0.055, 0.045, 1.55), trim, 0)
+	for i in range(9):
+		var x := -4.8 + float(i) * 1.2
+		_box(self, "Bridge glazing lower gasket", Vector3(x, 3.34, -29.72), Vector3(1.12, 0.045, 0.08), rubber, 0)
+		_box(self, "Bridge glazing upper gasket", Vector3(x, 6.26, -29.72), Vector3(1.12, 0.045, 0.08), rubber, 0)
+		_box(self, "Bridge window wiper motor", Vector3(x, 3.42, -29.82), Vector3(0.16, 0.10, 0.12), dark, 0)
+	for z in [-10.0, 5.0, 20.0, 31.0]:
+		_box(self, "Weather deck access door", Vector3(0.0, 3.2, z), Vector3(1.15, 2.15, 0.10), steel)
+		_box(self, "Access door inset", Vector3(0.0, 3.2, z - 0.06), Vector3(0.88, 1.82, 0.025), dark, 0)
+		_cylinder(self, "Access door handle", Vector3(0.39, 3.2, z - 0.10), 0.045, 0.18, trim, 10)
+	for y in [9.2, 10.6, 12.0]:
+		_box(self, "Mast cross member", Vector3(0, y, -21), Vector3(6.2 - (y - 9.2) * 0.7, 0.10, 0.12), trim)
+	for side in [-1.0, 1.0]:
+		var brace := _box(self, "Mast diagonal brace", Vector3(side * 1.2, 10.6, -21), Vector3(0.09, 3.0, 0.09), trim)
+		brace.rotation.z = side * 0.22
+	for z in [-31.0, -24.0, -12.0, 2.0, 17.0, 30.0, 36.0]:
+		for side in [-1.0, 1.0]:
+			_cylinder(self, "Deck bollard base", Vector3(side * 7.2, 1.22, z), 0.16, 0.10, dark, 12)
+			_cylinder(self, "Deck bollard", Vector3(side * 7.2, 1.42, z), 0.09, 0.38, trim, 12)
+			_box(self, "Deck drain cover", Vector3(side * 6.9, 1.13, z + 0.7), Vector3(0.22, 0.025, 0.42), dark, 0)
 
 func _interior_detail() -> void:
 	# Floor panels, ceiling cable trays and door frames make the passage feel built.
