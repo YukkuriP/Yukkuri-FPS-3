@@ -5,6 +5,7 @@ const SENS := 0.002
 const ROLES := ["艦長","操舵員","CIC士官","機関員","通信員","乗組員"]
 const KEYS: Array[Key] = [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6]
 var ship_root: Node3D
+var ui_font: SystemFont
 var player: CharacterBody3D
 var camera: Camera3D
 var pitch := 0.0
@@ -23,6 +24,8 @@ var cic_training := true
 var mess_status := true
 
 func _ready() -> void:
+	ui_font = SystemFont.new()
+	ui_font.font_names = PackedStringArray(["Yu Gothic UI", "Meiryo UI", "Meiryo", "Noto Sans CJK JP"])
 	_input_map()
 	_ocean_and_sky()
 	ship_root = Node3D.new()
@@ -148,7 +151,7 @@ func _add_console(pos: Vector3, kind: String, title: String) -> void:
 	var vp:=SubViewport.new(); vp.size=Vector2i(640,360); vp.render_target_update_mode=SubViewport.UPDATE_ALWAYS; root.add_child(vp)
 	var ui:=Control.new(); ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); vp.add_child(ui)
 	var bg:=ColorRect.new(); bg.color=Color(0.01,0.04,0.055); bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); ui.add_child(bg)
-	var label:=Label.new(); label.position=Vector2(22,20); label.size=Vector2(600,310); label.add_theme_font_size_override("font_size",24); label.add_theme_color_override("font_color",Color(0.4,0.9,0.86)); ui.add_child(label)
+	var label:=Label.new(); label.position=Vector2(22,20); label.size=Vector2(600,310); label.add_theme_font_size_override("font_size",24); label.add_theme_color_override("font_color",Color(0.4,0.9,0.86)); label.add_theme_font_override("font",ui_font); ui.add_child(label)
 	var surface:=MeshInstance3D.new(); var pm:=PlaneMesh.new(); pm.size=Vector2(1.52,0.79); surface.mesh=pm; surface.position=Vector3(0,0.73,-0.255); surface.rotation.x=PI/2
 	var mat:=StandardMaterial3D.new(); mat.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED; mat.albedo_texture=vp.get_texture(); mat.emission_enabled=true; mat.emission_texture=vp.get_texture(); mat.emission_energy_multiplier=0.65; surface.material_override=mat; root.add_child(surface)
 	var hit_body:=StaticBody3D.new()
@@ -172,8 +175,8 @@ func _player() -> void:
 func _hud() -> void:
 	var layer:=CanvasLayer.new(); add_child(layer)
 	var panel:=ColorRect.new(); panel.color=Color(0.01,0.025,0.04,0.8); panel.position=Vector2(14,14); panel.size=Vector2(490,112); layer.add_child(panel)
-	hud=Label.new(); hud.position=Vector2(28,22); hud.add_theme_font_size_override("font_size",17); layer.add_child(hud)
-	prompt=Label.new(); prompt.position=Vector2(28,82); prompt.add_theme_font_size_override("font_size",14); layer.add_child(prompt)
+	hud=Label.new(); hud.position=Vector2(28,22); hud.add_theme_font_size_override("font_size",17); hud.add_theme_font_override("font",ui_font); layer.add_child(hud)
+	prompt=Label.new(); prompt.position=Vector2(28,82); prompt.add_theme_font_size_override("font_size",14); prompt.add_theme_font_override("font",ui_font); layer.add_child(prompt)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE: _click_console()
