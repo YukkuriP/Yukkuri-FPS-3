@@ -61,8 +61,11 @@ func _run() -> void:
 		_fail("Could not find the aft hangar door leaf")
 		return
 	capture_camera.fov = 62.0
+	hangar_leaf.visible = true
+	print("HANGAR_LEAF_GLOBAL:", hangar_leaf.global_position)
 	capture_camera.position = hangar_leaf.global_position + Vector3(0.0, 0.0, 12.0)
 	capture_camera.look_at(hangar_leaf.global_position, Vector3.UP)
+	print("HANGAR_CAPTURE_CAMERA:", capture_camera.global_position)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("hangar_aft_closeup.png")):
@@ -120,7 +123,7 @@ func _run() -> void:
 		return
 
 	print("VISUAL CAPTURE PASSED")
-	print("Saved exterior, bridge compartment, hinged door and stairwell screenshots")
+	print("Saved exterior, superstructure, hangar, bridge, door and stairwell screenshots")
 	quit(0)
 
 func _save_viewport(path: String) -> bool:
