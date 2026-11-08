@@ -74,7 +74,8 @@ func _replace_blocky_hull() -> void:
 		verts.append(Vector3(-w*0.70,-2.55,z))
 	var indices:=PackedInt32Array()
 	for ring in range(sections.size()-1):
-		for edge in range(4):
+		# Leave the upper hull open: the deck plan supplies the watertight walking deck.
+		for edge in range(1, 4):
 			var a: int = ring * 4 + edge
 			var b: int = ring * 4 + ((edge + 1) % 4)
 			var c: int = (ring + 1) * 4 + ((edge + 1) % 4)
