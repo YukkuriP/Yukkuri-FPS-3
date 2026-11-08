@@ -372,7 +372,7 @@ func _interior_superstructure_finish() -> void:
 		var lamp := OmniLight3D.new()
 		lamp.position = Vector3(0.0, y - 0.18, z)
 		lamp.light_color = Color(0.82, 0.78, 0.67)
-		lamp.light_energy = 0.62
+		lamp.light_energy = 1.0
 		lamp.omni_range = 6.5
 		add_child(lamp)
 
