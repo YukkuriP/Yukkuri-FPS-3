@@ -123,6 +123,16 @@ func _build_lower_deck_and_stairs() -> void:
 		var step_y := 1.16 - float(i) * 0.25
 		var tread := _box(self, "Stair tread", Vector3(STAIR_X, step_y, step_z), Vector3(1.25, 0.07, 0.38), trim_mat)
 		tread.add_to_group("stair_treads")
+
+	# Warm, shielded stairwell lights make each tread and handrail readable.
+	for light_pos in [Vector3(3.35, 1.1, -7.2), Vector3(5.55, -0.1, -5.0)]:
+		var stair_light := OmniLight3D.new()
+		stair_light.position = light_pos
+		stair_light.light_color = Color(0.88, 0.82, 0.68)
+		stair_light.light_energy = 0.9
+		stair_light.omni_range = 5.5
+		stair_light.shadow_enabled = true
+		add_child(stair_light)
 	for side in [-1.0, 1.0]:
 		var rail := _box(stair, "Stair handrail", Vector3(side * 0.82, 0.72, 0), Vector3(0.07, 0.07, 4.9), trim_mat)
 		rail.rotation.x = 0.0
