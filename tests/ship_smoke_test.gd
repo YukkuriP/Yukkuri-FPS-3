@@ -30,6 +30,22 @@ func _run() -> void:
 		_fail("Tapered hull mesh was not generated")
 		return
 
+	var visual: Node3D = ship.get_node_or_null("VisualUpgrade")
+	if visual == null:
+		_fail("VisualUpgrade node is missing")
+		return
+	var rail_posts := visual.find_children("Tapered sheer stanchion", "MeshInstance3D", true, false)
+	if rail_posts.size() < 70:
+		_fail("Tapered sheer rail system is incomplete: %d posts" % rail_posts.size())
+		return
+	var mast_uprights := visual.find_children("Mast lattice upright", "MeshInstance3D", true, false)
+	if mast_uprights.size() != 4:
+		_fail("Communications mast lattice is incomplete")
+		return
+	if visual.find_child("Stern transom upper rub strip", true, false) == null:
+		_fail("Stern transom finish is missing")
+		return
+
 	var player: CharacterBody3D = main.get("player")
 	if player == null or player.name != "Player":
 		_fail("Player character was not created")
