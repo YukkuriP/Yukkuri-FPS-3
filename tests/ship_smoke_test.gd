@@ -34,19 +34,19 @@ func _run() -> void:
 	if visual == null:
 		_fail("VisualUpgrade node is missing")
 		return
-	var rail_post_count := _count_named_prefix(visual, "Tapered sheer stanchion")
+	var rail_post_count := visual.get_tree().get_nodes_in_group("tapered_sheer_stanchions").size()
 	if rail_post_count < 70:
 		_fail("Tapered sheer rail system is incomplete: %d posts" % rail_post_count)
 		return
-	var mast_upright_count := _count_named_prefix(visual, "Mast lattice upright")
+	var mast_upright_count := visual.get_tree().get_nodes_in_group("mast_lattice_uprights").size()
 	if mast_upright_count != 4:
 		_fail("Communications mast lattice is incomplete: %d uprights" % mast_upright_count)
 		return
 	if visual.find_child("Stern transom upper rub strip", true, false) == null:
 		_fail("Stern transom finish is missing")
 		return
-	var foredeck_segment_count := _count_named_prefix(deck, "Tapered foredeck plating")
-	var lower_forepeak_segment_count := _count_named_prefix(deck, "Tapered lower forepeak plating")
+	var foredeck_segment_count := deck.get_tree().get_nodes_in_group("tapered_foredeck_segments").size()
+	var lower_forepeak_segment_count := deck.get_tree().get_nodes_in_group("tapered_lower_forepeak_segments").size()
 	if foredeck_segment_count != 24 or lower_forepeak_segment_count != 24:
 		_fail("Tapered foredeck or lower forepeak plating is incomplete: %d / %d" % [foredeck_segment_count, lower_forepeak_segment_count])
 		return
@@ -90,11 +90,6 @@ func _count_named(node: Node, target_name: String) -> int:
 		total += _count_named(child, target_name)
 	return total
 
-func _count_named_prefix(node: Node, prefix: String) -> int:
-	var total := 1 if node.name.begins_with(prefix) else 0
-	for child in node.get_children():
-		total += _count_named_prefix(child, prefix)
-	return total
 
 func _count_group(node: Node, group_name: String) -> int:
 	var total := 1 if node.is_in_group(group_name) else 0
