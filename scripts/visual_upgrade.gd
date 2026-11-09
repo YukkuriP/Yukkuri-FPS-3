@@ -776,9 +776,19 @@ func _aft_flight_deck_markings() -> void:
 	_box(self, "Landing H left stroke", Vector3(-1.35, 1.29, h_center_z), Vector3(0.15, 0.035, 1.0), marking, 0)
 	_box(self, "Landing H right stroke", Vector3(1.35, 1.29, h_center_z), Vector3(0.15, 0.035, 1.0), marking, 0)
 	_box(self, "Landing H crossbar", Vector3(0.0, 1.29, h_center_z), Vector3(2.85, 0.035, 0.15), marking, 0)
+	# Four recessed, framed deck sockets make the painted pad feel integrated
+	# with the flight deck. They are static visual details, not usable equipment.
+	var socket_frame := _mat(Color(0.38, 0.41, 0.39), 0.68, 0.48)
+	var socket_recess := _mat(Color(0.055, 0.065, 0.064), 0.22, 0.88)
 	for side in [-1.0, 1.0]:
 		for z in [36.8, 40.0]:
-			_box(self, "Landing zone tie-down marker", Vector3(side * 4.35, 1.29, z), Vector3(0.15, 0.035, 0.15), marking, 0)
+			var x := side * 4.35
+			_box(self, "Landing socket recess", Vector3(x, 1.285, z), Vector3(0.34, 0.025, 0.34), socket_recess, 0)
+			_box(self, "Landing socket frame fore", Vector3(x, 1.305, z - 0.19), Vector3(0.42, 0.045, 0.045), socket_frame, 0)
+			_box(self, "Landing socket frame aft", Vector3(x, 1.305, z + 0.19), Vector3(0.42, 0.045, 0.045), socket_frame, 0)
+			_box(self, "Landing socket frame port", Vector3(x - 0.19, 1.305, z), Vector3(0.045, 0.045, 0.34), socket_frame, 0)
+			_box(self, "Landing socket frame starboard", Vector3(x + 0.19, 1.305, z), Vector3(0.045, 0.045, 0.34), socket_frame, 0)
+			_box(self, "Landing zone tie-down marker", Vector3(x, 1.322, z), Vector3(0.12, 0.025, 0.12), marking, 0)
 
 
 func _sheer_rail_finish() -> void:
