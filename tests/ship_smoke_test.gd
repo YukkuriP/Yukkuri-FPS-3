@@ -48,6 +48,12 @@ func _run() -> void:
 	if visual.find_child("Landing H crossbar", true, false) == null:
 		_fail("Aft flight-deck landing markings are missing")
 		return
+	if _count_named(visual, "Landing socket recess") != 4:
+		_fail("Aft landing pad recessed tie-down sockets are incomplete")
+		return
+	if _count_named(visual, "Landing socket frame fore") != 4:
+		_fail("Aft landing pad socket frames are incomplete")
+		return
 	var foredeck_segment_count := deck.get_tree().get_nodes_in_group("tapered_foredeck_segments").size()
 	var lower_forepeak_segment_count := deck.get_tree().get_nodes_in_group("tapered_lower_forepeak_segments").size()
 	if foredeck_segment_count != 24 or lower_forepeak_segment_count != 24:
