@@ -763,15 +763,16 @@ func _aft_flight_deck_markings() -> void:
 	# Non-functional landing-zone paint on the clear aft deck behind the hangar.
 	var marking := _mat(Color(0.82, 0.84, 0.79), 0.05, 0.82)
 	var center_z := 37.0
-	var radius := 2.45
+	var radius_x := 2.45
+	var radius_z := 1.225 # Compensate for the ship root's 2x longitudinal scale.
 	for segment in range(64):
 		var a0 := TAU * float(segment) / 64.0
 		var a1 := TAU * float(segment + 1) / 64.0
-		var p0 := Vector3(radius * cos(a0), 1.28, center_z + radius * sin(a0))
-		var p1 := Vector3(radius * cos(a1), 1.28, center_z + radius * sin(a1))
+		var p0 := Vector3(radius_x * cos(a0), 1.28, center_z + radius_z * sin(a0))
+		var p1 := Vector3(radius_x * cos(a1), 1.28, center_z + radius_z * sin(a1))
 		_rail_cylinder_between("Aft landing circle marking", p0, p1, 0.035, marking)
-	_box(self, "Landing H left stroke", Vector3(-0.78, 1.29, center_z), Vector3(0.12, 0.035, 1.7), marking, 0)
-	_box(self, "Landing H right stroke", Vector3(0.78, 1.29, center_z), Vector3(0.12, 0.035, 1.7), marking, 0)
+	_box(self, "Landing H left stroke", Vector3(-0.78, 1.29, center_z), Vector3(0.12, 0.035, 0.85), marking, 0)
+	_box(self, "Landing H right stroke", Vector3(0.78, 1.29, center_z), Vector3(0.12, 0.035, 0.85), marking, 0)
 	_box(self, "Landing H crossbar", Vector3(0.0, 1.29, center_z), Vector3(1.68, 0.035, 0.12), marking, 0)
 	for side in [-1.0, 1.0]:
 		for z in [35.1, 38.9]:
