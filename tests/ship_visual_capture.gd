@@ -81,7 +81,7 @@ func _run() -> void:
 		_fail("Could not find aft flight-deck markings")
 		return
 	capture_camera.fov = 48.0
-	capture_camera.position = landing_mark.global_position + Vector3(0.0, 7.0, 12.0)
+	capture_camera.position = landing_mark.global_position + Vector3(0.0, 12.0, 0.5)
 	capture_camera.look_at(landing_mark.global_position, Vector3.UP)
 	await process_frame
 	await RenderingServer.frame_post_draw
