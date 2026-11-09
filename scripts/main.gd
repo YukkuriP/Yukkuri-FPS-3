@@ -99,6 +99,16 @@ func _ocean_and_sky() -> void:
 	sea_roughness.seamless=true
 	sea_roughness.noise=sea_noise
 	sea_mat.roughness_texture=sea_roughness
+	# Procedural normal detail adds fine wind-ripple highlights without external assets.
+	var sea_normal := NoiseTexture2D.new()
+	sea_normal.width = 512
+	sea_normal.height = 512
+	sea_normal.seamless = true
+	sea_normal.noise = sea_noise
+	sea_normal.as_normal_map = true
+	sea_normal.bump_strength = 0.42
+	sea_mat.normal_texture = sea_normal
+	sea_mat.normal_scale = 0.32
 	sea.material_override=sea_mat
 	add_child(sea)
 	var we:=WorldEnvironment.new(); var env:=Environment.new()
