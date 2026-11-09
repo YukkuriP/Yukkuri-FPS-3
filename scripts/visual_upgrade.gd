@@ -258,9 +258,11 @@ func _exterior_detail() -> void:
 			_box(self,"Hull rubbing strake segment",Vector3(side * (half_width * 0.99),-0.9,float(z)),Vector3(0.13,0.18,2.1),trim)
 			if z % 4 == 0:
 				_box(self,"Hull plate seam",Vector3(side * (half_width * 1.002),-0.9,float(z)),Vector3(0.025,2.0,0.045),dark,0)
-	# Deck safety lines and painted zones
-	for x in [-7.5,7.5]:
-		_box(self,"Deck edge safety stripe",Vector3(x,1.125,2),Vector3(0.09,0.025,70),steel)
+	# Deck-edge safety stripes follow the tapered foredeck instead of floating outside the bow.
+	for z in range(-35, 39, 2):
+		var edge_width := minf(_sheer_half_beam(float(z) - 2.0) - 0.3, 6.5)
+		for side in [-1.0, 1.0]:
+			_box(self, "Deck edge safety stripe", Vector3(side * edge_width, 1.125, float(z)), Vector3(0.09, 0.025, 2.1), steel)
 	for z in range(-33,37,5):
 		_box(self,"Deck expansion strip",Vector3(0,1.14,float(z)),Vector3(16.8,0.018,0.035),dark,0)
 	# Flat stern transom: perimeter rub strips, plate joints and flush service panels.
@@ -675,11 +677,14 @@ func _weather_deck_finish() -> void:
 	var marking := _mat(Color(0.62, 0.56, 0.36), 0.02, 0.9)
 	var panel := _mat(Color(0.23, 0.26, 0.25), 0.24, 0.86)
 	var recess := _mat(Color(0.075, 0.085, 0.082), 0.12, 0.9)
-	# Narrow non-slip service walkways follow the deck shoulders.
+	# Narrow non-slip service walkways track the deck shoulders as the bow widens.
 	for side in [-1.0, 1.0]:
-		_box(self, "Non-slip service walkway", Vector3(side * 6.15, 1.145, 1.0), Vector3(1.05, 0.025, 64.0), walkway, 0)
-		_box(self, "Walkway inner safety line", Vector3(side * 5.52, 1.16, 1.0), Vector3(0.045, 0.018, 63.0), marking, 0)
-		_box(self, "Walkway outer safety line", Vector3(side * 6.78, 1.16, 1.0), Vector3(0.045, 0.018, 63.0), marking, 0)
+		for z in range(-29, 33, 2):
+			var edge_width := minf(_sheer_half_beam(float(z) - 2.0) - 0.3, 6.5)
+			var walkway_center := edge_width - 1.15
+			_box(self, "Non-slip service walkway", Vector3(side * walkway_center, 1.145, float(z)), Vector3(1.05, 0.025, 2.15), walkway, 0)
+			_box(self, "Walkway inner safety line", Vector3(side * (walkway_center - 0.63), 1.16, float(z)), Vector3(0.045, 0.018, 2.15), marking, 0)
+			_box(self, "Walkway outer safety line", Vector3(side * (walkway_center + 0.63), 1.16, float(z)), Vector3(0.045, 0.018, 2.15), marking, 0)
 		# Repeated shallow access plates and drain slots break up broad blank deck areas.
 		for z in [-29.0, -21.0, -13.0, -5.0, 3.0, 11.0, 19.0, 27.0]:
 			_box(self, "Deck service access plate", Vector3(side * 4.95, 1.17, z), Vector3(0.72, 0.035, 1.05), panel, 0)
