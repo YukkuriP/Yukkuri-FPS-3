@@ -719,6 +719,10 @@ func _rail_cylinder_between(label: String, a: Vector3, b: Vector3, radius: float
 	obj.quaternion = Quaternion(Vector3.UP, delta.normalized())
 	obj.material_override = mat
 	add_child(obj)
+	if label == "Tapered sheer stanchion":
+		obj.add_to_group("tapered_sheer_stanchions")
+	elif label == "Mast lattice upright":
+		obj.add_to_group("mast_lattice_uprights")
 
 
 func _sheer_rail_finish() -> void:
