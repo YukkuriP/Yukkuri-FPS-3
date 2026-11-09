@@ -260,7 +260,7 @@ func _exterior_detail() -> void:
 				_box(self,"Hull plate seam",Vector3(side * (half_width * 1.002),-0.9,float(z)),Vector3(0.025,2.0,0.045),dark,0)
 	# Deck-edge safety stripes follow the tapered foredeck instead of floating outside the bow.
 	for z in range(-35, 39, 2):
-		var edge_width := minf(_sheer_half_beam(float(z) - 2.0) - 0.3, 6.5)
+		var edge_width := minf(_sheer_half_beam(float(z) - 2.5) - 0.35, 6.5)
 		for side in [-1.0, 1.0]:
 			_box(self, "Deck edge safety stripe", Vector3(side * edge_width, 1.125, float(z)), Vector3(0.09, 0.025, 2.1), steel)
 	for z in range(-33,37,5):
@@ -680,7 +680,7 @@ func _weather_deck_finish() -> void:
 	# Narrow non-slip service walkways track the deck shoulders as the bow widens.
 	for side in [-1.0, 1.0]:
 		for z in range(-29, 33, 2):
-			var edge_width := minf(_sheer_half_beam(float(z) - 2.0) - 0.3, 6.5)
+			var edge_width := minf(_sheer_half_beam(float(z) - 2.5) - 0.35, 6.5)
 			var walkway_center := edge_width - 1.15
 			_box(self, "Non-slip service walkway", Vector3(side * walkway_center, 1.145, float(z)), Vector3(1.05, 0.025, 2.15), walkway, 0)
 			_box(self, "Walkway inner safety line", Vector3(side * (walkway_center - 0.63), 1.16, float(z)), Vector3(0.045, 0.018, 2.15), marking, 0)
