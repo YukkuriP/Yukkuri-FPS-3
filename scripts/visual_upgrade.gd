@@ -515,14 +515,15 @@ func _deckhouse_fenestration() -> void:
 	var panel := _mat(Color(0.34, 0.37, 0.36), 0.28, 0.78)
 	for side in [-1.0, 1.0]:
 		# Forward deckhouse side windows, set just proud of the exterior skin.
-		for z in [-27.0, -23.0, -19.0, -15.0]:
+		for z in [-28.0, -25.0, -22.0, -19.0, -16.0]:
 			var x: float = float(side) * 6.18
-			_box(self, "Forward side window gasket", Vector3(x, 4.65, z), Vector3(0.055, 0.92, 1.42), gasket, 0)
-			_box(self, "Forward side window glass", Vector3(x + side * 0.035, 4.65, z), Vector3(0.035, 0.72, 1.22), glass, 0)
-			for y in [4.17, 5.13]:
-				_box(self, "Forward side window frame", Vector3(x + side * 0.06, y, z), Vector3(0.08, 0.055, 1.48), frame, 0)
-			for dz in [-0.72, 0.72]:
-				_box(self, "Forward side window frame", Vector3(x + side * 0.06, 4.65, z + dz), Vector3(0.08, 0.98, 0.055), frame, 0)
+			_box(self, "Forward side window gasket", Vector3(x, 4.65, z), Vector3(0.055, 1.22, 1.62), gasket, 0)
+			_box(self, "Forward side window glass", Vector3(x + side * 0.035, 4.65, z), Vector3(0.035, 1.00, 1.42), glass, 0)
+			for y in [4.02, 5.28]:
+				_box(self, "Forward side window frame", Vector3(x + side * 0.06, y, z), Vector3(0.08, 0.055, 1.68), frame, 0)
+			for dz in [-0.81, 0.81]:
+				_box(self, "Forward side window frame", Vector3(x + side * 0.06, 4.65, z + dz), Vector3(0.08, 1.25, 0.055), frame, 0)
+			_box(self, "Forward side window center mullion", Vector3(x + side * 0.06, 4.65, z), Vector3(0.08, 1.18, 0.055), frame, 0)
 		# Aft deckhouse flush service panels and ventilation access covers.
 		for z in [6.0, 12.0, 18.0]:
 			var px: float = float(side) * 6.70
