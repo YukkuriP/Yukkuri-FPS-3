@@ -34,21 +34,21 @@ func _run() -> void:
 	if visual == null:
 		_fail("VisualUpgrade node is missing")
 		return
-	var rail_posts := visual.find_children("Tapered sheer stanchion*", "MeshInstance3D", true, false)
-	if rail_posts.size() < 70:
-		_fail("Tapered sheer rail system is incomplete: %d posts" % rail_posts.size())
+	var rail_post_count := _count_named_prefix(visual, "Tapered sheer stanchion")
+	if rail_post_count < 70:
+		_fail("Tapered sheer rail system is incomplete: %d posts" % rail_post_count)
 		return
-	var mast_uprights := visual.find_children("Mast lattice upright*", "MeshInstance3D", true, false)
-	if mast_uprights.size() != 4:
-		_fail("Communications mast lattice is incomplete")
+	var mast_upright_count := _count_named_prefix(visual, "Mast lattice upright")
+	if mast_upright_count != 4:
+		_fail("Communications mast lattice is incomplete: %d uprights" % mast_upright_count)
 		return
 	if visual.find_child("Stern transom upper rub strip", true, false) == null:
 		_fail("Stern transom finish is missing")
 		return
-	var foredeck_segments := deck.find_children("Tapered foredeck plating*", "MeshInstance3D", true, false)
-	var lower_forepeak_segments := deck.find_children("Tapered lower forepeak plating*", "MeshInstance3D", true, false)
-	if foredeck_segments.size() != 12 or lower_forepeak_segments.size() != 12:
-		_fail("Tapered foredeck or lower forepeak plating is incomplete")
+	var foredeck_segment_count := _count_named_prefix(deck, "Tapered foredeck plating")
+	var lower_forepeak_segment_count := _count_named_prefix(deck, "Tapered lower forepeak plating")
+	if foredeck_segment_count != 12 or lower_forepeak_segment_count != 12:
+		_fail("Tapered foredeck or lower forepeak plating is incomplete: %d / %d" % [foredeck_segment_count, lower_forepeak_segment_count])
 		return
 
 	var player: CharacterBody3D = main.get("player")
@@ -88,6 +88,12 @@ func _count_named(node: Node, target_name: String) -> int:
 	var total := 1 if node.name == target_name else 0
 	for child in node.get_children():
 		total += _count_named(child, target_name)
+	return total
+
+func _count_named_prefix(node: Node, prefix: String) -> int:
+	var total := 1 if node.name.begins_with(prefix) else 0
+	for child in node.get_children():
+		total += _count_named_prefix(child, prefix)
 	return total
 
 func _count_group(node: Node, group_name: String) -> int:
