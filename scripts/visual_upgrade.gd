@@ -264,13 +264,13 @@ func _exterior_detail() -> void:
 	for z in range(-33,37,5):
 		_box(self,"Deck expansion strip",Vector3(0,1.14,float(z)),Vector3(16.8,0.018,0.035),dark,0)
 	# Flat stern transom: perimeter rub strips, plate joints and flush service panels.
-	_box(self, "Stern transom upper rub strip", Vector3(0.0, 0.66, 38.91), Vector3(13.7, 0.11, 0.10), trim, 0)
-	_box(self, "Stern transom lower rub strip", Vector3(0.0, -1.38, 38.91), Vector3(12.8, 0.10, 0.10), dark, 0)
+	_box(self, "Stern transom upper rub strip", Vector3(0.0, 0.66, 40.91), Vector3(13.7, 0.11, 0.10), trim, 0)
+	_box(self, "Stern transom lower rub strip", Vector3(0.0, -1.38, 40.91), Vector3(12.8, 0.10, 0.10), dark, 0)
 	for x in [-5.0, -2.5, 0.0, 2.5, 5.0]:
-		_box(self, "Stern transom plate joint", Vector3(x, -0.32, 38.89), Vector3(0.035, 1.72, 0.045), dark, 0)
+		_box(self, "Stern transom plate joint", Vector3(x, -0.32, 40.89), Vector3(0.035, 1.72, 0.045), dark, 0)
 	for x in [-3.7, 3.7]:
-		_box(self, "Stern transom service panel frame", Vector3(x, -0.28, 38.92), Vector3(1.35, 0.92, 0.055), trim, 0)
-		_box(self, "Stern transom service panel inset", Vector3(x, -0.28, 38.96), Vector3(1.18, 0.75, 0.025), dark, 0)
+		_box(self, "Stern transom service panel frame", Vector3(x, -0.28, 40.92), Vector3(1.35, 0.92, 0.055), trim, 0)
+		_box(self, "Stern transom service panel inset", Vector3(x, -0.28, 40.96), Vector3(1.18, 0.75, 0.025), dark, 0)
 	# Bow anchor housings and mooring fittings (non-functional visual props)
 	for side in [-1.0,1.0]:
 		_box(self,"Anchor hawse plate",Vector3(side*5.6,-0.35,-36.0),Vector3(1.0,0.08,1.0),dark)
@@ -724,8 +724,8 @@ func _sheer_rail_finish() -> void:
 			mesh.visible = false
 	var rail_mat := _mat(Color(0.39, 0.43, 0.42), 0.72, 0.34)
 	var post_points: Array[Vector3] = []
-	for z in range(-38, 39, 2):
-		var half_beam := _sheer_half_beam(float(z))
+	for z in range(-36, 41, 2):
+		var half_beam := _sheer_half_beam(float(z) - 2.0)
 		for side in [-1.0, 1.0]:
 			var x: float = float(side) * (half_beam * 0.955)
 			var foot := Vector3(x, 1.18, float(z))
