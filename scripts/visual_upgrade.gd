@@ -762,22 +762,23 @@ func _rail_cylinder_between(label: String, a: Vector3, b: Vector3, radius: float
 func _aft_flight_deck_markings() -> void:
 	# Non-functional landing-zone paint on the clear aft deck behind the hangar.
 	var marking := _mat(Color(0.82, 0.84, 0.79), 0.05, 0.82)
-	var center_z := 37.46
-	var h_center_z := center_z + 0.8 # Keep the H aft of the hangar sightline.
-	var radius_x := 5.3
-	var radius_z := 2.65 # Compensate for the ship root's 2x longitudinal scale.
+	# Fit the pad between the hangar threshold and the stern transom.
+	var center_z := 38.4
+	var h_center_z := center_z + 0.45
+	var radius_x := 4.9
+	var radius_z := 1.95 # Compensate for the ship root's 2x longitudinal scale.
 	for segment in range(64):
 		var a0 := TAU * float(segment) / 64.0
 		var a1 := TAU * float(segment + 1) / 64.0
 		var p0 := Vector3(radius_x * cos(a0), 1.28, center_z + radius_z * sin(a0))
 		var p1 := Vector3(radius_x * cos(a1), 1.28, center_z + radius_z * sin(a1))
 		_rail_cylinder_between("Aft landing circle marking", p0, p1, 0.035, marking)
-	_box(self, "Landing H left stroke", Vector3(-1.5, 1.29, h_center_z), Vector3(0.16, 0.035, 1.2), marking, 0)
-	_box(self, "Landing H right stroke", Vector3(1.5, 1.29, h_center_z), Vector3(0.16, 0.035, 1.2), marking, 0)
-	_box(self, "Landing H crossbar", Vector3(0.0, 1.29, h_center_z), Vector3(3.2, 0.035, 0.16), marking, 0)
+	_box(self, "Landing H left stroke", Vector3(-1.35, 1.29, h_center_z), Vector3(0.15, 0.035, 1.0), marking, 0)
+	_box(self, "Landing H right stroke", Vector3(1.35, 1.29, h_center_z), Vector3(0.15, 0.035, 1.0), marking, 0)
+	_box(self, "Landing H crossbar", Vector3(0.0, 1.29, h_center_z), Vector3(2.85, 0.035, 0.15), marking, 0)
 	for side in [-1.0, 1.0]:
-		for z in [35.4, 39.5]:
-			_box(self, "Landing zone tie-down marker", Vector3(side * 4.7, 1.29, z), Vector3(0.16, 0.035, 0.16), marking, 0)
+		for z in [36.8, 40.0]:
+			_box(self, "Landing zone tie-down marker", Vector3(side * 4.35, 1.29, z), Vector3(0.15, 0.035, 0.15), marking, 0)
 
 
 func _sheer_rail_finish() -> void:
