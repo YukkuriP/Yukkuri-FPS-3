@@ -45,6 +45,9 @@ func _run() -> void:
 	if visual.find_child("Stern transom upper rub strip", true, false) == null:
 		_fail("Stern transom finish is missing")
 		return
+	if visual.find_child("Landing H crossbar", true, false) == null:
+		_fail("Aft flight-deck landing markings are missing")
+		return
 	var foredeck_segment_count := deck.get_tree().get_nodes_in_group("tapered_foredeck_segments").size()
 	var lower_forepeak_segment_count := deck.get_tree().get_nodes_in_group("tapered_lower_forepeak_segments").size()
 	if foredeck_segment_count != 24 or lower_forepeak_segment_count != 24:
