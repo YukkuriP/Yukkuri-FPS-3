@@ -45,6 +45,11 @@ func _run() -> void:
 	if visual.find_child("Stern transom upper rub strip", true, false) == null:
 		_fail("Stern transom finish is missing")
 		return
+	var foredeck_segments := deck.find_children("Tapered foredeck plating", "MeshInstance3D", true, false)
+	var lower_forepeak_segments := deck.find_children("Tapered lower forepeak plating", "MeshInstance3D", true, false)
+	if foredeck_segments.size() != 12 or lower_forepeak_segments.size() != 12:
+		_fail("Tapered foredeck or lower forepeak plating is incomplete")
+		return
 
 	var player: CharacterBody3D = main.get("player")
 	if player == null or player.name != "Player":
