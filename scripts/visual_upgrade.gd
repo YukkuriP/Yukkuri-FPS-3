@@ -32,6 +32,7 @@ func _ready() -> void:
 	_hangar_interior_finish()
 	_interior_detail()
 	_weather_deck_finish()
+	_sheer_rail_finish()
 
 func _mat(color: Color, metal: float, rough: float) -> StandardMaterial3D:
 	var m:=StandardMaterial3D.new()
@@ -654,3 +655,69 @@ func _weather_deck_finish() -> void:
 		for side in [-1.0, 1.0]:
 			_box(self, "Shielded deck courtesy light", Vector3(side * 7.55, 1.38, z), Vector3(0.22, 0.20, 0.34), dark, 0)
 			_box(self, "Courtesy light lens", Vector3(side * 7.55, 1.39, z - 0.08), Vector3(0.12, 0.08, 0.10), glow, 0)
+
+func _rail_cylinder_between(label: String, a: Vector3, b: Vector3, radius: float, mat: Material) -> void:
+	var delta := b - a
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = delta.length()
+	mesh.radial_segments = 12
+	var obj := MeshInstance3D.new()
+	obj.name = label
+	obj.mesh = mesh
+	obj.position = (a + b) * 0.5
+	obj.quaternion = Quaternion(Vector3.UP, delta.normalized())
+	obj.material_override = mat
+	add_child(obj)
+
+
+func _sheer_rail_finish() -> void:
+	# Replace the original straight-sided placeholder rails with rails that
+	# follow the narrowing sheer line of the lofted hull.
+	for mesh in get_parent().find_children("*", "MeshInstance3D", true, false):
+		if mesh.name == "Rail" or mesh.name == "Rail post":
+			mesh.visible = false
+	var rail_mat := _mat(Color(0.39, 0.43, 0.42), 0.72, 0.34)
+	var post_points: Array[Vector3] = []
+	for z in range(-38, 39, 2):
+		var half_beam := _sheer_half_beam(float(z))
+		for side in [-1.0, 1.0]:
+			var x := side * (half_beam * 0.955)
+			var foot := Vector3(x, 1.18, float(z))
+			var top := Vector3(x, 2.92, float(z))
+			_rail_cylinder_between("Tapered sheer stanchion", foot, top, 0.045, rail_mat)
+			post_points.append(top)
+	# Each side has a continuous upper and intermediate rail, segmented only
+	# at the post spacing so the changing beam remains visible in the silhouette.
+	for side_index in range(2):
+		var side_offset := side_index * 2
+		for i in range(0, 37):
+			var a_index := i * 2 + side_offset
+			var b_index := (i + 1) * 2 + side_offset
+			var upper_a := post_points[a_index]
+			var upper_b := post_points[b_index]
+			_rail_cylinder_between("Continuous tapered sheer handrail", upper_a, upper_b, 0.052, rail_mat)
+			var mid_a := upper_a.lerp(Vector3(upper_a.x, 1.18, upper_a.z), 0.48)
+			var mid_b := upper_b.lerp(Vector3(upper_b.x, 1.18, upper_b.z), 0.48)
+			_rail_cylinder_between("Intermediate sheer rail", mid_a, mid_b, 0.032, rail_mat)
+
+
+func _sheer_half_beam(z: float) -> float:
+	# Same measured hull stations as the loft; interpolate the sheer edge.
+	var stations: Array[Vector2] = [
+		Vector2(-38.8225, 0.10), Vector2(-38.45, 0.85),
+		Vector2(-37.5, 2.15), Vector2(-35.5, 4.15),
+		Vector2(-32.0, 5.95), Vector2(-27.0, 7.25),
+		Vector2(-20.0, 8.25), Vector2(-10.0, 8.85),
+		Vector2(8.0, 9.0), Vector2(22.0, 8.95),
+		Vector2(31.0, 8.65), Vector2(36.0, 8.15),
+		Vector2(38.2, 7.15), Vector2(38.8225, 0.10)
+	]
+	for i in range(stations.size() - 1):
+		var a := stations[i]
+		var b := stations[i + 1]
+		if z >= a.x and z <= b.x:
+			return lerpf(a.y, b.y, inverse_lerp(a.x, b.x, z))
+	return stations[0].y if z < stations[0].x else stations[stations.size() - 1].y
+
