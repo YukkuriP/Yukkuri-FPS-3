@@ -132,7 +132,8 @@ func _replace_blocky_hull() -> void:
 		Vector2(31.0, 8.65),
 		Vector2(36.0, 8.15),
 		Vector2(38.2, 7.15),
-		Vector2(38.8225, 0.10)
+		# A destroyer stern closes with a broad transom, not a pointed tip.
+		Vector2(38.8225, 7.0)
 	]
 	var stations: Array[Vector2] = []
 	const SUBDIVISIONS := 6
@@ -712,7 +713,7 @@ func _sheer_half_beam(z: float) -> float:
 		Vector2(-20.0, 8.25), Vector2(-10.0, 8.85),
 		Vector2(8.0, 9.0), Vector2(22.0, 8.95),
 		Vector2(31.0, 8.65), Vector2(36.0, 8.15),
-		Vector2(38.2, 7.15), Vector2(38.8225, 0.10)
+		Vector2(38.2, 7.15), Vector2(38.8225, 7.0)
 	]
 	for i in range(stations.size() - 1):
 		var a := stations[i]
