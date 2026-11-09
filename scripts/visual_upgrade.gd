@@ -691,8 +691,8 @@ func _sheer_rail_finish() -> void:
 	# Each side has a continuous upper and intermediate rail, segmented only
 	# at the post spacing so the changing beam remains visible in the silhouette.
 	for side_index in range(2):
-		var side_offset := side_index * 2
-		for i in range(0, 37):
+		var side_offset := side_index
+		for i in range(0, 38):
 			var a_index := i * 2 + side_offset
 			var b_index := (i + 1) * 2 + side_offset
 			var upper_a := post_points[a_index]
