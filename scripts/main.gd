@@ -120,6 +120,13 @@ func _ocean_and_sky() -> void:
 	env.ambient_light_energy = 1.0
 	we.environment=env; add_child(we)
 	var sun:=DirectionalLight3D.new(); sun.rotation_degrees=Vector3(-32,-28,0); sun.light_energy=1.5; sun.light_color=Color(1.0,0.97,0.9); sun.shadow_enabled=true; add_child(sun)
+	# Soft blue-gray fill light keeps shaded hull plating and glazing readable.
+	var fill := DirectionalLight3D.new()
+	fill.rotation_degrees = Vector3(-18.0, 148.0, 0.0)
+	fill.light_energy = 0.34
+	fill.light_color = Color(0.62, 0.73, 0.86)
+	fill.shadow_enabled = false
+	add_child(fill)
 
 func _exterior() -> void:
 	var hull:=_material(Color(0.17,0.22,0.25),0.72,0.38)
