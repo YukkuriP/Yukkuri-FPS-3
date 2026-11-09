@@ -34,19 +34,19 @@ func _run() -> void:
 	if visual == null:
 		_fail("VisualUpgrade node is missing")
 		return
-	var rail_posts := visual.find_children("Tapered sheer stanchion", "MeshInstance3D", true, false)
+	var rail_posts := visual.find_children("Tapered sheer stanchion*", "MeshInstance3D", true, false)
 	if rail_posts.size() < 70:
 		_fail("Tapered sheer rail system is incomplete: %d posts" % rail_posts.size())
 		return
-	var mast_uprights := visual.find_children("Mast lattice upright", "MeshInstance3D", true, false)
+	var mast_uprights := visual.find_children("Mast lattice upright*", "MeshInstance3D", true, false)
 	if mast_uprights.size() != 4:
 		_fail("Communications mast lattice is incomplete")
 		return
 	if visual.find_child("Stern transom upper rub strip", true, false) == null:
 		_fail("Stern transom finish is missing")
 		return
-	var foredeck_segments := deck.find_children("Tapered foredeck plating", "MeshInstance3D", true, false)
-	var lower_forepeak_segments := deck.find_children("Tapered lower forepeak plating", "MeshInstance3D", true, false)
+	var foredeck_segments := deck.find_children("Tapered foredeck plating*", "MeshInstance3D", true, false)
+	var lower_forepeak_segments := deck.find_children("Tapered lower forepeak plating*", "MeshInstance3D", true, false)
 	if foredeck_segments.size() != 12 or lower_forepeak_segments.size() != 12:
 		_fail("Tapered foredeck or lower forepeak plating is incomplete")
 		return
