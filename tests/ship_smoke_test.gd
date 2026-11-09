@@ -47,7 +47,7 @@ func _run() -> void:
 		return
 	var foredeck_segment_count := _count_named_prefix(deck, "Tapered foredeck plating")
 	var lower_forepeak_segment_count := _count_named_prefix(deck, "Tapered lower forepeak plating")
-	if foredeck_segment_count != 12 or lower_forepeak_segment_count != 12:
+	if foredeck_segment_count != 24 or lower_forepeak_segment_count != 24:
 		_fail("Tapered foredeck or lower forepeak plating is incomplete: %d / %d" % [foredeck_segment_count, lower_forepeak_segment_count])
 		return
 
