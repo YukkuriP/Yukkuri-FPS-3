@@ -25,6 +25,20 @@ func _ready() -> void:
 	# These are generated locally by Godot; no paid texture pack is required.
 	steel.roughness_texture = _roughness_texture(1701, 0.045)
 	deck.roughness_texture = _roughness_texture(1702, 0.075)
+	var deck_noise := FastNoiseLite.new()
+	deck_noise.seed = 1705
+	deck_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	deck_noise.frequency = 0.22
+	deck_noise.fractal_octaves = 2
+	var deck_normal := NoiseTexture2D.new()
+	deck_normal.width = 512
+	deck_normal.height = 512
+	deck_normal.seamless = true
+	deck_normal.noise = deck_noise
+	deck_normal.as_normal_map = true
+	deck_normal.bump_strength = 0.16
+	deck.normal_texture = deck_normal
+	deck.normal_scale = 0.18
 	trim.roughness_texture = _roughness_texture(1703, 0.055)
 	_replace_blocky_hull()
 	_exterior_detail()
