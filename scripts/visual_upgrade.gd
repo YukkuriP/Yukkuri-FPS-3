@@ -233,6 +233,20 @@ func _replace_blocky_hull() -> void:
 	var hull_mat := _mat(Color(0.18, 0.22, 0.24), 0.62, 0.46)
 	hull_mat.vertex_color_use_as_albedo = true
 	hull_mat.roughness_texture = steel.roughness_texture
+	var hull_noise := FastNoiseLite.new()
+	hull_noise.seed = 1704
+	hull_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	hull_noise.frequency = 0.075
+	hull_noise.fractal_octaves = 3
+	var hull_normal := NoiseTexture2D.new()
+	hull_normal.width = 512
+	hull_normal.height = 512
+	hull_normal.seamless = true
+	hull_normal.noise = hull_noise
+	hull_normal.as_normal_map = true
+	hull_normal.bump_strength = 0.08
+	hull_mat.normal_texture = hull_normal
+	hull_mat.normal_scale = 0.12
 	hull_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0, hull_mat)
 	var hull := MeshInstance3D.new()
