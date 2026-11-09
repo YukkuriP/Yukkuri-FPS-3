@@ -75,6 +75,20 @@ func _run() -> void:
 		_fail("Could not capture stern transom")
 		return
 
+	# Top-down inspection of the aft landing circle and H marking.
+	var landing_mark := main.find_child("Landing H crossbar", true, false) as Node3D
+	if landing_mark == null:
+		_fail("Could not find aft flight-deck markings")
+		return
+	capture_camera.fov = 25.0
+	capture_camera.position = landing_mark.global_position + Vector3(0.0, 24.0, 0.0)
+	capture_camera.look_at(landing_mark.global_position, Vector3.FORWARD)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("aft_flight_deck_closeup.png")):
+		_fail("Could not capture aft flight deck")
+		return
+
 	# Aim directly at the actual aft hangar door mesh.
 	var hangar_leaf := main.find_child("Aft hangar closure skin", true, false) as Node3D
 	if hangar_leaf == null:
