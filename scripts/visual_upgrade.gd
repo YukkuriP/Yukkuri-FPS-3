@@ -684,7 +684,7 @@ func _sheer_rail_finish() -> void:
 	for z in range(-38, 39, 2):
 		var half_beam := _sheer_half_beam(float(z))
 		for side in [-1.0, 1.0]:
-			var x := side * (half_beam * 0.955)
+			var x: float = float(side) * (half_beam * 0.955)
 			var foot := Vector3(x, 1.18, float(z))
 			var top := Vector3(x, 2.92, float(z))
 			_rail_cylinder_between("Tapered sheer stanchion", foot, top, 0.045, rail_mat)
