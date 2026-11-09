@@ -61,6 +61,20 @@ func _run() -> void:
 		_fail("Could not capture aft superstructure close-up")
 		return
 
+	# Inspect the new broad stern transom and its non-functional service-panel detailing.
+	var stern_detail := main.find_child("Stern transom upper rub strip", true, false) as Node3D
+	if stern_detail == null:
+		_fail("Could not find stern transom detailing")
+		return
+	capture_camera.fov = 58.0
+	capture_camera.position = stern_detail.global_position + Vector3(0.0, 2.8, 13.0)
+	capture_camera.look_at(stern_detail.global_position + Vector3(0.0, -0.45, 0.0), Vector3.UP)
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if not _save_viewport(output_dir.path_join("stern_transom_closeup.png")):
+		_fail("Could not capture stern transom")
+		return
+
 	# Aim directly at the actual aft hangar door mesh.
 	var hangar_leaf := main.find_child("Aft hangar closure skin", true, false) as Node3D
 	if hangar_leaf == null:
