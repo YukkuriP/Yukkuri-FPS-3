@@ -13,7 +13,7 @@ func _ready() -> void:
 	dark=_mat(Color(0.045,0.052,0.05),0.34,0.62)
 	deck=_mat(Color(0.19,0.21,0.20),0.25,0.88)
 	trim=_mat(Color(0.43,0.45,0.42),0.48,0.55)
-	glass=_mat(Color(0.11,0.14,0.13,0.28),0.32,0.2)
+	glass=_mat(Color(0.10,0.17,0.21,0.48),0.32,0.2)
 	glass.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
 	glow=_mat(Color(0.58,0.54,0.40),0.08,0.62)
 	glow.emission_enabled=true; glow.emission=Color(0.025,0.018,0.006)
