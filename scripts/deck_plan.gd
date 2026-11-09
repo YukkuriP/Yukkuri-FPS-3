@@ -82,20 +82,20 @@ func _label(value: String, pos: Vector3, size: int = 28) -> void:
 func _build_deck() -> void:
 	# Split the main deck around a real stairwell opening on the starboard side.
 	# The foredeck follows the narrowing bow instead of remaining a full-width rectangle.
-	for segment in range(12):
-		var z := -35.5 + float(segment)
+	for segment in range(24):
+		var z := -35.75 + float(segment) * 0.5
 		var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
-		_box(self, "Tapered foredeck plating", Vector3(0.0, DECK_Y - 0.14, z), Vector3(half_width * 2.0, 0.28, 1.05), floor_mat, true)
+		_box(self, "Tapered foredeck plating", Vector3(0.0, DECK_Y - 0.14, z), Vector3(half_width * 2.0, 0.28, 0.55), floor_mat, true)
 	_box(self, "Main deck forward plating", Vector3(0, DECK_Y - 0.14, -16.1), Vector3(13.0, 0.28, 15.8), floor_mat, true)
 	_box(self, "Main deck aft plating", Vector3(0, DECK_Y - 0.14, 18.1), Vector3(13.0, 0.28, 43.8), floor_mat, true)
 	_box(self, "Main deck stairwell port plating", Vector3(-1.475, DECK_Y - 0.14, -6.0), Vector3(10.05, 0.28, 4.4), floor_mat, true)
 	_box(self, "Main deck stairwell starboard plating", Vector3(5.925, DECK_Y - 0.14, -6.0), Vector3(1.15, 0.28, 4.4), floor_mat, true)
 	_box(self, "Passage ceiling", Vector3(0, DECK_Y + WALL_H, 2), Vector3(PASSAGE_HALF * 2.0, 0.18, 76), wall_mat)
 	for side in [-1.0, 1.0]:
-		for segment in range(12):
-			var z := -35.5 + float(segment)
+		for segment in range(24):
+			var z := -35.75 + float(segment) * 0.5
 			var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
-			_box(self, "Tapered forepeak outer bulkhead", Vector3(side * half_width, DECK_Y + WALL_H * 0.5, z), Vector3(0.22, WALL_H, 1.05), wall_mat, true)
+			_box(self, "Tapered forepeak outer bulkhead", Vector3(side * half_width, DECK_Y + WALL_H * 0.5, z), Vector3(0.22, WALL_H, 0.55), wall_mat, true)
 		_box(self, "Outer bulkhead", Vector3(side * HULL_HALF, DECK_Y + WALL_H * 0.5, 8.0), Vector3(0.22, WALL_H, 64.0), wall_mat, true)
 	# The centreline passage is continuous; each room opens into it through a real gap.
 
@@ -105,20 +105,20 @@ func _build_lower_deck_and_stairs() -> void:
 	var lower := Node3D.new()
 	lower.name = "LowerDeck"
 	add_child(lower)
-	for segment in range(12):
-		var z := -35.5 + float(segment)
+	for segment in range(24):
+		var z := -35.75 + float(segment) * 0.5
 		var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
-		_box(lower, "Tapered lower forepeak plating", Vector3(0.0, -1.55, z), Vector3(half_width * 2.0, 0.22, 1.05), floor_mat, true)
+		_box(lower, "Tapered lower forepeak plating", Vector3(0.0, -1.55, z), Vector3(half_width * 2.0, 0.22, 0.55), floor_mat, true)
 	_box(lower, "Lower deck plating", Vector3(0, -1.55, 8.0), Vector3(13.0, 0.22, 64.0), floor_mat, true)
 	# Lower service passage and its watertight-style bulkheads.
 	_box(lower, "Lower passage port bulkhead", Vector3(-PASSAGE_HALF, -0.48, 2), Vector3(0.18, 1.9, 76.0), wall_mat, true)
 	_box(lower, "Lower passage starboard forward bulkhead", Vector3(PASSAGE_HALF, -0.48, -20.35), Vector3(0.18, 1.9, 31.3), wall_mat, true)
 	_box(lower, "Lower passage starboard aft bulkhead", Vector3(PASSAGE_HALF, -0.48, 18.55), Vector3(0.18, 1.9, 42.9), wall_mat, true)
 	for side in [-1.0, 1.0]:
-		for segment in range(12):
-			var z := -35.5 + float(segment)
+		for segment in range(24):
+			var z := -35.75 + float(segment) * 0.5
 			var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
-			_box(lower, "Tapered lower forepeak bulkhead", Vector3(side * half_width, -0.48, z), Vector3(0.22, 1.9, 1.05), wall_mat, true)
+			_box(lower, "Tapered lower forepeak bulkhead", Vector3(side * half_width, -0.48, z), Vector3(0.22, 1.9, 0.55), wall_mat, true)
 		_box(lower, "Lower deck outer bulkhead", Vector3(side * HULL_HALF, -0.48, 8.0), Vector3(0.22, 1.9, 64.0), wall_mat, true)
 	# A sloped collision ramp under individually modeled stair treads makes the
 	# staircase traversable by CharacterBody3D without snagging on every riser.
