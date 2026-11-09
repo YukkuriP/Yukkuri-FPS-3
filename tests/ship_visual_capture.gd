@@ -82,7 +82,7 @@ func _run() -> void:
 		return
 	capture_camera.fov = 38.0
 	capture_camera.position = landing_mark.global_position + Vector3(0.0, 16.0, 0.0)
-	capture_camera.look_at(landing_mark.global_position, Vector3.UP)
+	capture_camera.look_at(landing_mark.global_position, Vector3.FORWARD)
 	await process_frame
 	await RenderingServer.frame_post_draw
 	if not _save_viewport(output_dir.path_join("aft_flight_deck_closeup.png")):
