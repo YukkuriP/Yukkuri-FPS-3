@@ -96,7 +96,7 @@ func _build_deck() -> void:
 			var z := -35.5 + float(segment)
 			var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
 			_box(self, "Tapered forepeak outer bulkhead", Vector3(side * half_width, DECK_Y + WALL_H * 0.5, z), Vector3(0.22, WALL_H, 1.05), wall_mat, true)
-		_box(self, "Outer bulkhead", Vector3(side * HULL_HALF, DECK_Y + WALL_H * 0.5, 8.5), Vector3(0.22, WALL_H, 63.0), wall_mat, true)
+		_box(self, "Outer bulkhead", Vector3(side * HULL_HALF, DECK_Y + WALL_H * 0.5, 8.0), Vector3(0.22, WALL_H, 64.0), wall_mat, true)
 	# The centreline passage is continuous; each room opens into it through a real gap.
 
 func _build_lower_deck_and_stairs() -> void:
@@ -109,7 +109,7 @@ func _build_lower_deck_and_stairs() -> void:
 		var z := -35.5 + float(segment)
 		var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
 		_box(lower, "Tapered lower forepeak plating", Vector3(0.0, -1.55, z), Vector3(half_width * 2.0, 0.22, 1.05), floor_mat, true)
-	_box(lower, "Lower deck plating", Vector3(0, -1.55, 8.5), Vector3(13.0, 0.22, 63.0), floor_mat, true)
+	_box(lower, "Lower deck plating", Vector3(0, -1.55, 8.0), Vector3(13.0, 0.22, 64.0), floor_mat, true)
 	# Lower service passage and its watertight-style bulkheads.
 	_box(lower, "Lower passage port bulkhead", Vector3(-PASSAGE_HALF, -0.48, 2), Vector3(0.18, 1.9, 76.0), wall_mat, true)
 	_box(lower, "Lower passage starboard forward bulkhead", Vector3(PASSAGE_HALF, -0.48, -20.35), Vector3(0.18, 1.9, 31.3), wall_mat, true)
@@ -119,7 +119,7 @@ func _build_lower_deck_and_stairs() -> void:
 			var z := -35.5 + float(segment)
 			var half_width := clampf(_hull_half_beam_at(z - 2.0) - 0.35, 1.2, HULL_HALF)
 			_box(lower, "Tapered lower forepeak bulkhead", Vector3(side * half_width, -0.48, z), Vector3(0.22, 1.9, 1.05), wall_mat, true)
-		_box(lower, "Lower deck outer bulkhead", Vector3(side * HULL_HALF, -0.48, 8.5), Vector3(0.22, 1.9, 63.0), wall_mat, true)
+		_box(lower, "Lower deck outer bulkhead", Vector3(side * HULL_HALF, -0.48, 8.0), Vector3(0.22, 1.9, 64.0), wall_mat, true)
 	# A sloped collision ramp under individually modeled stair treads makes the
 	# staircase traversable by CharacterBody3D without snagging on every riser.
 	var stair := Node3D.new()
