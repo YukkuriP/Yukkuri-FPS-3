@@ -26,6 +26,7 @@ func _ready() -> void:
 	_replace_blocky_hull()
 	_exterior_detail()
 	_superstructure_finish()
+	_mast_lattice_finish()
 	_deckhouse_fenestration()
 	_interior_superstructure_finish()
 	_bridge_furnishings()
@@ -469,6 +470,40 @@ func _superstructure_finish() -> void:
 			_box(self, "Weather deck door inset", Vector3(side * 6.20, 3.1, z), Vector3(0.025, 1.55, 0.68), dark, 0)
 			_cylinder(self, "Weather deck door handle", Vector3(side * 6.24, 3.1, z - 0.28), 0.045, 0.18, trim, 10)
 
+
+
+func _mast_lattice_finish() -> void:
+	# Structural communications-mast lattice only; no functional weapon or targeting equipment.
+	var mast_mat := _mat(Color(0.34, 0.38, 0.38), 0.62, 0.48)
+	var mast_z := -21.0
+	var half_width := 2.45
+	var half_depth := 1.05
+	var bottom_y := 9.45
+	var top_y := 13.45
+	for side in [-1.0, 1.0]:
+		for fore_aft in [-1.0, 1.0]:
+			var base := Vector3(side * half_width, bottom_y, mast_z + fore_aft * half_depth)
+			var top := Vector3(side * half_width, top_y, mast_z + fore_aft * half_depth)
+			_rail_cylinder_between("Mast lattice upright", base, top, 0.055, mast_mat)
+	for y in [9.55, 10.8, 12.05, 13.3]:
+		for fore_aft in [-1.0, 1.0]:
+			_rail_cylinder_between("Mast transverse crossmember",
+				Vector3(-half_width, y, mast_z + fore_aft * half_depth),
+				Vector3(half_width, y, mast_z + fore_aft * half_depth), 0.045, mast_mat)
+		for side in [-1.0, 1.0]:
+			_rail_cylinder_between("Mast longitudinal crossmember",
+				Vector3(side * half_width, y, mast_z - half_depth),
+				Vector3(side * half_width, y, mast_z + half_depth), 0.045, mast_mat)
+	for side in [-1.0, 1.0]:
+		for fore_aft in [-1.0, 1.0]:
+			var lower := Vector3(side * half_width, 9.6, mast_z + fore_aft * half_depth)
+			var upper := Vector3(side * half_width, 11.55, mast_z - fore_aft * half_depth)
+			_rail_cylinder_between("Mast lattice diagonal", lower, upper, 0.035, mast_mat)
+			var upper_b := Vector3(side * half_width, 11.55, mast_z + fore_aft * half_depth)
+			var lower_b := Vector3(side * half_width, 9.6, mast_z - fore_aft * half_depth)
+			_rail_cylinder_between("Mast lattice diagonal", upper_b, lower_b, 0.035, mast_mat)
+	_box(self, "Mast upper service platform", Vector3(0.0, 13.35, mast_z),
+		Vector3(5.35, 0.12, 2.5), deck)
 
 func _deckhouse_fenestration() -> void:
 	# Small framed side glazing and flush access panels break up the broad
